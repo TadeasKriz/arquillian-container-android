@@ -22,8 +22,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
 /**
- * A {@link org.jboss.arquillian.spi.client.container.ContainerConfiguration} 
- * implementation for the Android containers.
+ * A {@link org.jboss.arquillian.spi.client.container.ContainerConfiguration} implementation for the Android containers.
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
@@ -51,7 +50,7 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
     private long emulatorShutdownTimeoutInSeconds = 60L;
 
     private String home = System.getenv("ANDROID_HOME");
-    
+
     private boolean AVDIsGenerated;
 
     // Android 2.3.3 is the default
@@ -144,33 +143,28 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
     public void setAbi(String abi) {
         this.abi = abi;
     }
-    
+
     @Override
     public void validate() throws AndroidContainerConfigurationException {
-        Validate.isReadableDirectory(
-                home,
+        Validate.isReadableDirectory(home,
                 "You must provide Android SDK home directory. The value you've provided is not valid ("
                         + (home == null ? "" : home)
-                        + "). You can either set it via an environment variable ANDROID_HOME or via" +
-                        " a property called \"home\" in Arquillian configuration.");
-/*        Validate.notAllNullsOrEmpty(
-                new String[] { avdName, serialId },
-                "You must provide either \"avdName\" if you want to use an emulator, or \"serialId\"" +
-                " property if you want to use a real device.");*/
+                        + "). You can either set it via an environment variable ANDROID_HOME or via"
+                        + " a property called \"home\" in Arquillian configuration.");
 
         if (avdName != null && serialId != null) {
-            logger.warning("Both \"avdName\" and \"serialId\" properties are defined, the device " +
-            		"specified by \"serialId\" will get priority if connected.");
+            logger.warning("Both \"avdName\" and \"serialId\" properties are defined, the device "
+                    + "specified by \"serialId\" will get priority if connected.");
         }
-        
+
         // in case of bad serialId, we try to start an emulator, which has to have a name
         // if we do not specify it in the arquillian.xml, we have to define some random one
         if (avdName == null) {
-        	avdName = AVDIdentifierGenerator.getRandomAVDName();
+            avdName = AVDIdentifierGenerator.getRandomAVDName();
         }
-        
-        Validate.sdSize(sdSize, "Check you did not forget to add M char (as Megabytes) " +
-        		"in your sdSize property in arquillian.xml");
+
+        Validate.sdSize(sdSize, "Check you did not forget to add M char (as Megabytes) "
+                + "in your sdSize property in arquillian.xml");
     }
 
     @Override
@@ -190,12 +184,12 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         return sb.toString();
     }
 
-	public void setAVDIsGenerated(boolean value) {
-		this.AVDIsGenerated = value;
-	}
+    public void setAVDIsGenerated(boolean value) {
+        this.AVDIsGenerated = value;
+    }
 
-	public boolean isAVDGenerated() {
-		return AVDIsGenerated;
-	}
+    public boolean isAVDGenerated() {
+        return AVDIsGenerated;
+    }
 
 }

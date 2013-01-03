@@ -17,8 +17,7 @@
 package org.jboss.arquillian.container.android.api;
 
 /**
- * Represents an action to perform upon {@link AndroidEmulator} instance such as
- * its startup or shutdown.
+ * Represents an action to perform upon {@link AndroidEmulator} instance such as its startup or shutdown.
  * 
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  * 

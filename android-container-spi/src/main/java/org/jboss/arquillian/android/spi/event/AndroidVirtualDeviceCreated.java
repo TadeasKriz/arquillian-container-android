@@ -18,9 +18,9 @@ package org.jboss.arquillian.android.spi.event;
 
 /**
  * Event representing that an Android Virtual device was created
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 public class AndroidVirtualDeviceCreated extends AndroidVirtualDeviceEvent {
 

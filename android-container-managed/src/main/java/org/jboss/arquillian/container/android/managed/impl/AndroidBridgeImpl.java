@@ -45,7 +45,7 @@ import com.android.ddmlib.IDevice;
 
 /**
  * Implementation of Android Debug Bridge
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author hugo.josefson@jayway.com
  * @author Manfred Moser <manfred@simpligility.com>
@@ -112,7 +112,7 @@ class AndroidBridgeImpl implements AndroidBridge {
 
     /**
      * Run a wait loop until adb is connected or trials run out. This method seems to work more reliably then using a listener.
-     *
+     * 
      * @param adb
      */
     private void waitUntilConnected() {
@@ -132,7 +132,7 @@ class AndroidBridgeImpl implements AndroidBridge {
 
     /**
      * Wait for the Android Debug Bridge to return an initial device list.
-     *
+     * 
      * @param adb
      */
     private void waitForInitialDeviceList() {

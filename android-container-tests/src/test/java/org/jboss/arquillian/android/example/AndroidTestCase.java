@@ -27,16 +27,16 @@ import junit.framework.Assert;
 
 @RunWith(Arquillian.class)
 public class AndroidTestCase {
-	
-	@Deployment(order = 1, managed = true, testable = true)
-	public static JavaArchive createDeployment() {
-		JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "test.jar");
-		System.out.println(jar.toString(true));
-		return jar;
-	}
-	
-	@Test
-	public void test01() {
-		Assert.assertTrue(true);
-	}
+
+    @Deployment(order = 1, managed = true, testable = true)
+    public static JavaArchive createDeployment() {
+        JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "test.jar");
+        System.out.println(jar.toString(true));
+        return jar;
+    }
+
+    @Test
+    public void test01() {
+        Assert.assertTrue(true);
+    }
 }

@@ -22,9 +22,9 @@ import org.jboss.arquillian.container.android.managed.configuration.AndroidConta
 
 /**
  * Simple validation utility
- *
+ * 
  * @author <a href="@mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 class Validate {
 
@@ -36,7 +36,7 @@ class Validate {
 
     /**
      * Checks that object is not null, throws exception if it is.
-     *
+     * 
      * @param obj The object to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if obj is null
@@ -49,7 +49,7 @@ class Validate {
 
     /**
      * Checks that the specified String is not null or empty, throws exception if it is.
-     *
+     * 
      * @param string The object to check
      * @param message The exception message
      * @throws AndroidContainerConfigurationException Thrown if string is null
@@ -62,12 +62,13 @@ class Validate {
 
     /**
      * Checks that at least one of specified String is not empty
-     *
+     * 
      * @param strings The array of strings to be checked
      * @param message The exception message
      * @throws AndroidContainerConfigurationException Throws if all strings are null or empty
      */
-    public static void notAllNullsOrEmpty(final String[] strings, final String message) throws AndroidContainerConfigurationException {
+    public static void notAllNullsOrEmpty(final String[] strings, final String message)
+            throws AndroidContainerConfigurationException {
         for (String string : strings) {
             if (string != null && string.trim().length() != 0) {
                 return;
@@ -80,7 +81,7 @@ class Validate {
     /**
      * Checks that the specified String is not null or empty and represents a readable file, throws exception if it is empty or
      * null and does not represent a path to a file.
-     *
+     * 
      * @param path The path to check
      * @param message The exception message
      * @throws AndroidContainerConfigurationException Thrown if path is empty, null or invalid
@@ -94,7 +95,7 @@ class Validate {
     /**
      * Checks that the specified File is not null or empty and represents a readable file, throws exception if it is empty or
      * null and does not represent a path to a file.
-     *
+     * 
      * @param file The file to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if file is null or invalid
@@ -111,7 +112,7 @@ class Validate {
     /**
      * Checks that the specified String is not null or empty and represents a readable directory, throws exception if it is
      * empty or null and does not represent a path to a directory.
-     *
+     * 
      * @param path The path to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if path is empty, null or invalid
@@ -125,7 +126,7 @@ class Validate {
     /**
      * Checks that the specified file is not null and represents a readable directory, throws exception if it is empty or null
      * and does not represent a directory.
-     *
+     * 
      * @param file The path to check
      * @param message The exception message
      * @throws AndroidContainerConfigurationException Thrown if file is null or invalid
@@ -139,10 +140,10 @@ class Validate {
         }
     }
 
-	public static void sdSize(String sdSize, String message) throws AndroidContainerConfigurationException{
+    public static void sdSize(String sdSize, String message) throws AndroidContainerConfigurationException {
         if (sdSize != null && !sdSize.matches("\\d{1,3}M")) {
-        	throw new AndroidContainerConfigurationException(message);
+            throw new AndroidContainerConfigurationException(message);
         }
-	}
+    }
 
 }

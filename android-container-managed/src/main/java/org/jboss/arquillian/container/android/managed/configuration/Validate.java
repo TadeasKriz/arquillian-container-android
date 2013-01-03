@@ -75,8 +75,8 @@ class Validate {
         }
 
         throw new AndroidContainerConfigurationException(message);
-    }    
-    
+    }
+
     /**
      * Checks that the specified String is not null or empty and represents a readable file, throws exception if it is empty or
      * null and does not represent a path to a file.
@@ -110,7 +110,7 @@ class Validate {
     /**
      * Checks that the specified File is not null or empty and represents a readable file, throws exception if it is empty or
      * null and does not represent a path to a file.
-     *
+     * 
      * @param file The file to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if file is null or invalid
@@ -123,7 +123,7 @@ class Validate {
             throw new IllegalArgumentException(message);
         }
     }
-    
+
     /**
      * Checks that the specified file is not null and represents a readable directory, throws exception if it is empty or null
      * and does not represent a directory.
@@ -149,10 +149,10 @@ class Validate {
      * @param message The exception message
      * @throws AndroidContainerConfigurationException
      */
-	public static void sdSize(String sdSize, String message) throws AndroidContainerConfigurationException{
+    public static void sdSize(String sdSize, String message) throws AndroidContainerConfigurationException {
         if (sdSize != null && !sdSize.matches("\\d{1,3}M")) {
-        	throw new AndroidContainerConfigurationException(message);
+            throw new AndroidContainerConfigurationException(message);
         }
-	}
-    
+    }
+
 }

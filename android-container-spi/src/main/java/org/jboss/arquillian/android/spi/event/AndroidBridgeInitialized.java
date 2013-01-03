@@ -20,9 +20,9 @@ import org.jboss.arquillian.container.android.api.AndroidBridge;
 
 /**
  * Event representing that Android Bridge was initialized and connected
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 public class AndroidBridgeInitialized {
     private AndroidBridge bridge;

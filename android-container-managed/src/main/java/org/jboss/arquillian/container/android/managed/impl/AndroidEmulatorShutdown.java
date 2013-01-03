@@ -59,22 +59,22 @@ import com.android.ddmlib.IDevice;
 
 /**
  * Brings Android Emulator down.
- *
+ * 
  * Observes:
  * <ul>
  * <li>{@link AfterSuite}</li>
  * </ul>
- *
+ * 
  * Fires:
  * <ul>
  * <li>{@link AndroidDeviceShutdown}</li>
  * </ul>
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author Manfred Moser <manfred@simpligility.com>
  */
 public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
-	
+
     private static final Logger logger = Logger.getLogger(AndroidEmulatorShutdown.class.getName());
 
     @Inject
@@ -83,13 +83,10 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
     @Inject
     private Instance<AndroidEmulatorImpl> androidEmulator;
 
-    public void shutdownEmulator(
-    		@Observes(precedence = 10) AfterSuite event,
-    		AndroidManagedContainerConfiguration configuration,
-    		AndroidDevice device,
-            ProcessExecutor executor
-            ) throws AndroidExecutionException {
-    	
+    public void shutdownEmulator(@Observes(precedence = 10) AfterSuite event,
+            AndroidManagedContainerConfiguration configuration, AndroidDevice device, ProcessExecutor executor)
+            throws AndroidExecutionException {
+
         AndroidEmulatorImpl emulator = androidEmulator.get();
 
         // we created the emulator, test shut it down
@@ -97,8 +94,8 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
 
             final Process p = emulator.getProcess();
             CountDownWatch countdown = new CountDownWatch(configuration.getEmulatorShutdownTimeoutInSeconds(), TimeUnit.SECONDS);
-            logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be disconnected and shutdown.",
-            		new Object[] { countdown.timeout(), device.getAvdName() });
+            logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be disconnected and shutdown.", new Object[] {
+                    countdown.timeout(), device.getAvdName() });
             try {
                 final DeviceDisconnectDiscovery listener = new DeviceDisconnectDiscovery(device);
                 AndroidDebugBridge.addDeviceChangeListener(listener);
@@ -114,11 +111,8 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
 
     }
 
-    private void waitUntilShutDownIsComplete(
-    		final AndroidDevice device,
-            final DeviceDisconnectDiscovery listener,
-            ProcessExecutor executor,
-            CountDownWatch countdown) throws AndroidExecutionException {
+    private void waitUntilShutDownIsComplete(final AndroidDevice device, final DeviceDisconnectDiscovery listener,
+            ProcessExecutor executor, CountDownWatch countdown) throws AndroidExecutionException {
 
         try {
             // wait until device is disconnected from bridge
@@ -134,7 +128,8 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
                         device.getAvdName(), countdown.timeout());
             }
 
-            logger.log(Level.INFO, "Device {0} was disconnected in {1} seconds.", new Object[] { device.getAvdName(), countdown.timeElapsed() });
+            logger.log(Level.INFO, "Device {0} was disconnected in {1} seconds.",
+                    new Object[] { device.getAvdName(), countdown.timeElapsed() });
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Unable to disconnect AVD device {0}", device.getAvdName());
         } catch (ExecutionException e) {
@@ -145,16 +140,13 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
 
     /**
      * This method contains the code required to stop an emulator.
-     *
+     * 
      * @return {@code true} if stopped without errors, {@code false} otherwise
      * @param device The device to stop
      */
-    private Boolean stopEmulator(
-    		final Process p,
-    		final ProcessExecutor executor,
-    		final AndroidDevice device,
+    private Boolean stopEmulator(final Process p, final ProcessExecutor executor, final AndroidDevice device,
             final CountDownWatch countdown) throws AndroidExecutionException {
-    	
+
         int devicePort = extractPortFromDevice(device);
         if (devicePort == -1) {
             logger.log(Level.SEVERE, "Unable to retrieve port to stop emulator {0}", device.getSerialNumber());
@@ -163,8 +155,9 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
             logger.log(Level.INFO, "Stopping emulator {0} via port {1}", new Object[] { device.getSerialNumber(), devicePort });
 
             try {
-                Boolean stopped = executor.submit(sendEmulatorCommand(devicePort, "kill")).get(countdown.timeLeft(), countdown.getTimeUnit());
-        
+                Boolean stopped = executor.submit(sendEmulatorCommand(devicePort, "kill")).get(countdown.timeLeft(),
+                        countdown.getTimeUnit());
+
                 // wait to retrieve finished process of emulator
                 int retval = executor.submit(new Callable<Integer>() {
                     @Override
@@ -176,7 +169,9 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
                 return stopped && retval == 0;
             } catch (TimeoutException e) {
                 p.destroy();
-                logger.log(Level.WARNING, "Emulator process was forcibly destroyed, {0} seconds remaining to dispose the device", countdown.timeLeft());
+                logger.log(Level.WARNING,
+                        "Emulator process was forcibly destroyed, {0} seconds remaining to dispose the device",
+                        countdown.timeLeft());
                 return false;
             } catch (InterruptedException e) {
                 p.destroy();
@@ -190,10 +185,9 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
     }
 
     /**
-     * This method extracts a port number from the serial number of a device. It assumes that the device name is of
-     * format
+     * This method extracts a port number from the serial number of a device. It assumes that the device name is of format
      * [xxxx-nnnn] where nnnn is the port number.
-     *
+     * 
      * @param device The device to extract the port number from.
      * @return Returns the port number of the device
      */
@@ -212,7 +206,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
 
     /**
      * Sends a user command to the running emulator via its telnet interface.
-     *
+     * 
      * @param port The emulator's telnet port.
      * @param command The command to execute on the emulator's telnet interface.
      * @return Whether sending the command succeeded.
@@ -230,7 +224,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
                     if (in.readLine() == null) {
                         return false;
                     }
-                    
+
                     out.write(command);
                     out.write("\r\n");
                 } finally {
@@ -239,7 +233,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
                         in.close();
                         socket.close();
                     } catch (Exception e) {
-                    	// nothing
+                        // nothing
                     }
                 }
 

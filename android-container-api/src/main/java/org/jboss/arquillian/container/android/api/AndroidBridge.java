@@ -20,36 +20,36 @@ import java.util.List;
 
 /**
  * An abstraction of Android Debug Bridge
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 public interface AndroidBridge {
 
     /**
      * Lists all devices currently available
-     *
+     * 
      * @return List of available devices
      */
     List<AndroidDevice> getDevices();
 
     /**
      * Connects to the bridge
-     *
+     * 
      * @throws AndroidExecutionException
      */
     void connect() throws AndroidExecutionException;
 
     /**
      * Checks if bridge is connected
-     *
+     * 
      * @return {@code true} if connected, {@code false} otherwise
      */
     boolean isConnected();
 
     /**
      * Disconnects bridge and disposes connection
-     *
+     * 
      * @throws AndroidExecutionException
      */
     void disconnect() throws AndroidExecutionException;

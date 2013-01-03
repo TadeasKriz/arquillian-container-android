@@ -48,30 +48,30 @@ import com.android.ddmlib.IDevice;
 
 /**
  * Starts an emulator and either connects to an existing device or creates one.
- *
+ * 
  * Observes:
  * <ul>
  * <li>{@link AndroidVirtualDeviceEvent}</li>
  * </ul>
- *
+ * 
  * Creates:
  * <ul>
  * <li>{@link AndroidEmulatorImpl}</li>
  * <li>{@link AndroidDevice}</li>
  * </ul>
- *
+ * 
  * Fires:
  * <ul>
  * <li>{@link AndroidDeviceReady}</li>
  * </ul>
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
-	
+
     private static final Logger logger = Logger.getLogger(AndroidEmulatorStartup.class.getName());
-    
+
     @Inject
     @SuiteScoped
     private InstanceProducer<AndroidEmulatorImpl> androidEmulator;
@@ -83,37 +83,33 @@ public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
     @Inject
     private Event<AndroidDeviceReady> androidDeviceReady;
 
-    public void createAndroidEmulator(
-    		@Observes AndroidVirtualDeviceEvent event,
-    		AndroidBridge bridge,
-            AndroidManagedContainerConfiguration configuration,
-            AndroidSDK sdk,
-            ProcessExecutor executor)
-            		throws AndroidExecutionException {
+    public void createAndroidEmulator(@Observes AndroidVirtualDeviceEvent event, AndroidBridge bridge,
+            AndroidManagedContainerConfiguration configuration, AndroidSDK sdk, ProcessExecutor executor)
+            throws AndroidExecutionException {
 
         if (!bridge.isConnected()) {
             throw new IllegalStateException("Android debug bridge must be connected in order to spawn the emulator");
         }
 
         String name = configuration.getAvdName();
-        
+
         if (name == null) {
-        	throw new IllegalStateException("Android Virtual Device name has to be set in order to spawn the emulator");
+            throw new IllegalStateException("Android Virtual Device name has to be set in order to spawn the emulator");
         }
-        
+
         AndroidDevice running = null;
 
         CountDownWatch countdown = new CountDownWatch(configuration.getEmulatorBootupTimeoutInSeconds(), TimeUnit.SECONDS);
         logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be started and connected.",
-        		new Object[] {countdown.timeout(), name });
+                new Object[] { countdown.timeout(), name });
 
         // discover what device was added here
         DeviceConnectDiscovery deviceDiscovery = new DeviceConnectDiscovery();
         AndroidDebugBridge.addDeviceChangeListener(deviceDiscovery);
         Process emulator = startEmulator(executor, sdk, name, configuration.getEmulatorOptions());
         androidEmulator.set(new AndroidEmulatorImpl(emulator));
-        logger.log(Level.FINE, "Emulator process started, {0} seconds remaining to start the device {1}",
-        		new Object[] {countdown.timeLeft(), name });
+        logger.log(Level.FINE, "Emulator process started, {0} seconds remaining to start the device {1}", new Object[] {
+                countdown.timeLeft(), name });
 
         waitUntilBootUpIsComplete(deviceDiscovery, executor, sdk, countdown);
         running = deviceDiscovery.getDiscoveredDevice();
@@ -130,7 +126,7 @@ public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
         // construct emulator command
         List<String> emulatorCommand = new ArrayList<String>(Arrays.asList(sdk.getEmulatorPath(), "-avd", name));
         emulatorCommand = getEmulatorOptions(emulatorCommand, emulatorOptions);
-        logger.log(Level.INFO,"emulator command -> {0}", emulatorCommand.toString());
+        logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
         // execute emulator
         try {
             return executor.spawn(emulatorCommand);
@@ -143,8 +139,7 @@ public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
     }
 
     private void waitUntilBootUpIsComplete(final DeviceConnectDiscovery deviceDiscovery, final ProcessExecutor executor,
-            final AndroidSDK sdk,
-            final CountDownWatch countdown) throws AndroidExecutionException {
+            final AndroidSDK sdk, final CountDownWatch countdown) throws AndroidExecutionException {
 
         try {
             boolean isOnline = executor.scheduleUntilTrue(new Callable<Boolean>() {
@@ -167,10 +162,8 @@ public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
                 @Override
                 public Boolean call() throws Exception {
                     // check properties of underlying process
-                    List<String> props = executor.execute(Collections.<String, String> emptyMap(), sdk.getAdbPath(),
-                            "-s",
-                            connectedDevice.getSerialNumber(),
-                            "shell", "getprop");
+                    List<String> props = executor.execute(Collections.<String, String> emptyMap(), sdk.getAdbPath(), "-s",
+                            connectedDevice.getSerialNumber(), "shell", "getprop");
                     for (String line : props) {
                         if (line.contains("[ro.runtime.firstboot]")) {
                             // boot is completed

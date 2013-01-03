@@ -20,10 +20,10 @@ import org.jboss.arquillian.container.android.api.AndroidEmulator;
 
 /**
  * An Android emulator process.
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="smikloso@redhar.com">Stefan Miklosovic</a>
- *
+ * 
  */
 public class AndroidEmulatorImpl implements AndroidEmulator {
 

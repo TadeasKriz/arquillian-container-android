@@ -26,14 +26,14 @@ import java.security.SecureRandom;
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
 public final class AVDIdentifierGenerator {
-	
-	private static final int NUM_BITS = 130;
-	
-	private static final int RADIX = 30;
-	
-	private static final SecureRandom random = new SecureRandom();
-	
-	public static String getRandomAVDName() {
-		return new BigInteger(NUM_BITS, random).toString(RADIX);
-	}
+
+    private static final int NUM_BITS = 130;
+
+    private static final int RADIX = 30;
+
+    private static final SecureRandom random = new SecureRandom();
+
+    public static String getRandomAVDName() {
+        return new BigInteger(NUM_BITS, random).toString(RADIX);
+    }
 }

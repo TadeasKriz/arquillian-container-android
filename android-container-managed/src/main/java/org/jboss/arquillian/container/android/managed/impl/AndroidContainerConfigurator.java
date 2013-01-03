@@ -28,9 +28,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
- * Configurator of Android container for Arquillian. Note that the configuration method observes 
- * {@link BeforeSuite} event with higher precedence so it will be executed before configuration 
- * is parsed for {@link AndroidManagedDeployableContainer} itself.
+ * Configurator of Android container for Arquillian. Note that the configuration method observes {@link BeforeSuite} event with
+ * higher precedence so it will be executed before configuration is parsed for {@link AndroidManagedDeployableContainer} itself.
  * 
  * Observes:
  * <ul>
@@ -39,30 +38,28 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
- *
+ * 
  */
 public class AndroidContainerConfigurator {
-	
+
     private static Logger logger = Logger.getLogger(AndroidContainerConfigurator.class.getName());
 
     public static final String ANDROID_EXTENSION_NAME = "android-container";
 
-    public void configureAndroidSdk(
-    		@Observes(precedence = 10) BeforeSuite event,
-    		ArquillianDescriptor descriptor)
-    				throws AndroidContainerConfigurationException {
+    public void configureAndroidSdk(@Observes(precedence = 10) BeforeSuite event, ArquillianDescriptor descriptor)
+            throws AndroidContainerConfigurationException {
 
-    	AndroidManagedContainerConfiguration configuration = new AndroidManagedContainerConfiguration();
+        AndroidManagedContainerConfiguration configuration = new AndroidManagedContainerConfiguration();
 
         for (ContainerDef containerDef : descriptor.getContainers()) {
             if (ANDROID_EXTENSION_NAME.equals(containerDef.getContainerName())) {
-            	try {
-            		ConfigurationMapper.fromArquillianDescriptor(
-            				descriptor, configuration, containerDef.getContainerProperties());
-            	} catch(RuntimeException ex) {
-            		logger.info("Unable to parse configuration from Arquillian configuration file");
-            		throw new AndroidContainerConfigurationException(ex);
-            	}
+                try {
+                    ConfigurationMapper.fromArquillianDescriptor(descriptor, configuration,
+                            containerDef.getContainerProperties());
+                } catch (RuntimeException ex) {
+                    logger.info("Unable to parse configuration from Arquillian configuration file");
+                    throw new AndroidContainerConfigurationException(ex);
+                }
                 logger.info("Configured Android extension from Arquillian configuration file");
             }
         }

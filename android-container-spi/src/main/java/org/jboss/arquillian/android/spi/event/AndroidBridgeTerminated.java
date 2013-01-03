@@ -18,9 +18,9 @@ package org.jboss.arquillian.android.spi.event;
 
 /**
  * Event representing that Android Bridge was disconnected and disposed
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 public class AndroidBridgeTerminated {
 

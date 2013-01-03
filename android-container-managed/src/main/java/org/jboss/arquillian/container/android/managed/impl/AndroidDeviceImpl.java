@@ -35,9 +35,9 @@ import com.android.ddmlib.TimeoutException;
 
 /**
  * Then implementation of {@link AndroidDevice}.
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 class AndroidDeviceImpl implements AndroidDevice {
 
@@ -114,8 +114,7 @@ class AndroidDeviceImpl implements AndroidDevice {
     }
 
     @Override
-    public void executeShellCommand(String command, AndroidDeviceOutputReciever reciever) throws AndroidExecutionException
-    {
+    public void executeShellCommand(String command, AndroidDeviceOutputReciever reciever) throws AndroidExecutionException {
         try {
             delegate.executeShellCommand(command, new AndroidRecieverDelegate(reciever));
         } catch (TimeoutException e) {
@@ -141,8 +140,7 @@ class AndroidDeviceImpl implements AndroidDevice {
             throw new AndroidExecutionException("Unable to forward port (" + localPort + " to " + remotePort
                     + "), command was rejected", e);
         } catch (IOException e) {
-            throw new AndroidExecutionException("Unable to forward port (" + localPort + " to " + remotePort
-                    + ").", e);
+            throw new AndroidExecutionException("Unable to forward port (" + localPort + " to " + remotePort + ").", e);
         }
     }
 
@@ -157,8 +155,8 @@ class AndroidDeviceImpl implements AndroidDevice {
             throw new AndroidExecutionException("Unable to remove port forwarding (" + localPort + " to " + remotePort
                     + "), command was rejected", e);
         } catch (IOException e) {
-            throw new AndroidExecutionException("Unable to remove port forwarding (" + localPort + " to " + remotePort
-                    + ").", e);
+            throw new AndroidExecutionException("Unable to remove port forwarding (" + localPort + " to " + remotePort + ").",
+                    e);
         }
     }
 

@@ -22,36 +22,36 @@ import java.util.Map;
 
 /**
  * Representation of Android Device
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 public interface AndroidDevice {
 
     /**
      * Returns serial number of device
-     *
+     * 
      * @return Serial number
      */
     String getSerialNumber();
 
     /**
      * Returns name of Android Virtual Device
-     *
+     * 
      * @return Either a virtual device name or {@code null} if device is not an emulator
      */
     String getAvdName();
 
     /**
      * Returns a map of properties available for the device. These properties are cached.
-     *
+     * 
      * @return A properties map
      */
     Map<String, String> getProperties();
 
     /**
      * Returns a value of property with given name
-     *
+     * 
      * @param name A key
      * @return Value of property or {@code null} if not present
      * @throws IOException
@@ -61,27 +61,27 @@ public interface AndroidDevice {
 
     /**
      * Checks if the device is online
-     *
+     * 
      * @return {@code true} if device is online, {@code false} otherwise
      */
     boolean isOnline();
 
     /**
      * Checks if the device is an emulator
-     *
+     * 
      * @return {@code true} if device is an emulator, {@code false} otherwise
      */
     boolean isEmulator();
 
     /**
      * Returns if the device is offline
-     *
+     * 
      */
     boolean isOffline();
 
     /**
      * Executes a shell command on the device. Silently discards command output.
-     *
+     * 
      * @param command The command to be executed
      * @throws AndroidExecutionException
      */
@@ -89,7 +89,7 @@ public interface AndroidDevice {
 
     /**
      * Executes a shell command on the device
-     *
+     * 
      * @param command The command to be executed
      * @param reciever A processor to process command output
      * @throws AndroidExecutionException
@@ -98,7 +98,7 @@ public interface AndroidDevice {
 
     /**
      * Creates a port forwarding between a local and a remote port.
-     *
+     * 
      * @param localPort the local port to forward
      * @param remotePort the remote port.
      */
@@ -106,7 +106,7 @@ public interface AndroidDevice {
 
     /**
      * Removes a port forwarding between a local and a remote port.
-     *
+     * 
      * @param localPort the local port to forward
      * @param remotePort the remote port.
      */
@@ -115,7 +115,7 @@ public interface AndroidDevice {
     /**
      * Installs an Android application on device. This is a helper method that combines the syncPackageToDevice,
      * installRemotePackage, and removePackage steps
-     *
+     * 
      * @param packageFilePath the absolute file system path to file on local host to install
      * @param reinstall set to <code>true</code> if re-install of app should be performed
      * @param extraArgs optional extra arguments to pass. See 'adb shell pm install --help' for available options.
@@ -124,7 +124,7 @@ public interface AndroidDevice {
 
     /**
      * Uninstalls an package from the device.
-     *
+     * 
      * @param packageName the Android application package name to uninstall
      */
     void uninstallPackage(String packageName) throws AndroidExecutionException;

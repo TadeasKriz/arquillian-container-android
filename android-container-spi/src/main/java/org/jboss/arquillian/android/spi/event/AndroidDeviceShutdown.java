@@ -20,9 +20,9 @@ import org.jboss.arquillian.container.android.api.AndroidDevice;
 
 /**
  * Event representing that Android device was shut down
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * 
  */
 public class AndroidDeviceShutdown {
 

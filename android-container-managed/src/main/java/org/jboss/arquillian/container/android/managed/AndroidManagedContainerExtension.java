@@ -27,7 +27,9 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * <p>Android Container Extension</p>
+ * <p>
+ * Android Container Extension
+ * </p>
  * 
  * This is the place where all other observers and services are registered.
  * 

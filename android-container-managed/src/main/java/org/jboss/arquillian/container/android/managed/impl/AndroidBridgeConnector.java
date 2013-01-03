@@ -37,26 +37,26 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
  * Creator and destructor of Android Bridge.
  * 
  * This must be called after Android Container initialization.
- *
+ * 
  * Observes:
  * <ul>
  * <li>{@link AndroidContainerConfigured}</li>
  * </ul>
- *
+ * 
  * Creates:
  * <ul>
  * <li>{@link AndroidBridge}</li>
  * </ul>
- *
+ * 
  * Fires:
  * <ul>
  * <li>{@link AndroidBridgeTerminated}</li>
  * <li>{@link AndroidBridgeInitialized}</li>
  * </ul>
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
- *
+ * 
  */
 public class AndroidBridgeConnector {
 
@@ -75,16 +75,13 @@ public class AndroidBridgeConnector {
     /**
      * Initializes Android Debug Bridge and fires {@link AndroidBridgeInitialized} event.
      * 
-     * @param event 
+     * @param event
      * @param sdk
      * @param configuration
      * @throws AndroidExecutionException
      */
-    public void initAndroidDebugBridge(
-    		@Observes AndroidContainerConfigured event,
-    		AndroidSDK sdk,
-    		AndroidManagedContainerConfiguration configuration)
-    				throws AndroidExecutionException {
+    public void initAndroidDebugBridge(@Observes AndroidContainerConfigured event, AndroidSDK sdk,
+            AndroidManagedContainerConfiguration configuration) throws AndroidExecutionException {
 
         long start = System.currentTimeMillis();
         log.info("Initializing Android Debug Bridge");
@@ -103,8 +100,7 @@ public class AndroidBridgeConnector {
      * @param event
      * @throws AndroidExecutionException
      */
-    public void destroyAndroidDebugBridge(@Observes AndroidDeviceShutdown event) 
-    		throws AndroidExecutionException {
+    public void destroyAndroidDebugBridge(@Observes AndroidDeviceShutdown event) throws AndroidExecutionException {
         androidBridge.get().disconnect();
         adbTerminated.fire(new AndroidBridgeTerminated());
     }
