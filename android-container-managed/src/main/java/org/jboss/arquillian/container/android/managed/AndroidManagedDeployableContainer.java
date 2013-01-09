@@ -10,7 +10,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -37,34 +37,34 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
  * <p>Android Managed container for the Arquillian project</p>
- * 
+ *
  * Deployable Android Container class with the whole lifecycle.
- * 
+ *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
 public class AndroidManagedDeployableContainer implements DeployableContainer<AndroidManagedContainerConfiguration> {
-    
+
     private static final String LIFE_CYCLE_SETUP_MISSING_CONFIG_EXCEPTION_MSG =
-    		"Configuration for an Arquillan Andorid Container must not be null";
+            "Configuration for an Arquillan Andorid Container must not be null";
 
     private static final Logger logger =
-    		Logger.getLogger(AndroidManagedDeployableContainer.class.getName());    
-    
+            Logger.getLogger(AndroidManagedDeployableContainer.class.getName());
+
     @Inject
     @SuiteScoped
     private InstanceProducer<AndroidManagedContainerConfiguration> configuration;
-    
+
     @Inject
     @SuiteScoped
     private InstanceProducer<AndroidSDK> androidSDK;
-    
+
     @Inject
     @SuiteScoped
     private InstanceProducer<ProcessExecutor> executor;
-    
+
     @Inject
     private Event<AndroidContainerConfigured> afterConfiguration;
-    
+
     ////////////////////////////
     // (1) GET CONFIGURATION CLASS
     ////////////////////////////
@@ -81,7 +81,7 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
 
     @Override
     public void setup(AndroidManagedContainerConfiguration configuration) {
-    	logger.info("ANDROID MANAGED CONTAINER SETUP");
+        logger.info("ANDROID MANAGED CONTAINER SETUP");
         if (configuration == null) {
             throw new IllegalArgumentException(LIFE_CYCLE_SETUP_MISSING_CONFIG_EXCEPTION_MSG);
         }

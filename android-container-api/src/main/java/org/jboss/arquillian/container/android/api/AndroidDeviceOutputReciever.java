@@ -18,22 +18,22 @@ package org.jboss.arquillian.container.android.api;
 
 /**
  * Abstraction of a processor for output written by shell command
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public interface AndroidDeviceOutputReciever {
 
     /**
      * Processes output of a shell command
-     * 
+     *
      * @param lines Array of lines returned by shell command to be processed
      */
     void processNewLines(String[] lines);
 
     /**
      * Checks if command execution was cancelled
-     * 
+     *
      * @return {@code true} if command was cancelled, {@code false} otherwise
      */
     boolean isCancelled();

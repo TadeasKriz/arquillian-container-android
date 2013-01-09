@@ -20,9 +20,9 @@ import java.text.MessageFormat;
 
 /**
  * A generic error during execution on the Android device
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class AndroidExecutionException extends Exception {
 

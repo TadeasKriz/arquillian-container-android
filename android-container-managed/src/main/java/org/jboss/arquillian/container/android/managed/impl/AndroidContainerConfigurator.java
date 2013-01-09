@@ -30,15 +30,15 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 /**
  * Configurator of Android container for Arquillian. Note that the configuration method observes {@link BeforeSuite} event with
  * higher precedence so it will be executed before configuration is parsed for {@link AndroidManagedDeployableContainer} itself.
- * 
+ *
  * Observes:
  * <ul>
  * <li>{@link BeforeSuite}</li>
  * </ul>
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
- * 
+ *
  */
 public class AndroidContainerConfigurator {
 

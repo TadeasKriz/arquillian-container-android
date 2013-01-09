@@ -40,9 +40,9 @@ import java.util.logging.Logger;
 
 /**
  * Executor service which is able to execute external process as well as callables
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class ProcessExecutor {
 
@@ -58,7 +58,7 @@ public class ProcessExecutor {
 
     /**
      * Submit callable to be executed
-     * 
+     *
      * @param callable to be executed
      * @return future
      */
@@ -68,7 +68,7 @@ public class ProcessExecutor {
 
     /**
      * Schedules a callable to be executed in regular intervals
-     * 
+     *
      * @param callable Callable
      * @param timeout Total timeout
      * @param step delay before next execution
@@ -102,7 +102,7 @@ public class ProcessExecutor {
 
     /**
      * Spawns a process defined by command. Process output is discarded.
-     * 
+     *
      * @param timeout Total timeout
      * @param unit Timeout unit
      * @param command the command to be executed
@@ -116,7 +116,7 @@ public class ProcessExecutor {
 
     /**
      * Spawns a process defined by command. Process output is discarded
-     * 
+     *
      * @param command the command to be executed
      * @return
      * @throws InterruptedException
@@ -211,7 +211,7 @@ public class ProcessExecutor {
 
     /**
      * Runnable that consumes the output of the process.
-     * 
+     *
      * @author Stuart Douglas
      * @author Karel Piwko
      */
@@ -293,9 +293,9 @@ public class ProcessExecutor {
 
     /**
      * Represents a proccess with id
-     * 
+     *
      * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
-     * 
+     *
      */
     private class ProcessWithId extends Process {
 

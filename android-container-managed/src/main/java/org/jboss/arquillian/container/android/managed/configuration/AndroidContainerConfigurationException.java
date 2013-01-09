@@ -20,7 +20,7 @@ import org.jboss.arquillian.container.spi.ConfigurationException;
 
 /**
  * Exception thrown when configuration of Android container went wrong.
- * 
+ *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
 public class AndroidContainerConfigurationException extends ConfigurationException {

@@ -10,7 +10,7 @@ containers for Arquillian (managed ones). There are no extensions which are hook
 After completition, the user just codes deployment logic against well defined SPI, Arquillian Drone and Android will be 
 merged together.
 
-The main advantage of container-approach is to be able to let construct the archive for the deployment on ShrinkWrap. 
+The main advantage of container approach is to be able to let construct the archive for the deployment on ShrinkWrap. 
 The other advantage is to be able to create more then one Android device (physicall, virtual or both) and to test 
 scenarios where more then one mobile device is involved, e.g. testing their communication. 
 

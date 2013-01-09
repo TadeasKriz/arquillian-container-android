@@ -30,15 +30,15 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 /**
  * An utility which maps a segment of arquillian.xml file to the extension configuration. It is able to do basic object
  * conversions, like a string to URL.
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class ConfigurationMapper {
 
     /**
      * Maps Android configuration using Arquillian Descriptor file
-     * 
+     *
      * @param descriptor Arquillian Descriptor
      * @param configuration Configuration object
      * @param properties A map of name-value pairs
@@ -64,7 +64,7 @@ public class ConfigurationMapper {
 
     /**
      * A helper boxing method. Returns boxed class for a primitive class
-     * 
+     *
      * @param primitive A primitive class
      * @return Boxed class if class was primitive, unchanged class in other cases
      */
@@ -96,9 +96,9 @@ public class ConfigurationMapper {
 
     /**
      * A helper converting method.
-     * 
+     *
      * Converts string to a class of given type
-     * 
+     *
      * @param <T> Type of returned value
      * @param clazz Type of desired value
      * @param value String value to be converted

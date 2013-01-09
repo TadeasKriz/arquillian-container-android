@@ -35,9 +35,9 @@ import com.android.ddmlib.TimeoutException;
 
 /**
  * Then implementation of {@link AndroidDevice}.
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 class AndroidDeviceImpl implements AndroidDevice {
 

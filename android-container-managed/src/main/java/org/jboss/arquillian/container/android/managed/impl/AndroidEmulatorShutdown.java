@@ -59,17 +59,17 @@ import com.android.ddmlib.IDevice;
 
 /**
  * Brings Android Emulator down.
- * 
+ *
  * Observes:
  * <ul>
  * <li>{@link AfterSuite}</li>
  * </ul>
- * 
+ *
  * Fires:
  * <ul>
  * <li>{@link AndroidDeviceShutdown}</li>
  * </ul>
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author Manfred Moser <manfred@simpligility.com>
  */
@@ -140,7 +140,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
 
     /**
      * This method contains the code required to stop an emulator.
-     * 
+     *
      * @return {@code true} if stopped without errors, {@code false} otherwise
      * @param device The device to stop
      */
@@ -187,7 +187,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
     /**
      * This method extracts a port number from the serial number of a device. It assumes that the device name is of format
      * [xxxx-nnnn] where nnnn is the port number.
-     * 
+     *
      * @param device The device to extract the port number from.
      * @return Returns the port number of the device
      */
@@ -206,13 +206,14 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
 
     /**
      * Sends a user command to the running emulator via its telnet interface.
-     * 
+     *
      * @param port The emulator's telnet port.
      * @param command The command to execute on the emulator's telnet interface.
      * @return Whether sending the command succeeded.
      */
     private Callable<Boolean> sendEmulatorCommand(final int port, final String command) {
         return new Callable<Boolean>() {
+            @Override
             public Boolean call() throws IOException {
                 Socket socket = null;
                 BufferedReader in = null;

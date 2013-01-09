@@ -20,9 +20,9 @@ import org.jboss.arquillian.container.android.api.AndroidDevice;
 
 /**
  * Event representing there is an Android device ready to be used
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class AndroidDeviceReady {
 

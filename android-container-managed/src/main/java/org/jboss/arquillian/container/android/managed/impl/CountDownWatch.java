@@ -22,11 +22,11 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A simple utility to measure time left from an timeout.
- * 
+ *
  * Note that MICROSECONDS and MILLISECONDS are not supported as time units.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class CountDownWatch {
 
@@ -36,7 +36,7 @@ public class CountDownWatch {
 
     /**
      * Creates a countdown watch and starts it
-     * 
+     *
      * @param timeout timeout
      * @param unit timeout unit
      */
@@ -61,7 +61,7 @@ public class CountDownWatch {
     }
 
     /**
-     * 
+     *
      * @return time elapsed since started
      */
     public long timeElapsed() {
@@ -77,7 +77,7 @@ public class CountDownWatch {
     }
 
     /**
-     * 
+     *
      * @return timeout set during initialization
      */
     public long timeout() {
@@ -85,7 +85,7 @@ public class CountDownWatch {
     }
 
     /**
-     * 
+     *
      * @return timeout unit
      */
     public TimeUnit getTimeUnit() {

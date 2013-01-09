@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 
 /**
  * Represents an Android SDK.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author hugo.josefson@jayway.com
  * @author Manfred Moser <manfred@simpligility.com>
@@ -161,7 +161,7 @@ public class AndroidSDK {
     private Set<Platform> availablePlatforms;
 
     /**
-     * 
+     *
      * @param configuration
      * @throws AndroidContainerConfigurationException
      */
@@ -237,7 +237,7 @@ public class AndroidSDK {
 
     /**
      * Returns the complete path for a tool, based on this SDK.
-     * 
+     *
      * @param tool which tool, for example <code>adb</code> or <code>dx.jar</code>.
      * @return the complete path as a <code>String</code>, including the tool's filename.
      */
@@ -264,7 +264,7 @@ public class AndroidSDK {
 
     /**
      * Get the emulator path.
-     * 
+     *
      * @return
      */
     public String getEmulatorPath() {
@@ -273,7 +273,7 @@ public class AndroidSDK {
 
     /**
      * Get the android debug tool path (adb).
-     * 
+     *
      * @return
      */
     public String getAdbPath() {
@@ -282,7 +282,7 @@ public class AndroidSDK {
 
     /**
      * Get the android tool path
-     * 
+     *
      * @return
      */
     public String getAndroidPath() {
@@ -291,7 +291,7 @@ public class AndroidSDK {
 
     /**
      * Returns the complete path for <code>framework.aidl</code>, based on this SDK.
-     * 
+     *
      * @return the complete path as a <code>String</code>, including the filename.
      * @throws AndroidConfigurationException
      */
@@ -327,9 +327,9 @@ public class AndroidSDK {
 
     /**
      * Initialize the maps matching platform and api levels form the source properties files.
-     * 
+     *
      * @throws AndroidConfigurationException
-     * 
+     *
      */
     private Set<Platform> findAvailablePlatforms() throws AndroidContainerConfigurationException {
         List<Platform> availablePlatforms = new ArrayList<Platform>();
@@ -362,7 +362,7 @@ public class AndroidSDK {
 
     /**
      * Gets the source properties files from all locally installed platforms.
-     * 
+     *
      * @return
      */
     private List<File> getPlatformDirectories() {

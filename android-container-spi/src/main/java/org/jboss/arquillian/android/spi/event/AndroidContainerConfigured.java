@@ -18,9 +18,9 @@ package org.jboss.arquillian.android.spi.event;
 
 /**
  * Event representing that Android Extension for Arquillian was configured
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class AndroidContainerConfigured {
 }

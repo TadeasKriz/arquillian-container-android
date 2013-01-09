@@ -47,26 +47,26 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 /**
  * Select either a real device or virtual device for execution. If a real device is specified via its serial number, it will
  * check if it is connected, otherwise it will use an virtual device.
- * 
+ *
  * Observes:
  * <ul>
  * <li>{@link AndroidBridgeInitialized}</li>
  * </ul>
- * 
+ *
  * Creates:
  * <ul>
  * <li>{@link AndroidDevice}</li>
  * </ul>
- * 
+ *
  * Fires:
  * <ul>
  * <li>{@link AndroidVirtualDeviceCreated}</li>
  * <li>{@link AndroidVirtualDeviceAvailable}</li>
  * <li>{@link AndroidDeviceReady}</li>
  * </ul>
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class AndroidDeviceSelector {
     private static Logger logger = Logger.getLogger(AndroidDeviceSelector.class.getName());

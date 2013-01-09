@@ -48,25 +48,25 @@ import com.android.ddmlib.IDevice;
 
 /**
  * Starts an emulator and either connects to an existing device or creates one.
- * 
+ *
  * Observes:
  * <ul>
  * <li>{@link AndroidVirtualDeviceEvent}</li>
  * </ul>
- * 
+ *
  * Creates:
  * <ul>
  * <li>{@link AndroidEmulatorImpl}</li>
  * <li>{@link AndroidDevice}</li>
  * </ul>
- * 
+ *
  * Fires:
  * <ul>
  * <li>{@link AndroidDeviceReady}</li>
  * </ul>
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
 

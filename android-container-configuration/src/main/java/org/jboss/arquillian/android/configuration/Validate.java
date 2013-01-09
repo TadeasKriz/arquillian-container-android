@@ -20,9 +20,9 @@ import java.io.File;
 
 /**
  * Simple validation utility
- * 
+ *
  * @author <a href="@mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 class Validate {
 
@@ -34,7 +34,7 @@ class Validate {
 
     /**
      * Checks that object is not null, throws exception if it is.
-     * 
+     *
      * @param obj The object to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if obj is null
@@ -47,7 +47,7 @@ class Validate {
 
     /**
      * Checks that the specified String is not null or empty, throws exception if it is.
-     * 
+     *
      * @param string The object to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if string is null
@@ -61,7 +61,7 @@ class Validate {
     /**
      * Checks that the specified String is not null or empty and represents a readable file, throws exception if it is empty or
      * null and does not represent a path to a file.
-     * 
+     *
      * @param path The path to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if path is empty, null or invalid
@@ -75,7 +75,7 @@ class Validate {
     /**
      * Checks that the specified File is not null or empty and represents a readable file, throws exception if it is empty or
      * null and does not represent a path to a file.
-     * 
+     *
      * @param file The file to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if file is null or invalid
@@ -93,7 +93,7 @@ class Validate {
     /**
      * Checks that the specified String is not null or empty and represents a readable directory, throws exception if it is
      * empty or null and does not represent a path to a directory.
-     * 
+     *
      * @param path The path to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if path is empty, null or invalid
@@ -107,7 +107,7 @@ class Validate {
     /**
      * Checks that the specified file is not null and represents a readable directory, throws exception if it is empty or null
      * and does not represent a directory.
-     * 
+     *
      * @param file The path to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if file is null or invalid
