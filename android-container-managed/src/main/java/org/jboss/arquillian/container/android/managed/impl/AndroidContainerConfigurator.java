@@ -44,7 +44,7 @@ public class AndroidContainerConfigurator {
 
     private static Logger logger = Logger.getLogger(AndroidContainerConfigurator.class.getName());
 
-    public static final String ANDROID_EXTENSION_NAME = "android-container";
+    public static final String ANDROID_EXTENSION_NAME = "android-managed";
 
     public void configureAndroidSdk(@Observes(precedence = 10) BeforeSuite event, ArquillianDescriptor descriptor)
             throws AndroidContainerConfigurationException {

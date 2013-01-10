@@ -4,13 +4,18 @@
     xsi:schemaLocation="http://jboss.org/schema/arquillian
     http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
-    <container qualifier="android-container" default="true">
-        <configuration>
-            <property name="avdName">containerTest</property>
-            <!--property name="serialId">42583930325742355458</property-->
-            <!--property name="sdSize">256M</property-->
-            <property name="emulatorBootupTimeoutInSeconds">600</property>
-        </configuration>
-    </container>
-
+    <group qualifier="containers" default="true">
+        <container qualifier="jbossas-managed" default="true">
+            <configuration>
+                <property name="jbossHome">/home/smikloso/devel/servers/jboss-as-7.1.1.Final</property>
+            </configuration>
+        </container>
+        <container qualifier="android-managed">
+            <configuration>
+                <property name="avdName">containerTest</property>
+                <property name="sdSize">128M</property>
+                <property name="emulatorBootupTimeoutInSeconds">600</property>
+            </configuration>
+        </container>
+    </group>
 </arquillian>
