@@ -7,7 +7,7 @@
     <group qualifier="containers" default="true">
         <container qualifier="jbossas-managed" default="true">
             <configuration>
-                <property name="jbossHome">/home/smikloso/devel/jboss-eap-6.0.1.ER4</property>
+                <property name="jbossHome">/home/smikloso/devel/servers/jboss-eap-6.0</property>
                 <property name="adapterImplClass">org.jboss.arquillian.container.jbossas.managed_6.JBossASLocalContainer</property>
             </configuration>
         </container>

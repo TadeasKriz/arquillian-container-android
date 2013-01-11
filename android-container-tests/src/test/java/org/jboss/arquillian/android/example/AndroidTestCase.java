@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.android.example;
 
+import org.jboss.arquillian.android.test.TestingClass;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -33,18 +34,18 @@ public class AndroidTestCase {
     @Deployment(name = "jbossas", order = 1, managed = true, testable = false)
     @TargetsContainer("jbossas-managed")
     public static JavaArchive createJBossASDeployment() {
-        JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "jbossASTest.jar");
+        JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "jbossASTest.jar").addClass(TestingClass.class);
         System.out.println(jar.toString(true));
         return jar;
     }
 
-    @Deployment(name = "android", order = 2, managed = true, testable = false)
+/*    @Deployment(name = "android", order = 2, managed = true, testable = false)
     @TargetsContainer("android-managed")
     public static JavaArchive createAndroidDeployment() {
         JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "androidTest.jar");
         System.out.println(jar.toString(true));
         return jar;
-    }    
+    }*/
     
     @Test
     @OperateOnDeployment("jbossas")
