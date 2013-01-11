@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>8</version>
+        <version>9</version>
     </parent>
 
     <!-- Model Version -->
@@ -108,6 +108,7 @@
         <module>android-container-configuration</module>
         <module>android-container-depchain</module>
         <module>android-container-managed</module>
+        <module>arquillian-multiple-containers</module>
         <!--module>android-container-tests</module-->
     </modules>
 

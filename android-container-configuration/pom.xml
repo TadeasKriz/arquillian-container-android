@@ -15,6 +15,7 @@
     <!-- Artifact Configuration -->
     <artifactId>android-container-configuration</artifactId>
     <name>Arquillian Android Container Configuration</name>
+    <description>Android Managed Container Configuration module</description>
 
     <developers>
         <developer>

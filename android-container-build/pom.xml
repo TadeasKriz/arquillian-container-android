@@ -17,6 +17,7 @@
     <artifactId>android-container-build</artifactId>
     <packaging>pom</packaging>
     <name>Arquillian Android Container Build</name>
+    <description>Android Managed Container Build</description>
 
     <developers>
         <developer>
