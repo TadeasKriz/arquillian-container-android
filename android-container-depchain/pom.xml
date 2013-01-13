@@ -25,9 +25,6 @@
         </developer>
     </developers>
 
-    <properties>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>

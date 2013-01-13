@@ -16,7 +16,6 @@
     <name>Arquillian Multiple Containers Extension Implementation</name>
     <packaging>jar</packaging>
 
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.arquillian.core>1.0.3.Final</version.arquillian.core>

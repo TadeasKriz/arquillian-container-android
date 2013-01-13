@@ -37,6 +37,7 @@ public class AndroidTestCase {
     @Deployment(name = "android", order = 1, managed = true, testable = false)
     @TargetsContainer("android-managed-1")
     public static JavaArchive createAndroidDeployment1() {
+        // simulates installing something at an Android device but does really nothing
         JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "androidTest.jar").addClass(TestingClass.class);
         System.out.println(jar.toString(true));
         return jar;

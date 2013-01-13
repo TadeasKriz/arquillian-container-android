@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidBridgeTerminated;
-import org.jboss.arquillian.android.spi.event.AndroidContainerConfigured;
+import org.jboss.arquillian.android.spi.event.AndroidConfigurationDone;
 import org.jboss.arquillian.android.spi.event.AndroidDeviceShutdown;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
@@ -40,7 +40,7 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
  *
  * Observes:
  * <ul>
- * <li>{@link AndroidContainerConfigured}</li>
+ * <li>{@link AndroidConfigurationDone}</li>
  * </ul>
  *
  * Creates:
@@ -80,7 +80,7 @@ public class AndroidBridgeConnector {
      * @param configuration
      * @throws AndroidExecutionException
      */
-    public void initAndroidDebugBridge(@Observes AndroidContainerConfigured event, AndroidSDK sdk,
+    public void initAndroidDebugBridge(@Observes AndroidConfigurationDone event, AndroidSDK sdk,
             AndroidManagedContainerConfiguration configuration) throws AndroidExecutionException {
 
         long start = System.currentTimeMillis();
