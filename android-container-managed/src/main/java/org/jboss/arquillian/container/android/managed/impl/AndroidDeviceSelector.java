@@ -163,6 +163,7 @@ public class AndroidDeviceSelector {
     }
 
     private AndroidDevice getVirtualDeviceIfConnected(AndroidBridge bridge, String avdName) {
+        System.out.println("AVD NAME " + avdName);
         // no avdName was specified
         if (avdName == null || avdName.trim().isEmpty()) {
             return null;
@@ -170,6 +171,7 @@ public class AndroidDeviceSelector {
 
         for (AndroidDevice device : bridge.getDevices()) {
             if (equalsIgnoreNulls(avdName, device.getAvdName())) {
+                System.out.println("GET VIRTUAL DEVICE IF CONNECTED : AVD NAME = " + avdName + " DEVICE.GETAVDNAME() " + device.getAvdName());
                 return device;
             }
         }

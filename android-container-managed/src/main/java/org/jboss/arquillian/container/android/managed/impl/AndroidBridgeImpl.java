@@ -84,10 +84,14 @@ class AndroidBridgeImpl implements AndroidBridge {
 
     @Override
     public void connect() throws AndroidExecutionException {
-        AndroidDebugBridge.init(false);
-        this.delegate = AndroidDebugBridge.createBridge(adbLocation.getAbsolutePath(), forceNewBridge);
-        waitUntilConnected();
-        waitForInitialDeviceList();
+        this.delegate = AndroidDebugBridge.getBridge();
+        
+        if (this.delegate == null) {
+            AndroidDebugBridge.init(false);
+            this.delegate = AndroidDebugBridge.createBridge(adbLocation.getAbsolutePath(), forceNewBridge);
+            waitUntilConnected();
+            waitForInitialDeviceList();
+        }
     }
 
     public void destroyAndroidDebugBridge() {

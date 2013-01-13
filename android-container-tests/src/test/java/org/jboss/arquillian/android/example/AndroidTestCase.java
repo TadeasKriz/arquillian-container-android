@@ -17,10 +17,13 @@
 package org.jboss.arquillian.android.example;
 
 import org.jboss.arquillian.android.test.TestingClass;
+import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
@@ -31,25 +34,36 @@ import junit.framework.Assert;
 @RunWith(Arquillian.class)
 public class AndroidTestCase {
 
-    @Deployment(name = "jbossas", order = 1, managed = true, testable = false)
+    @Deployment(name = "android", order = 1, managed = true, testable = false)
+    @TargetsContainer("android-managed-1")
+    public static JavaArchive createAndroidDeployment1() {
+        JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "androidTest.jar").addClass(TestingClass.class);
+        System.out.println(jar.toString(true));
+        return jar;
+    }   
+   
+    @Deployment(name = "jbossas", order = 2, managed = true, testable = false)
     @TargetsContainer("jbossas-managed")
     public static JavaArchive createJBossASDeployment() {
         JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "jbossASTest.jar").addClass(TestingClass.class);
         System.out.println(jar.toString(true));
         return jar;
-    }
-
-/*    @Deployment(name = "android", order = 2, managed = true, testable = false)
-    @TargetsContainer("android-managed")
-    public static JavaArchive createAndroidDeployment() {
-        JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "androidTest.jar");
-        System.out.println(jar.toString(true));
-        return jar;
-    }*/
+    }    
+    
+    @ArquillianResource
+    AndroidDevice device;
     
     @Test
-    @OperateOnDeployment("jbossas")
+    @InSequence(1)
+    @OperateOnDeployment("android")
     public void test01() {
+        Assert.assertTrue(device != null);
+    }
+    
+    @Test
+    @InSequence(2)
+    @OperateOnDeployment("jbossas")
+    public void test03() {
         Assert.assertTrue(true);
     }
 }

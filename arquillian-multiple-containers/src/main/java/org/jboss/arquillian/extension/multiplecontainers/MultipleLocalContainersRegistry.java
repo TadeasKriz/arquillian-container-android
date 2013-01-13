@@ -22,10 +22,10 @@
 package org.jboss.arquillian.extension.multiplecontainers;
 
 import java.util.*;
+
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.ContainerCreationException;
 import org.jboss.arquillian.container.impl.ContainerImpl;
-import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -35,151 +35,99 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.Validate;
 
 /**
- *
+ * 
  * @author Dominik Pospisil <dpospisi@redhat.com>
  */
 public class MultipleLocalContainersRegistry implements ContainerRegistry {
-  private List<Container> containers;
-   
-   private Injector injector;
+    
+    private List<Container> containers;
 
-   public MultipleLocalContainersRegistry(Injector injector)
-   {
-      this.containers = new ArrayList<Container>();
-      this.injector = injector;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#create(org.jboss.arquillian.impl.configuration.api.ContainerDef, org.jboss.arquillian.core.spi.ServiceLoader)
-    */
-   @Override
-   public Container create(ContainerDef definition, ServiceLoader loader)
-   {
-      Validate.notNull(definition, "Definition must be specified");
+    private Injector injector;
 
-      try
-      {
-         // TODO: this whole Classloading thing is a HACK and does not work. Need to split out into multiple JVMs for multi container testing
-//         ClassLoader containerClassLoader;
-//         if(definition.getDependencies().size() > 0)
-//         {
-//            final MavenDependencyResolver resolver = DependencyResolvers.use(MavenDependencyResolver.class).artifacts(
-//                  definition.getDependencies().toArray(new String[0]));
-//            
-//            URL[] resolvedURLs = MapObject.convert(resolver.resolveAsFiles());
-//
-//            containerClassLoader = new FilteredURLClassLoader(resolvedURLs, "org.jboss.(arquillian|shrinkwrap)..*");
-//         }
-//         else
-//         {
-//            containerClassLoader = LocalContainerRegistry.class.getClassLoader();
-//         }
-//            
-          
-         System.out.println("Registering container: " + definition.getContainerName());
-          
-         Map<String,String> props = definition.getContainerProperties();
-         if (! props.containsKey("adapterImplClass"))
-             throw new Exception("Container adapter implementation class must be provided via 'adapterImplClass' property.");
+    public MultipleLocalContainersRegistry(Injector injector) {
+        this.containers = new ArrayList<Container>();
+        this.injector = injector;
+    }
 
-         
-         System.out.println("classpath" + System.getProperty("java.class.path", null));
-         
-         Class<?> dcImplClass = Class.forName(props.get("adapterImplClass"));
-         
-         @SuppressWarnings("rawtypes")
-         Collection<DeployableContainer> services = loader.all(DeployableContainer.class);        
-         
-         DeployableContainer<?> dcService = null;
-         for(DeployableContainer<?> dc : services) {
-             if (dcImplClass.isInstance(dc)) {
-                 dcService = dc;
-                 break;
-             }
-         }
-         
-         if (dcService == null) throw new Exception ("No suitable container adapter implementation found.");
-         
-         return addContainer(
-               //before a Container is added to a collection of containers, inject into its injection point
-               injector.inject(new ContainerImpl(
-                               definition.getContainerName(), 
-                               dcService,
-                               definition)));
-      }
-      catch (Exception e) 
-      {
-         throw new ContainerCreationException("Could not create Container " + definition.getContainerName(), e);
-      }
-   }
+    @Override
+    public Container create(ContainerDef definition, ServiceLoader loader) {
+        Validate.notNull(definition, "Definition must be specified");
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainer(java.lang.String)
-    */
-   @Override
-   public Container getContainer(String name)
-   {
-      return findMatchingContainer(name);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainers()
-    */
-   @Override
-   public List<Container> getContainers()
-   {
-      return Collections.unmodifiableList(new ArrayList<Container>(containers));
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainer(org.jboss.arquillian.spi.client.deployment.TargetDescription)
-    */
-   @Override
-   public Container getContainer(TargetDescription target)
-   {
-      Validate.notNull(target, "Target must be specified");
-      if(TargetDescription.DEFAULT.equals(target))
-      {
-         return findDefaultContainer();
-      }
-      return findMatchingContainer(target.getName());
-   }
+        try {
+            System.out.println("Registering container: " + definition.getContainerName());
 
-   private Container addContainer(Container contianer)
-   {
-      containers.add(contianer);
-      return contianer;
-   }
-   
-   /**
-    * @return
-    */
-   private Container findDefaultContainer()
-   {
-      if(containers.size() == 1)
-      {
-         return containers.get(0);
-      }
-      for(Container container : containers)
-      {
-        if(container.getContainerConfiguration().isDefault())
-        {
-           return container;
+            Map<String, String> props = definition.getContainerProperties();
+            if (!props.containsKey("adapterImplClass"))
+                throw new Exception("Container adapter implementation class must be provided via 'adapterImplClass' property.");
+            
+            Class<?> dcImplClass = Class.forName(props.get("adapterImplClass"));
+            
+            @SuppressWarnings("rawtypes")
+            Collection<DeployableContainer> services = loader.all(DeployableContainer.class);        
+            
+            DeployableContainer<?> dcService = null;
+            for(DeployableContainer<?> dc : services) {
+                if (dcImplClass.isInstance(dc)) {
+                    dcService = dc;
+                    break;
+                }
+            }            
+
+            if (dcService == null)
+                throw new Exception("No suitable container adapter implementation found.");
+            
+            return addContainer(
+            // before a Container is added to a collection of containers, inject into its injection point
+            injector.inject(new ContainerImpl(definition.getContainerName(), dcService, definition)));
+        } catch (Exception e) {
+            throw new ContainerCreationException("Could not create Container " + definition.getContainerName(), e);
         }
-      }
-      return null;
-   }
+    }
 
-   private Container findMatchingContainer(String name)
-   {
-      for(Container container: containers)
-      {
-         if(container.getName().equals(name))
-         {
-            return container;
-         }
-      }
-      return null;
-   } 
-   
+
+    @Override
+    public Container getContainer(String name) {
+        return findMatchingContainer(name);
+    }
+
+    @Override
+    public List<Container> getContainers() {
+        return Collections.unmodifiableList(new ArrayList<Container>(containers));
+    }
+
+    @Override
+    public Container getContainer(TargetDescription target) {
+        Validate.notNull(target, "Target must be specified");
+        if (TargetDescription.DEFAULT.equals(target)) {
+            return findDefaultContainer();
+        }
+        return findMatchingContainer(target.getName());
+    }
+
+    private Container addContainer(Container contianer) {
+        containers.add(contianer);
+        return contianer;
+    }
+
+    private Container findDefaultContainer() {
+        if (containers.size() == 1) {
+            return containers.get(0);
+        }
+        for (Container container : containers) {
+            if (container.getContainerConfiguration().isDefault()) {
+                return container;
+            }
+        }
+        return null;
+    }
+
+    private Container findMatchingContainer(String name) {
+        for (Container container : containers) {
+            if (container.getName().equals(name)) {
+                return container;
+            }
+        }
+        return null;
+    }
+
 }

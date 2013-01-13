@@ -5,19 +5,21 @@
     http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
     <group qualifier="containers" default="true">
+
         <container qualifier="jbossas-managed" default="true">
             <configuration>
                 <property name="jbossHome">/home/smikloso/devel/servers/jboss-eap-6.0</property>
-                <property name="adapterImplClass">org.jboss.arquillian.container.jbossas.managed_6.JBossASLocalContainer</property>
+                <property name="adapterImplClass">org.jboss.as.arquillian.container.managed.ManagedDeployableContainer</property>
             </configuration>
         </container>
-        <!-- container qualifier="android-managed">
+
+        <container qualifier="android-managed-1">
             <configuration>
-                <property name="avdName">containerTest</property>
+                <property name="avdName">android-managed-1</property>
                 <property name="sdSize">128M</property>
                 <property name="emulatorBootupTimeoutInSeconds">600</property>
-                <property name="adapterImplClass">org.jboss.arquillian.container.android.managed.AndoridManagedDeployableContainer</property>
+                <property name="adapterImplClass">org.jboss.arquillian.container.android.managed.AndroidManagedDeployableContainer</property>
             </configuration>
-        </container-->
+        </container>
     </group>
 </arquillian>
