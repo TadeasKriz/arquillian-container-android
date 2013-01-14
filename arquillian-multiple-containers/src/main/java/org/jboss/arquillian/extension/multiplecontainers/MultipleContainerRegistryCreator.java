@@ -41,7 +41,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 
 /**
- * 
+ * Registers all container adapters.
+ *
  * @author Dominik Pospisil <dpospisi@redhat.com>
  */
 public class MultipleContainerRegistryCreator {
@@ -54,10 +55,10 @@ public class MultipleContainerRegistryCreator {
     @Inject
     @ApplicationScoped
     private InstanceProducer<ContainerRegistry> registry;
-    
+
     @Inject
     private Instance<Injector> injector;
-    
+
     @Inject
     private Instance<ServiceLoader> loader;
 
@@ -111,7 +112,7 @@ public class MultipleContainerRegistryCreator {
 
     /**
      * Validate that the Configuration given is sane
-     * 
+     *
      * @param desc The read Descriptor
      */
     private void validateConfiguration(ArquillianDescriptor desc) {

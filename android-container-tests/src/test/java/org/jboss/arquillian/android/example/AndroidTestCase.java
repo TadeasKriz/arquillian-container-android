@@ -42,7 +42,7 @@ public class AndroidTestCase {
         System.out.println(jar.toString(true));
         return jar;
     }   
-   
+    
     @Deployment(name = "jbossas", order = 2, managed = true, testable = false)
     @TargetsContainer("jbossas-managed")
     public static JavaArchive createJBossASDeployment() {

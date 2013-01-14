@@ -104,6 +104,7 @@
     </build>
 
     <profiles>
+        <!-- Multiple containers -->
         <profile>
             <id>arquillian-jbossas-managed-android-web</id>
             <activation>
@@ -111,7 +112,7 @@
             </activation>
 
             <properties>
-                <jboss.home>/home/smikloso/devel/servers/jboss-eap-6.0</jboss.home>
+                <jboss.home>/home/smikloso/devel/jboss-eap-6.0.1.ER4</jboss.home>
                 <android.avd.name>android-managed-1</android.avd.name>
                 <android.sd.size>128M</android.sd.size>
                 <android.emulator.bootup.timeout>600</android.emulator.bootup.timeout>

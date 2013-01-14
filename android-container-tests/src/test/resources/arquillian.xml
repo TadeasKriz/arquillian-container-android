@@ -1,38 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <arquillian xmlns="http://jboss.org/schema/arquillian"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://jboss.org/schema/arquillian
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.org/schema/arquillian
     http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
-    <group qualifier="containers" default="true">
+    <!-- You specify which container or group you want from arquillian.launch file on the classpath -->
+    
+	<!-- These containers have to have adapterImplClass properties specified 
+		since we have multiple adapter classes on the classpath, we have to recognize 
+		what adapter class implements what container. -->
+	<group qualifier="containers" default="true">
+		<container qualifier="jbossas-managed" default="true">
+			<configuration>
+				<property name="jbossHome">${jboss.home}</property>
+				<property name="adapterImplClass">org.jboss.as.arquillian.container.managed.ManagedDeployableContainer</property>
+			</configuration>
+		</container>
+		<container qualifier="android-managed-1">
+			<configuration>
+				<property name="apiLevel">${android.api.level}</property>
+				<property name="avdName">${android.avd.name}</property>
+				<property name="sdSize">${android.sd.size}</property>
+				<property name="abi">${android.abi}</property>
+				<property name="emulatorBootupTimeoutInSeconds">${android.emulator.bootup.timeout}</property>
+				<property name="adapterImplClass">org.jboss.arquillian.container.android.managed.AndroidManagedDeployableContainer</property>
+			</configuration>
+		</container>
+	</group>
 
-        <container qualifier="jbossas-managed" default="true">
-            <configuration>
-                <property name="jbossHome">${jboss.home}</property>
-                <property name="adapterImplClass">org.jboss.as.arquillian.container.managed.ManagedDeployableContainer</property>
-            </configuration>
-        </container>
+	<extension qualifier="webdriver">
+		<property name="remoteAddress">${webdriver.remote.address}</property>
+		<property name="browserCapabilities">${webdriver.browsercapabilities}</property>
+	</extension>
 
-        <container qualifier="android-managed-1">
-            <configuration>
-                <property name="apiLevel">${android.api.level}</property>
-                <property name="avdName">${android.avd.name}</property>
-                <property name="sdSize">${android.sd.size}</property>
-                <property name="abi">${android.abi}</property>
-                <property name="emulatorBootupTimeoutInSeconds">${android.emulator.bootup.timeout}</property>
-                <property name="adapterImplClass">org.jboss.arquillian.container.android.managed.AndroidManagedDeployableContainer</property>
-            </configuration>
-        </container>
-    </group>
-
-    <extension qualifier="webdriver">
-        <property name="remoteAddress">${webdriver.remote.address}</property>
-        <property name="browserCapabilities">${webdriver.browsercapabilities}</property>
-    </extension>
-
-    <extension qualifier="android-drone">
-        <property name="verbose">${arquillian.drone.verbose}</property>
-        <property name="androidServerApk">${arquillian.drone.apkserver}</property>
-    </extension>
+	<extension qualifier="android-drone">
+		<property name="verbose">${arquillian.drone.verbose}</property>
+		<property name="androidServerApk">${arquillian.drone.apkserver}</property>
+	</extension>
 
 </arquillian>

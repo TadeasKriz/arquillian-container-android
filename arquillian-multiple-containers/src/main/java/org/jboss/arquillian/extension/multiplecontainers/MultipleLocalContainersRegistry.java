@@ -22,10 +22,13 @@
 package org.jboss.arquillian.extension.multiplecontainers;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.ContainerCreationException;
 import org.jboss.arquillian.container.impl.ContainerImpl;
+import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -35,14 +38,24 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.Validate;
 
 /**
- * 
+ * This class registers all adapters which are specified in the arquillian.xml.
+ *
+ * In the case there is only one adapter implementation on the classpath, it is not necessary to specify it in the container
+ * configuration since it will be used automatically. You have to specify it only in the case you are going to use more than one
+ * container.
+ *
  * @author Dominik Pospisil <dpospisi@redhat.com>
+ * @author Stefan Miklosovic <smikloso@redhat.com>
  */
 public class MultipleLocalContainersRegistry implements ContainerRegistry {
-    
+
     private List<Container> containers;
 
     private Injector injector;
+
+    private static final Logger logger = Logger.getLogger(MultipleContainerRegistryCreator.class.getName());
+
+    private static final String ADAPTER_IMPL_CONFIG_STRING = "adapterImplClass";
 
     public MultipleLocalContainersRegistry(Injector injector) {
         this.containers = new ArrayList<Container>();
@@ -54,28 +67,39 @@ public class MultipleLocalContainersRegistry implements ContainerRegistry {
         Validate.notNull(definition, "Definition must be specified");
 
         try {
-            System.out.println("Registering container: " + definition.getContainerName());
+            logger.log(Level.INFO, "Registering container: {0}", definition.getContainerName());
 
-            Map<String, String> props = definition.getContainerProperties();
-            if (!props.containsKey("adapterImplClass"))
-                throw new Exception("Container adapter implementation class must be provided via 'adapterImplClass' property.");
-            
-            Class<?> dcImplClass = Class.forName(props.get("adapterImplClass"));
-            
             @SuppressWarnings("rawtypes")
-            Collection<DeployableContainer> services = loader.all(DeployableContainer.class);        
-            
-            DeployableContainer<?> dcService = null;
-            for(DeployableContainer<?> dc : services) {
-                if (dcImplClass.isInstance(dc)) {
-                    dcService = dc;
-                    break;
-                }
-            }            
+            Collection<DeployableContainer> services = loader.all(DeployableContainer.class);
 
-            if (dcService == null)
-                throw new Exception("No suitable container adapter implementation found.");
-            
+            DeployableContainer<?> dcService = null;
+
+            if (services.size() == 0) {
+                throw new ContainerAdapterNotFoundException("No suitable container adapter implementation found");
+            }
+
+            if (services.size() == 1) {
+                dcService = services.iterator().next();
+            } else {
+                Map<String, String> props = definition.getContainerProperties();
+                if (!props.containsKey("adapterImplClass")) {
+                    throw new ConfigurationException("Container adapter implementation class must be provided via "
+                            + ADAPTER_IMPL_CONFIG_STRING + " property.");
+                }
+
+                Class<?> dcImplClass = Class.forName(props.get(ADAPTER_IMPL_CONFIG_STRING));
+                for (DeployableContainer<?> dc : services) {
+                    if (dcImplClass.isInstance(dc)) {
+                        dcService = dc;
+                        break;
+                    }
+                }
+            }
+
+            if (dcService == null) {
+                throw new ContainerAdapterNotFoundException("No suitable container adapter implementation found");
+            }
+
             return addContainer(
             // before a Container is added to a collection of containers, inject into its injection point
             injector.inject(new ContainerImpl(definition.getContainerName(), dcService, definition)));
@@ -83,7 +107,6 @@ public class MultipleLocalContainersRegistry implements ContainerRegistry {
             throw new ContainerCreationException("Could not create Container " + definition.getContainerName(), e);
         }
     }
-
 
     @Override
     public Container getContainer(String name) {
