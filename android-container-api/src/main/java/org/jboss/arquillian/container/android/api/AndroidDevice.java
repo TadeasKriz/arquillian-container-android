@@ -128,5 +128,12 @@ public interface AndroidDevice {
      * @param packageName the Android application package name to uninstall
      */
     void uninstallPackage(String packageName) throws AndroidExecutionException;
+    
+    /**
+     * Checks if an APK package of name {@code packageName} is installed or not.
+     * @param packageName name of the installed package
+     * @return true if a package of {@code packageName} is installed, false otherwise
+     */
+    boolean isPackageInstalled(String packageName) throws AndroidExecutionException;
 
 }

@@ -84,7 +84,6 @@
         <module>android-container-depchain</module>
         <module>android-container-managed</module>
         <module>arquillian-multiple-containers</module>
-        <!-- module>android-container-tests</module-->
     </modules>
 
 </project>

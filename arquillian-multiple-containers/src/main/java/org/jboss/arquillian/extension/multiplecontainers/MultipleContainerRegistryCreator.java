@@ -128,6 +128,7 @@ public class MultipleContainerRegistryCreator {
                 defaultConfig = container;
             }
         }
+        
         boolean containerMarkedAsDefault = defaultConfig != null;
 
         // verify only one container or group is marked as default

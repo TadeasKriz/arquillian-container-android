@@ -89,7 +89,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
 
         AndroidEmulatorImpl emulator = androidEmulator.get();
 
-        // we created the emulator, test shut it down
+        // we created the emulator, shut it down
         if (emulator != null && device.isEmulator()) {
 
             final Process p = emulator.getProcess();

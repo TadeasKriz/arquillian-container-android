@@ -174,7 +174,19 @@ class AndroidDeviceImpl implements AndroidDevice {
         }
 
     }
-
+    
+    @Override
+    public boolean isPackageInstalled(String packageName) throws AndroidExecutionException {
+        try {
+            String command = "pm list packages -f"; 
+            PackageInstalledMonkey monkey = new PackageInstalledMonkey(packageName);
+            executeShellCommand(command, monkey);
+            return monkey.isInstalled();
+        } catch (Exception e) {
+            throw new AndroidExecutionException("Unable to decide if package " + packageName + " is installed or nor", e);
+        }
+    }
+    
     @Override
     public void uninstallPackage(String packageName) throws AndroidExecutionException {
         try {
@@ -185,6 +197,36 @@ class AndroidDeviceImpl implements AndroidDevice {
 
     }
 
+    private static class PackageInstalledMonkey implements AndroidDeviceOutputReciever {
+
+        private String packageName;
+        
+        private boolean installed = false;
+        
+        public PackageInstalledMonkey(String packageName) {
+            this.packageName = packageName;
+        }
+        
+        @Override
+        public void processNewLines(String[] lines) {
+            for (String line : lines) {
+                if (line.contains(packageName)) {
+                    installed = true;
+                    break;
+                }
+            }
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return false;
+        }
+        
+        public boolean isInstalled() {
+            return installed;
+        }
+    }
+    
     private static final class AndroidRecieverDelegate extends MultiLineReceiver {
 
         private AndroidDeviceOutputReciever delegate;
