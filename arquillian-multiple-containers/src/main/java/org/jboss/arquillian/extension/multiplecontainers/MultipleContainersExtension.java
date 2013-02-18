@@ -39,17 +39,13 @@ public class MultipleContainersExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
 
-      System.out.println("Multiple containers extension registering.");
+        System.out.println("Multiple containers extension registering.");
 
-      builder.context(ContainerContextImpl.class)
-             .context(DeploymentContextImpl.class);
+        builder.context(ContainerContextImpl.class).context(DeploymentContextImpl.class);
 
-      builder.observer(MultipleContainerRegistryCreator.class)
-             .observer(ContainerDeploymentContextHandler.class)
-             .observer(ContainerLifecycleController.class)
-             .observer(ContainerDeployController.class)
-             .observer(ArchiveDeploymentExporter.class)
-             .observer(DeploymentExceptionHandler.class);
+        builder.observer(MultipleContainerRegistryCreator.class).observer(ContainerDeploymentContextHandler.class)
+            .observer(ContainerLifecycleController.class).observer(ContainerDeployController.class)
+            .observer(ArchiveDeploymentExporter.class).observer(DeploymentExceptionHandler.class);
     }
 
 }

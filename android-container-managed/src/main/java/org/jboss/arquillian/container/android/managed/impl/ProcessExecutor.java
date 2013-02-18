@@ -59,7 +59,8 @@ public class ProcessExecutor {
     /**
      * Submit callable to be executed
      *
-     * @param callable to be executed
+     * @param callable
+     *            to be executed
      * @return future
      */
     public <T> Future<T> submit(Callable<T> callable) {
@@ -69,16 +70,20 @@ public class ProcessExecutor {
     /**
      * Schedules a callable to be executed in regular intervals
      *
-     * @param callable Callable
-     * @param timeout Total timeout
-     * @param step delay before next execution
-     * @param unit time unit
+     * @param callable
+     *            Callable
+     * @param timeout
+     *            Total timeout
+     * @param step
+     *            delay before next execution
+     * @param unit
+     *            time unit
      * @return {@code true} if executed successfully, false otherwise
      * @throws InterruptedException
      * @throws ExecutionException
      */
     public Boolean scheduleUntilTrue(Callable<Boolean> callable, long timeout, long step, TimeUnit unit)
-            throws InterruptedException, ExecutionException {
+        throws InterruptedException, ExecutionException {
 
         CountDownWatch countdown = new CountDownWatch(timeout, unit);
         while (countdown.timeLeft() > 0) {
@@ -103,9 +108,12 @@ public class ProcessExecutor {
     /**
      * Spawns a process defined by command. Process output is discarded.
      *
-     * @param timeout Total timeout
-     * @param unit Timeout unit
-     * @param command the command to be executed
+     * @param timeout
+     *            Total timeout
+     * @param unit
+     *            Timeout unit
+     * @param command
+     *            the command to be executed
      * @return
      * @throws InterruptedException
      * @throws ExecutionException
@@ -117,7 +125,8 @@ public class ProcessExecutor {
     /**
      * Spawns a process defined by command. Process output is discarded
      *
-     * @param command the command to be executed
+     * @param command
+     *            the command to be executed
      * @return
      * @throws InterruptedException
      * @throws ExecutionException
@@ -131,7 +140,8 @@ public class ProcessExecutor {
         return process;
     }
 
-    public List<String> execute(Map<String, String> input, String... command) throws InterruptedException, ExecutionException {
+    public List<String> execute(Map<String, String> input, String... command) throws InterruptedException,
+        ExecutionException {
         Future<Process> processFuture = service.submit(new SpawnedProcess(true, command));
         Process process = processFuture.get();
         return service.submit(new ProcessOutputConsumer(new ProcessWithId(process, command[0]), input)).get();
@@ -254,8 +264,8 @@ public class ProcessExecutor {
                     if (inputOutputMap.containsKey(key)) {
 
                         if (log.isLoggable(Level.FINEST)) {
-                            log.log(Level.FINEST, "{0} outputs: {1}, responded with: ", new Object[] { process,
-                                    line.toString(), inputOutputMap.get(key) });
+                            log.log(Level.FINEST, "{0} outputs: {1}, responded with: ",
+                                new Object[] { process, line.toString(), inputOutputMap.get(key) });
                         }
                         OutputStream ostream = process.getOutputStream();
                         ostream.write(inputOutputMap.get(key).getBytes());

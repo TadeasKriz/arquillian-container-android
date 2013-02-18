@@ -39,13 +39,16 @@ public class ConfigurationMapper {
     /**
      * Maps Android configuration using Arquillian Descriptor file
      *
-     * @param descriptor Arquillian Descriptor
-     * @param configuration Configuration object
-     * @param properties A map of name-value pairs
+     * @param descriptor
+     *            Arquillian Descriptor
+     * @param configuration
+     *            Configuration object
+     * @param properties
+     *            A map of name-value pairs
      * @return Configured configuration
      */
     public static <T> T fromArquillianDescriptor(ArquillianDescriptor descriptor, T configuration,
-            Map<String, String> properties) {
+        Map<String, String> properties) {
         Validate.notNull(descriptor, "Descriptor must not be null");
         Validate.notNull(configuration, "Configuration must not be null");
 
@@ -65,7 +68,8 @@ public class ConfigurationMapper {
     /**
      * A helper boxing method. Returns boxed class for a primitive class
      *
-     * @param primitive A primitive class
+     * @param primitive
+     *            A primitive class
      * @return Boxed class if class was primitive, unchanged class in other cases
      */
     private static Class<?> box(Class<?> primitive) {
@@ -99,9 +103,12 @@ public class ConfigurationMapper {
      *
      * Converts string to a class of given type
      *
-     * @param <T> Type of returned value
-     * @param clazz Type of desired value
-     * @param value String value to be converted
+     * @param <T>
+     *            Type of returned value
+     * @param clazz
+     *            Type of desired value
+     * @param value
+     *            String value to be converted
      * @return Value converted to a appropriate type
      */
     private static <T> T convert(Class<T> clazz, String value) {

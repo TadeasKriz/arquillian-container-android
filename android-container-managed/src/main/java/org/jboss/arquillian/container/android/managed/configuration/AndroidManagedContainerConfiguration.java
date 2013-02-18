@@ -17,13 +17,14 @@
  */
 package org.jboss.arquillian.container.android.managed.configuration;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
 /**
  * A {@link org.jboss.arquillian.spi.client.container.ContainerConfiguration} implementation for the Android containers.
- *
+ * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
@@ -43,6 +44,8 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private String sdSize = "128M";
 
+    private String sdCard;
+
     private String abi;
 
     private long emulatorBootupTimeoutInSeconds = 120L;
@@ -51,10 +54,14 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private String home = System.getenv("ANDROID_HOME");
 
-    private boolean AVDIsGenerated;
+    private boolean AVDGenerated;
+
+    private boolean SDCardFileNameGenerated;
 
     // Android 2.3.3 is the default
     private String apiLevel = "10";
+
+    private final String SDCARD_PREFIX_PATH = "/tmp/";
 
     public String getHome() {
         return home;
@@ -128,6 +135,14 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         this.sdSize = sdSize;
     }
 
+    public String getSdCard() {
+        return sdCard;
+    }
+
+    public void setSdCard(String sdCard) {
+        this.sdCard = sdCard;
+    }
+
     public long getEmulatorShutdownTimeoutInSeconds() {
         return emulatorShutdownTimeoutInSeconds;
     }
@@ -143,28 +158,58 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
     public void setAbi(String abi) {
         this.abi = abi;
     }
+    
+    public boolean isAVDGenerated() {
+        return AVDGenerated;
+    }
+    
+    public void setAVDGenerated(boolean generated) {
+        this.AVDGenerated = generated;
+    }
 
+    public boolean isSDCardFileNameGenerated() {
+        return SDCardFileNameGenerated;
+    }
+
+    public void setSDCardFileNameGenerated(boolean SDCardFileNameGenerated) {
+        this.SDCardFileNameGenerated = SDCardFileNameGenerated;
+    }
+    
     @Override
     public void validate() throws AndroidContainerConfigurationException {
         Validate.isReadableDirectory(home,
-                "You must provide Android SDK home directory. The value you've provided is not valid ("
-                        + (home == null ? "" : home)
-                        + "). You can either set it via an environment variable ANDROID_HOME or via"
-                        + " a property called \"home\" in Arquillian configuration.");
+            "You must provide Android SDK home directory. The value you've provided is not valid ("
+                + (home == null ? "" : home)
+                + "). You can either set it via an environment variable ANDROID_HOME or via"
+                + " a property called \"home\" in Arquillian configuration.");
 
         if (avdName != null && serialId != null) {
             logger.warning("Both \"avdName\" and \"serialId\" properties are defined, the device "
-                    + "specified by \"serialId\" will get priority if connected.");
+                + "specified by \"serialId\" will get priority if connected.");
         }
 
         // in case of bad serialId, we try to start an emulator, which has to have a name
         // if we do not specify it in the arquillian.xml, we have to define some random one
         if (avdName == null) {
             avdName = AVDIdentifierGenerator.getRandomAVDName();
+            AVDGenerated = true;
         }
 
+        // if sdCard is null, so not specified in the arquillian.xml, since there can be more
+        // then one device of some avd and these sd cards could collide, we create some random name
+        // (path) to the sd card
+        if (sdCard == null) {
+            sdCard = SDCARD_PREFIX_PATH + SDCardIdentifierGenerator.getRandomSDCardName();
+            SDCardFileNameGenerated = true;
+        }
+
+        Validate.isReadableDirectory(new File(sdCard).getParentFile(), "Directory of the sd card for '" + avdName
+            + "' is not readable.");
+        Validate.isWritable(new File(sdCard), "Location of the SD card for the Android container '" + avdName
+            + "' is not writable.");
+
         Validate.sdSize(sdSize, "Check you did not forget to add M char (as Megabytes) "
-                + "in your sdSize property in arquillian.xml");
+            + "in your sdSize property in arquillian.xml");
     }
 
     @Override
@@ -181,15 +226,7 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         sb.append("emuShut\t\t:").append(this.emulatorShutdownTimeoutInSeconds).append("\n");
         sb.append("emuOpts\t\t:").append(this.emulatorOptions).append("\n");
         sb.append("home\t\t:").append(this.home).append("\n");
+        sb.append("sdCard\t\t:").append(this.sdCard).append("\n");
         return sb.toString();
     }
-
-    public void setAVDIsGenerated(boolean value) {
-        this.AVDIsGenerated = value;
-    }
-
-    public boolean isAVDGenerated() {
-        return AVDIsGenerated;
-    }
-
 }

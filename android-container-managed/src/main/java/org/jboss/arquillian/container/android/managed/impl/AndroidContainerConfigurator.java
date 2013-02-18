@@ -32,17 +32,18 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
- * Configurator of Android container for Arquillian. Note that the configuration method observes {@link BeforeSuite} event with
- * higher precedence so it will be executed before configuration is parsed for {@link AndroidManagedDeployableContainer} itself.
- * 
+ * Configurator of Android container for Arquillian. Note that the configuration method observes {@link BeforeSuite}
+ * event with higher precedence so it will be executed before configuration is parsed for
+ * {@link AndroidManagedDeployableContainer} itself.
+ *
  * Observes:
  * <ul>
  * <li>{@link BeforeSuite}</li>
  * </ul>
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
- * 
+ *
  */
 public class AndroidContainerConfigurator {
 
@@ -55,13 +56,13 @@ public class AndroidContainerConfigurator {
 
     /**
      * Configures Android container by parsing Arquillian descriptor.
-     * 
+     *
      * @param event
      * @param descriptor
      * @throws AndroidContainerConfigurationException
      */
     public void configureAndroidSdk(@Observes(precedence = 10) BeforeSuite event, ArquillianDescriptor descriptor)
-            throws AndroidContainerConfigurationException {
+        throws AndroidContainerConfigurationException {
 
         AndroidManagedContainerConfiguration configuration = new AndroidManagedContainerConfiguration();
 
@@ -69,7 +70,7 @@ public class AndroidContainerConfigurator {
             if (ANDROID_EXTENSION_NAME.equals(containerDef.getContainerName())) {
                 try {
                     ConfigurationMapper.fromArquillianDescriptor(descriptor, configuration,
-                            containerDef.getContainerProperties());
+                        containerDef.getContainerProperties());
                 } catch (RuntimeException ex) {
                     logger.info("Unable to parse configuration from Arquillian configuration file");
                     throw new AndroidContainerConfigurationException(ex);
@@ -80,9 +81,9 @@ public class AndroidContainerConfigurator {
     }
 
     /**
-     * Observes {@link AndroidDroneEvent} after which {@link AndroidConfigurationDone} is fired noticing that container and
-     * extensions are configured. {@link AndroidBridgeConnector} is listenting to this kind of event.
-     * 
+     * Observes {@link AndroidDroneEvent} after which {@link AndroidConfigurationDone} is fired noticing that container
+     * and extensions are configured. {@link AndroidBridgeConnector} is listenting to this kind of event.
+     *
      * @param event
      */
     public void androidConfigurationDone(@Observes AndroidDroneEvent event) {

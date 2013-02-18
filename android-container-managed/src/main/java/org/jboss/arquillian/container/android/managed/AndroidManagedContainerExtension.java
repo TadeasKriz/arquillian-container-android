@@ -17,12 +17,10 @@
  */
 package org.jboss.arquillian.container.android.managed;
 
+import org.jboss.arquillian.container.android.api.DeviceSelector;
 import org.jboss.arquillian.container.android.enricher.AndroidDeviceResourceProvider;
 import org.jboss.arquillian.container.android.managed.impl.AndroidBridgeConnector;
-import org.jboss.arquillian.container.android.managed.impl.AndroidContainerConfigurator;
 import org.jboss.arquillian.container.android.managed.impl.AndroidDeviceSelector;
-import org.jboss.arquillian.container.android.managed.impl.AndroidEmulatorDelete;
-import org.jboss.arquillian.container.android.managed.impl.AndroidEmulatorShutdown;
 import org.jboss.arquillian.container.android.managed.impl.AndroidEmulatorStartup;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -43,13 +41,10 @@ public class AndroidManagedContainerExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.service(DeployableContainer.class, AndroidManagedDeployableContainer.class);
         builder.service(ResourceProvider.class, AndroidDeviceResourceProvider.class);
-        builder.observer(AndroidContainerConfigurator.class);
-        builder.observer(AndroidManagedDeployableContainer.class);
-        builder.observer(AndroidDeviceSelector.class);
+        builder.service(DeviceSelector.class, AndroidDeviceSelector.class);
         builder.observer(AndroidBridgeConnector.class);
         builder.observer(AndroidEmulatorStartup.class);
-        builder.observer(AndroidEmulatorShutdown.class);
-        builder.observer(AndroidEmulatorDelete.class);
+        builder.observer(AndroidDeviceSelector.class);
     }
 
 }

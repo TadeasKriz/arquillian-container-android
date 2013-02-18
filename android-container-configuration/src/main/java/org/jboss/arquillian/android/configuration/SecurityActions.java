@@ -71,7 +71,8 @@ final class SecurityActions {
      * @return
      * @throws NoSuchMethodException
      */
-    static Constructor<?> getConstructor(final Class<?> clazz, final Class<?>... argumentTypes) throws NoSuchMethodException {
+    static Constructor<?> getConstructor(final Class<?> clazz, final Class<?>... argumentTypes)
+        throws NoSuchMethodException {
         try {
             return AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<?>>() {
                 @Override
@@ -103,17 +104,22 @@ final class SecurityActions {
      * Create a new instance by finding a constructor that matches the argumentTypes signature using the arguments for
      * instantiation.
      *
-     * @param className Full classname of class to create
-     * @param argumentTypes The constructor argument types
-     * @param arguments The constructor arguments
+     * @param className
+     *            Full classname of class to create
+     * @param argumentTypes
+     *            The constructor argument types
+     * @param arguments
+     *            The constructor arguments
      * @return a new instance
-     * @throws IllegalArgumentException if className, argumentTypes, or arguments are null
-     * @throws RuntimeException if any exceptions during creation
+     * @throws IllegalArgumentException
+     *             if className, argumentTypes, or arguments are null
+     * @throws RuntimeException
+     *             if any exceptions during creation
      * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
      * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
      */
     static <T> T newInstance(final String className, final Class<?>[] argumentTypes, final Object[] arguments,
-            final Class<T> expectedType) {
+        final Class<T> expectedType) {
         if (className == null) {
             throw new IllegalArgumentException("ClassName must be specified");
         }
@@ -130,7 +136,8 @@ final class SecurityActions {
             Constructor<?> constructor = getConstructor(implClass, argumentTypes);
             obj = constructor.newInstance(arguments);
         } catch (Exception e) {
-            throw new RuntimeException("Could not create new instance of " + className + ", missing package from classpath?", e);
+            throw new RuntimeException("Could not create new instance of " + className
+                + ", missing package from classpath?", e);
         }
 
         // Cast
@@ -139,7 +146,7 @@ final class SecurityActions {
         } catch (final ClassCastException cce) {
             // Reconstruct so we get some useful information
             throw new ClassCastException("Incorrect expected type, " + expectedType.getName() + ", defined for "
-                    + obj.getClass().getName());
+                + obj.getClass().getName());
         }
     }
 

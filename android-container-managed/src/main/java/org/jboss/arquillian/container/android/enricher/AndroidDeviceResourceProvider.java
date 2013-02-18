@@ -34,6 +34,7 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @see AndroidDevice
  */
 public class AndroidDeviceResourceProvider implements ResourceProvider {
+    
     private static final Logger log = Logger.getLogger(AndroidDeviceResourceProvider.class.getName());
 
     @Inject
@@ -46,8 +47,6 @@ public class AndroidDeviceResourceProvider implements ResourceProvider {
 
     @Override
     public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
-
-        // there is no way how to store more than a single AVD devices at this moment, ignoring qualifiers
         AndroidDevice device = androidDevice.get();
         if (device == null) {
             log.severe("Unable to Inject Android Device controller into test");

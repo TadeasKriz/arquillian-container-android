@@ -1,19 +1,3 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jboss.arquillian.container.android.managed.impl;
 
 import java.io.File;
@@ -21,51 +5,33 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidBridgeTerminated;
-import org.jboss.arquillian.android.spi.event.AndroidConfigurationDone;
-import org.jboss.arquillian.android.spi.event.AndroidDeviceShutdown;
+import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
+import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
+import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 
-/**
- * Creator and destructor of Android Bridge.
- *
- * This must be called after Android Container initialization.
- *
- * Observes:
- * <ul>
- * <li>{@link AndroidConfigurationDone}</li>
- * </ul>
- *
- * Creates:
- * <ul>
- * <li>{@link AndroidBridge}</li>
- * </ul>
- *
- * Fires:
- * <ul>
- * <li>{@link AndroidBridgeTerminated}</li>
- * <li>{@link AndroidBridgeInitialized}</li>
- * </ul>
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
- *
- */
 public class AndroidBridgeConnector {
 
-    private static final Logger log = Logger.getLogger(AndroidBridgeConnector.class.getName());
+    private static final Logger logger = Logger.getLogger(AndroidBridgeConnector.class.getSimpleName());
 
     @Inject
-    @SuiteScoped
+    @ContainerScoped
     private InstanceProducer<AndroidBridge> androidBridge;
-
+    
+    @Inject
+    private Instance<AndroidSDK> androidSDK;
+    
+    @Inject
+    private Instance<AndroidManagedContainerConfiguration> configuration;
+    
     @Inject
     private Event<AndroidBridgeInitialized> adbInitialized;
 
@@ -80,18 +46,16 @@ public class AndroidBridgeConnector {
      * @param configuration
      * @throws AndroidExecutionException
      */
-    public void initAndroidDebugBridge(@Observes AndroidConfigurationDone event, AndroidSDK sdk,
-            AndroidManagedContainerConfiguration configuration) throws AndroidExecutionException {
-
+    public void initAndroidDebugBridge(@Observes AndroidContainerStart event) throws AndroidExecutionException {
+        
         long start = System.currentTimeMillis();
-        log.info("Initializing Android Debug Bridge");
-        AndroidBridge bridge = new AndroidBridgeImpl(new File(sdk.getAdbPath()), configuration.isForce());
+        logger.info("Initializing Android Debug Bridge");
+        AndroidBridge bridge = new AndroidBridgeImpl(new File(androidSDK.get().getAdbPath()), configuration.get().isForce());
         bridge.connect();
         long delta = System.currentTimeMillis() - start;
-        log.info("Android debug Bridge was initialized in " + delta + "ms");
+        logger.info("Android debug Bridge was initialized in " + delta + "ms");
         androidBridge.set(bridge);
-
-        adbInitialized.fire(new AndroidBridgeInitialized(bridge));
+        adbInitialized.fire(new AndroidBridgeInitialized());
     }
 
     /**
@@ -100,8 +64,13 @@ public class AndroidBridgeConnector {
      * @param event
      * @throws AndroidExecutionException
      */
-    public void destroyAndroidDebugBridge(@Observes AndroidDeviceShutdown event) throws AndroidExecutionException {
+    public void terminateAndroidDebugBridge(@Observes AndroidContainerStop event) throws AndroidExecutionException {
+        logger.info("terminating of Android Debug Bridge");
         androidBridge.get().disconnect();
         adbTerminated.fire(new AndroidBridgeTerminated());
+    }
+    
+    public void afterTerminateAndroidDebugBridge(@Observes AndroidBridgeTerminated event) {
+        logger.info("Executing operations after destroying Android Debug Bridge");
     }
 }

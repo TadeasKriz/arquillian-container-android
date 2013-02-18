@@ -17,146 +17,103 @@
  */
 package org.jboss.arquillian.container.android.managed;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.android.spi.event.AndroidContainerConfigured;
+import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
+import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
+import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
-import org.jboss.arquillian.container.android.managed.impl.ProcessExecutor;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
- * <p>Android Managed container for the Arquillian project</p>
- *
+ * <p>
+ * Android Managed container for the Arquillian project
+ * </p>
+ * 
  * Deployable Android Container class with the whole lifecycle.
- *
+ * 
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
 public class AndroidManagedDeployableContainer implements DeployableContainer<AndroidManagedContainerConfiguration> {
 
-    private static final String LIFE_CYCLE_SETUP_MISSING_CONFIG_EXCEPTION_MSG =
-            "Configuration for an Arquillan Andorid Container must not be null";
-
-    private static final Logger logger =
-            Logger.getLogger(AndroidManagedDeployableContainer.class.getName());
+    private static final Logger logger = Logger.getLogger(AndroidManagedDeployableContainer.class.getSimpleName());
 
     @Inject
-    @SuiteScoped
+    @ContainerScoped
     private InstanceProducer<AndroidManagedContainerConfiguration> configuration;
-
+    
     @Inject
-    @SuiteScoped
+    @ContainerScoped
     private InstanceProducer<AndroidSDK> androidSDK;
 
     @Inject
-    @SuiteScoped
-    private InstanceProducer<ProcessExecutor> executor;
-
+    private Event<AndroidContainerStart> androidContainerStartEvent;
+    
     @Inject
-    private Event<AndroidContainerConfigured> afterConfiguration;
-
-    ////////////////////////////
-    // (1) GET CONFIGURATION CLASS
-    ////////////////////////////
-
+    private Event<AndroidContainerStop> androidContainerStopEvent;
+    
+    @Inject
+    private Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
+    
     @Override
     public Class<AndroidManagedContainerConfiguration> getConfigurationClass() {
-        logger.info("ANDROID MANAGED CONTAINER GET CONFIGURATION CLASS");
         return AndroidManagedContainerConfiguration.class;
     }
 
-    ////////////////////////////
-    // (2) SETUP
-    ////////////////////////////
+    @Override
+    public ProtocolDescription getDefaultProtocol() {
+        return new ProtocolDescription("android protocol");
+    }
 
     @Override
     public void setup(AndroidManagedContainerConfiguration configuration) {
-        logger.info("ANDROID MANAGED CONTAINER SETUP");
-        if (configuration == null) {
-            throw new IllegalArgumentException(LIFE_CYCLE_SETUP_MISSING_CONFIG_EXCEPTION_MSG);
-        }
         this.configuration.set(configuration);
-        executor.set(new ProcessExecutor());
-        androidSDK.set(new AndroidSDK(configuration));
-        logger.info(configuration.toString());
+        this.androidSDK.set(new AndroidSDK(this.configuration.get()));
     }
-
-    ////////////////////////////
-    // (3) START
-    ////////////////////////////
 
     @Override
     public void start() throws LifecycleException {
-        logger.info("ANDROID MANAGED CONTAINER START");
-        afterConfiguration.fire(new AndroidContainerConfigured());
-        logger.info("ANDROID MANAGED CONTAINER AFTER FIRING CONFIGURATION EVENT");
+        logger.log(Level.INFO, "Starting the container {0}", configuration.get().getAvdName());
+        this.androidContainerStartEvent.fire(new AndroidContainerStart());
     }
 
-    ////////////////////////////
-    // (4) DEPLOY ARCHIVE
-    ////////////////////////////
-
     @Override
-    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
-        logger.info("ANDROID MANAGED CONTAINER DEPLOY ARCHIVE");
+    public ProtocolMetaData deploy(Archive<?> arg0) throws DeploymentException {
+        logger.log(Level.INFO, "Deploying an archive to the container {0}", configuration.get().getAvdName());
         return new ProtocolMetaData();
     }
 
-    ////////////////////////////
-    // (5) GET DEFAULT PROTOCOL
-    ////////////////////////////
-
-    @Override
-    public ProtocolDescription getDefaultProtocol() {
-        logger.info("ANDROID MANAGED CONTAINER GET DEFAULT PROTOCOL");
-        return new ProtocolDescription("Servlet 3.0");
-    }
-
-    ////////////////////////////
-    // (6) UPDEPLOY ARCHIVE
-    ////////////////////////////
-
     @Override
     public void undeploy(Archive<?> arg0) throws DeploymentException {
-        logger.info("ANDROID MANAGED CONTAINER UNDEPLOY ARCHIVE");
+        logger.log(Level.INFO, "Undeploying an archive from the container {0}", configuration.get().getAvdName());
     }
-
-    ////////////////////////////
-    // (7) STOP
-    ////////////////////////////
 
     @Override
     public void stop() throws LifecycleException {
-        logger.info("ANDROID MANAGED CONTAINER STOP");
+        logger.log(Level.INFO, "Stopping container {0}", configuration.get().getAvdName());
+        this.androidContainerStopEvent.fire(new AndroidContainerStop());
     }
-
-    // =======================================================================================
-
-    ////////////////////////////
-    // UNDEPLOY DESCRIPTOR
-    ////////////////////////////
 
     @Override
     public void undeploy(Descriptor arg0) throws DeploymentException {
-        logger.info("ANDROID MANAGED CONTAINER UNDEPLOY DESCRIPTOR");
+        throw new UnsupportedOperationException("Undeployment of a descriptor is not supported.");
     }
-
-    ////////////////////////////
-    // DEPLOY DESCRIPTOR
-    ////////////////////////////
 
     @Override
     public void deploy(Descriptor arg0) throws DeploymentException {
-        logger.info("ANDROID MANAGED CONTAINER DEPLOY DESCRIPTOR");
+        throw new UnsupportedOperationException("Deployment of a descriptor is not supported");
     }
+
 }

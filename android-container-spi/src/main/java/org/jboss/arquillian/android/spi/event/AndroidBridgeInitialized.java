@@ -25,7 +25,7 @@ import org.jboss.arquillian.container.android.api.AndroidBridge;
  *
  */
 public class AndroidBridgeInitialized {
-    private AndroidBridge bridge;
+/*    private AndroidBridge bridge;
 
     public AndroidBridgeInitialized(AndroidBridge bridge) {
         this.bridge = bridge;
@@ -37,5 +37,5 @@ public class AndroidBridgeInitialized {
 
     public void setBridge(AndroidBridge bridge) {
         this.bridge = bridge;
-    }
+    }*/
 }

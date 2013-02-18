@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.config.descriptor.api.GroupDef;
@@ -73,7 +74,7 @@ public class MultipleContainerRegistryCreator {
         for (ContainerDef container : event.getContainers()) {
             log.log(Level.INFO, "ContainerDef container");
             if ((activeConfiguration != null && activeConfiguration.equals(container.getContainerName()))
-                    || (activeConfiguration == null && container.isDefault())) {
+                || (activeConfiguration == null && container.isDefault())) {
                 reg.create(container, serviceLoader);
             }
         }
@@ -81,7 +82,7 @@ public class MultipleContainerRegistryCreator {
         for (GroupDef group : event.getGroups()) {
             log.log(Level.INFO, "GroupDef group");
             if ((activeConfiguration != null && activeConfiguration.equals(group.getGroupName()))
-                    || (activeConfiguration == null && group.isGroupDefault())) {
+                || (activeConfiguration == null && group.isGroupDefault())) {
                 for (ContainerDef container : group.getGroupContainers()) {
                     reg.create(container, serviceLoader);
                 }
@@ -95,7 +96,7 @@ public class MultipleContainerRegistryCreator {
                 deployableContainer = serviceLoader.onlyOne(DeployableContainer.class);
             } catch (IllegalStateException e) {
                 throw new IllegalStateException("Could not add a default container to registry because multipe "
-                        + DeployableContainer.class.getName() + " found on classpath", e);
+                    + DeployableContainer.class.getName() + " found on classpath", e);
             } catch (Exception e) {
                 throw new IllegalStateException("Could not create the default container instance", e);
             }
@@ -103,7 +104,8 @@ public class MultipleContainerRegistryCreator {
                 reg.create(new ContainerDefImpl("arquillian.xml").setContainerName("default"), serviceLoader);
             }
         } else if (activeConfiguration != null && reg.getContainers().size() == 0) {
-            throw new IllegalArgumentException("No container or group found that match given qualifier: " + activeConfiguration);
+            throw new IllegalArgumentException("No container or group found that match given qualifier: "
+                + activeConfiguration);
         }
 
         // export
@@ -113,7 +115,8 @@ public class MultipleContainerRegistryCreator {
     /**
      * Validate that the Configuration given is sane
      *
-     * @param desc The read Descriptor
+     * @param desc
+     *            The read Descriptor
      */
     private void validateConfiguration(ArquillianDescriptor desc) {
         Object defaultConfig = null;
@@ -123,12 +126,12 @@ public class MultipleContainerRegistryCreator {
             if (container.isDefault()) {
                 if (defaultConfig != null) {
                     throw new IllegalStateException("Multiple Containers defined as default, only one is allowed:\n"
-                            + defaultConfig + ":" + container);
+                        + defaultConfig + ":" + container);
                 }
                 defaultConfig = container;
             }
         }
-        
+
         boolean containerMarkedAsDefault = defaultConfig != null;
 
         // verify only one container or group is marked as default
@@ -136,11 +139,12 @@ public class MultipleContainerRegistryCreator {
             if (group.isGroupDefault()) {
                 if (defaultConfig != null) {
                     if (containerMarkedAsDefault) {
-                        throw new IllegalStateException("Multiple Containers/Groups defined as default, only one is allowed:\n"
-                                + defaultConfig + ":" + group);
+                        throw new IllegalStateException(
+                            "Multiple Containers/Groups defined as default, only one is allowed:\n" + defaultConfig
+                                + ":" + group);
                     }
                     throw new IllegalStateException("Multiple Groups defined as default, only one is allowed:\n"
-                            + defaultConfig + ":" + group);
+                        + defaultConfig + ":" + group);
                 }
                 defaultConfig = group;
             }
@@ -151,7 +155,7 @@ public class MultipleContainerRegistryCreator {
                 if (container.isDefault()) {
                     if (defaultInGroup != null) {
                         throw new IllegalStateException(
-                                "Multiple Containers within Group defined as default, only one is allowed:\n" + group);
+                            "Multiple Containers within Group defined as default, only one is allowed:\n" + group);
                     }
                     defaultInGroup = container;
                 }
@@ -165,7 +169,7 @@ public class MultipleContainerRegistryCreator {
         }
 
         InputStream arquillianLaunchStream = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream(ARQUILLIAN_LAUNCH_DEFAULT);
+            .getResourceAsStream(ARQUILLIAN_LAUNCH_DEFAULT);
         if (arquillianLaunchStream != null) {
             try {
                 return readActivatedValue(new BufferedReader(new InputStreamReader(arquillianLaunchStream)));

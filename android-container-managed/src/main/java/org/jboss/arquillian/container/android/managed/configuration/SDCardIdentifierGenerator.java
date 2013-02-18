@@ -15,17 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.android.spi.event;
+package org.jboss.arquillian.container.android.managed.configuration;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 /**
- * This class serves as the event which is fired after overall configurations of Android Container and all extensions
- * are done. This class is different from {@link AndroidContainerConfigured}. That class is for noticing that Android
- * container as such was configured and it is different from {@link AndroidDroneEvent} - this class is for noticing that
- * Android extensions were configured. {@code AndroidConfigurationDone} merges these two events together, saying that
- * container and extensions were fully configured.
+ * Finds out some random string in order to provide some name for SD card.
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
-public class AndroidConfigurationDone {
+public final class SDCardIdentifierGenerator {
 
+    private static final int NUM_BITS = 130;
+
+    private static final int RADIX = 30;
+
+    private static final SecureRandom random = new SecureRandom();
+
+    public static String getRandomSDCardName() {
+        return new BigInteger(NUM_BITS, random).toString(RADIX).concat(".img");
+    }
 }

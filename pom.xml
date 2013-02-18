@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>9</version>
+        <version>10</version>
     </parent>
 
     <!-- Model Version -->
@@ -35,9 +35,8 @@
 
     <!-- Properties -->
     <properties>
-
         <!-- Versioning -->
-        <version.arquillian_core>1.0.0.Final</version.arquillian_core>
+        <version.arquillian_core>1.0.3.Final</version.arquillian_core>
     </properties>
 
     <!-- Dependency Management -->

@@ -47,7 +47,7 @@ public class AndroidEmulatorDelete implements AndroidEmulatorEvent {
     private Event<AndroidVirtualDeviceDeleted> afterAndroidVirtualDeviceDeleted;
 
     public void deleteEmulator(@Observes AfterStop event, AndroidManagedContainerConfiguration configuration,
-            ProcessExecutor executor) {
+        ProcessExecutor executor) {
 
         if (!configuration.isAVDGenerated()) {
             return;
@@ -83,10 +83,10 @@ public class AndroidEmulatorDelete implements AndroidEmulatorEvent {
     }
 
     private Process constructDeleteProcess(ProcessExecutor executor, AndroidSDK androidSDK, String avdName)
-            throws AndroidExecutionException {
+        throws AndroidExecutionException {
 
-        List<String> androidCommand = new ArrayList<String>(
-                Arrays.asList(androidSDK.getAndroidPath(), "delete", "avd", "-n", avdName));
+        List<String> androidCommand = new ArrayList<String>(Arrays.asList(androidSDK.getAndroidPath(), "delete", "avd",
+            "-n", avdName));
 
         try {
             return executor.spawn(androidCommand);

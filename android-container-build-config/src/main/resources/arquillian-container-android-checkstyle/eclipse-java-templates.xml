@@ -1,4 +1,4 @@
-/*
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="filecomment_context" deleted="false" description="Comment for created Java files" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.filecomment" name="filecomment">/*
  * JBoss, Home of Professional Open Source
  * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
@@ -13,20 +13,4 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-package org.jboss.arquillian.android.spi.event;
-
-/**
- * Event representing that an already existing Android Device is available
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
- */
-public class AndroidVirtualDeviceAvailable {
-
-    String name;
-    
-    public AndroidVirtualDeviceAvailable(String name) {
-        this.name = name;
-    }
-}
+ */</template></templates>

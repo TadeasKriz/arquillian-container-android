@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,169 +34,172 @@ import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceCreated;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
-import org.jboss.arquillian.container.android.managed.configuration.AndroidContainerConfigurationException;
+import org.jboss.arquillian.container.android.api.DeviceSelector;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
+import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 
 /**
- * Select either a real device or virtual device for execution. If a real device is specified via its serial number, it will
- * check if it is connected, otherwise it will use an virtual device.
- *
+ * Select either a real device or virtual device for execution. If a real device is specified via its serial number, it
+ * will check if it is connected, otherwise it will use an virtual device.
+ * 
  * Observes:
  * <ul>
  * <li>{@link AndroidBridgeInitialized}</li>
  * </ul>
- *
+ * 
  * Creates:
  * <ul>
  * <li>{@link AndroidDevice}</li>
  * </ul>
- *
+ * 
  * Fires:
  * <ul>
  * <li>{@link AndroidVirtualDeviceCreated}</li>
  * <li>{@link AndroidVirtualDeviceAvailable}</li>
  * <li>{@link AndroidDeviceReady}</li>
  * </ul>
- *
+ * 
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
+ * 
  */
-public class AndroidDeviceSelector {
-    private static Logger logger = Logger.getLogger(AndroidDeviceSelector.class.getName());
+public class AndroidDeviceSelector implements DeviceSelector {
+
+    private static Logger logger = Logger.getLogger(AndroidDeviceSelector.class.getSimpleName());
 
     @Inject
-    @SuiteScoped
+    @ContainerScoped
     private InstanceProducer<AndroidDevice> androidDevice;
 
     @Inject
-    private Event<AndroidVirtualDeviceCreated> avdCreated;
+    private Instance<AndroidBridge> androidBridge;
 
     @Inject
-    private Event<AndroidVirtualDeviceAvailable> avdAvailable;
+    private Instance<AndroidManagedContainerConfiguration> configuration;
 
     @Inject
-    private Event<AndroidDeviceReady> androidDeviceReady;
+    private Instance<AndroidSDK> androidSDK;
 
-    public void getOrCreateAndroidDevice(@Observes AndroidBridgeInitialized event, ProcessExecutor executor,
-            AndroidManagedContainerConfiguration configuration, AndroidSDK androidSDK) throws AndroidExecutionException {
+    @Inject
+    private Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
 
-        String avdName = configuration.getAvdName();
-        String serialId = configuration.getSerialId();
-        AndroidBridge bridge = event.getBridge();
+    @Inject
+    private Event<AndroidVirtualDeviceCreated> androidVirtualDeviceCreated;
 
-        AndroidDevice device = null;
-
-        // get priority for device specified by serialId if such device is
-        // connected
-
-        if ((device = getRealDeviceIfConnected(bridge, serialId)) != null) {
-            androidDevice.set(device);
-            androidDeviceReady.fire(new AndroidDeviceReady(device));
-            logger.log(Level.INFO, "Using connected physical device with serial ID of {0}.", serialId);
-            return;
-        }
-
-        // then try to use connected AVD
-
-        if ((device = getVirtualDeviceIfConnected(bridge, avdName)) != null) {
-            androidDevice.set(device);
-            androidDeviceReady.fire(new AndroidDeviceReady(device));
-            logger.log(Level.INFO, "Using already started emulator of AVD name {0} and serial ID {1}", new Object[] { avdName,
-                    device.getSerialNumber() });
-            return;
-        }
-
-        Set<String> devices = getAvdDeviceNames(executor, androidSDK);
-
-        // we failed in both, so check out AVD availability and if it not exits,
-        // create it
-        if (!devices.contains(avdName) || configuration.isForce()) {
-            logger.log(Level.INFO, "Creating an Android virtual device named " + avdName);
-
-            createAVD(configuration, androidSDK, executor);
-
-            logger.info("Android virtual device " + configuration.getAvdName() + " was created");
-            configuration.setAVDIsGenerated(true);
-            avdCreated.fire(new AndroidVirtualDeviceCreated(avdName));
-        } else {
-            logger.info("Android virtual device " + avdName + " already exists, will be reused in tests");
-            avdAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
-        }
-    }
-
-    @SuppressWarnings("serial")
-    public void createAVD(AndroidManagedContainerConfiguration configuration, AndroidSDK androidSDK, ProcessExecutor executor)
-            throws AndroidExecutionException {
-        Validate.notNullOrEmpty(configuration.getSdSize(), "Memory SD card size must be defined");
-
+    public void selectDevice(@Observes AndroidBridgeInitialized event) throws AndroidExecutionException {
         try {
-            List<String> args = new ArrayList<String>(Arrays.asList(androidSDK.getAndroidPath(), "create", "avd", "-n",
-                    configuration.getAvdName(), "-t", "android-" + configuration.getApiLevel(), "-f", "-p",
-                    configuration.getAvdName(), "-c", configuration.getSdSize()));
-            if (configuration.getAbi() != null) {
-                args.add("--abi");
-                args.add(configuration.getAbi());
-            }
-            logger.log(Level.INFO, "creating new avd -> {0}", args.toString());
-            String[] argsArrays = new String[args.size()];
-            executor.execute(new HashMap<String, String>() {
-                {
-                    put("Do you wish to create a custom hardware profile [no]", "no\n");
+            if (isPhysicalDeviceAvailable()) {
+                try {
+                    AndroidDevice device = getPhysicalDevice();
+                    androidDevice.set(device);
+                    return;
+                } catch (AndroidExecutionException ex) {
+                    logger.info("Unable to select Android physical device, let's try virtual device");
                 }
-            }, args.toArray(argsArrays));
-        } catch (InterruptedException e) {
-            throw new AndroidExecutionException("Unable to create a new AVD Device", e);
-        } catch (ExecutionException e) {
-            throw new AndroidExecutionException("Unable to create a new AVD Device", e);
-        } catch (AndroidContainerConfigurationException ex) {
-            throw new AndroidExecutionException("Unable to determine proper configuration for "
-                    + "creation of AVD device, check if memory SD card size is defined in the " + "container configuration.");
+            }
+            if (isVirtualDeviceAvailable()) {
+                try {
+                    AndroidDevice device = getVirtualDevice();
+                    androidDevice.set(device);
+                    return;
+                } catch (AndroidExecutionException ex) {
+                    logger.info("Unable to select running Android virtual device, let's see if there is AVD we want");
+                }
+            }
+            if (!isAVDCreated() || configuration.get().isForce()) {
+                logger.info("Android virtual device " + configuration.get().getAvdName() + " is not present in the system, let's create it");
+                try {
+                    createAVD();
+                    configuration.get().setAVDGenerated(true);
+                    logger.info("Android virtual device of name " + configuration.get().getAvdName() + " was successfuly created");
+                    androidVirtualDeviceCreated.fire(new AndroidVirtualDeviceCreated(configuration.get().getAvdName()));
+                    return;
+                } catch (AndroidExecutionException e) {
+                    logger.info("Unable to create AVD");
+                }
+            }
+            else {
+                logger.info("Android virtual device " + configuration.get().getAvdName() + " already exists, will be reused in tests");
+                androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(configuration.get().getAvdName()));
+                logger.info("After FIRE !!!!!!!!!!!!!");
+                //return;
+            }
+        } catch(AndroidExecutionException ex) {
+            throw new AndroidExecutionException("Unable to get Android Device", ex.getMessage());
         }
-
     }
 
-    private AndroidDevice getVirtualDeviceIfConnected(AndroidBridge bridge, String avdName) {
-        System.out.println("AVD NAME " + avdName);
-        // no avdName was specified
-        if (avdName == null || avdName.trim().isEmpty()) {
-            return null;
-        }
+    private boolean isAVDCreated() throws AndroidExecutionException {
+        ProcessExecutor executor = new ProcessExecutor();
+        Set<String> devices = getAvdDeviceNames(executor);
+        return devices.contains(configuration.get().getAvdName());
+    }
 
-        for (AndroidDevice device : bridge.getDevices()) {
-            if (equalsIgnoreNulls(avdName, device.getAvdName())) {
-                System.out.println("GET VIRTUAL DEVICE IF CONNECTED : AVD NAME = " + avdName + " DEVICE.GETAVDNAME() " + device.getAvdName());
+    private boolean isVirtualDeviceAvailable() throws AndroidExecutionException {
+        if (configuration.get().getAvdName() == null || configuration.get().getAvdName().trim().isEmpty()) {
+            return false;
+        }
+        
+        for (AndroidDevice device : androidBridge.get().getDevices()) {
+            if (equalsIgnoreNulls(configuration.get().getAvdName(), device.getAvdName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private AndroidDevice getVirtualDevice() throws AndroidExecutionException {
+        for (AndroidDevice device : androidBridge.get().getDevices()) {
+            if (equalsIgnoreNulls(configuration.get().getAvdName(), device.getAvdName())) {
                 return device;
             }
         }
-
-        return null;
+        throw new AndroidExecutionException("Unable to get virtual device of avd name "
+            + configuration.get().getAvdName());
     }
 
-    private AndroidDevice getRealDeviceIfConnected(AndroidBridge bridge, String serialId) {
-        // no serialId was specified
-        if (serialId == null || serialId.trim().isEmpty()) {
-            return null;
+    private boolean isPhysicalDeviceAvailable() throws AndroidExecutionException {
+        if (configuration.get().getSerialId() == null || configuration.get().getSerialId().trim().isEmpty()) {
+            return false;
         }
 
-        for (AndroidDevice device : bridge.getDevices()) {
-            if (serialId.equals(device.getSerialNumber())) {
+        for (AndroidDevice device : androidBridge.get().getDevices()) {
+            if (configuration.get().getSerialId().equals(device.getSerialNumber())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private AndroidDevice getPhysicalDevice() throws AndroidExecutionException {
+        for (AndroidDevice device : androidBridge.get().getDevices()) {
+            if (configuration.get().getSerialId().equals(device.getSerialNumber())) {
                 return device;
             }
         }
-
-        logger.warning("SerialId " + serialId + " was specified, however no such device was "
-                + "connected. Trying to connect to an emulator instead.");
-
-        return null;
+        throw new AndroidExecutionException("Unable to get psysical device of serial ID "
+            + configuration.get().getSerialId());
     }
 
-    private Set<String> getAvdDeviceNames(ProcessExecutor executor, AndroidSDK sdk) throws AndroidExecutionException {
+    private boolean equalsIgnoreNulls(String current, String other) {
+        if (current == null && other == null) {
+            return false;
+        } else if (current == null && other != null) {
+            return false;
+        } else if (current != null && other == null) {
+            return false;
+        }
+
+        return current.equals(other);
+    }
+
+    private Set<String> getAvdDeviceNames(ProcessExecutor executor) throws AndroidExecutionException {
 
         final Pattern deviceName = Pattern.compile("[\\s]*Name: ([^\\s]+)[\\s]*");
 
@@ -205,7 +207,7 @@ public class AndroidDeviceSelector {
 
         List<String> output;
         try {
-            output = executor.execute(sdk.getAndroidPath(), "list", "avd");
+            output = executor.execute(androidSDK.get().getAndroidPath(), "list", "avd");
         } catch (InterruptedException e) {
             throw new AndroidExecutionException("Unable to get list of available AVDs", e);
         } catch (ExecutionException e) {
@@ -220,26 +222,39 @@ public class AndroidDeviceSelector {
                     continue;
                 }
                 names.add(name);
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Available Android Device: " + name);
-                }
+                logger.info("Available Android Device: " + name);
             }
         }
 
         return names;
     }
 
-    private boolean equalsIgnoreNulls(String current, String other) {
-        if (current == null && other == null) {
-            return false;
-        } else if (current == null && other != null) {
-            return false;
-        } else if (current != null && other == null) {
-            return false;
+    @SuppressWarnings("serial")
+    public void createAVD() throws AndroidExecutionException {
+        AndroidManagedContainerConfiguration configuration = this.configuration.get();
+        AndroidSDK androidSDK = this.androidSDK.get();
+        ProcessExecutor executor = new ProcessExecutor();
+        Validate.notNullOrEmpty(configuration.getSdSize(), "Memory SD card size must be defined");
+
+        try {
+            List<String> args = new ArrayList<String>(Arrays.asList(androidSDK.getAndroidPath(), "create", "avd", "-n",
+                configuration.getAvdName(), "-t", "android-" + configuration.getApiLevel(), "-f", "-p",
+                configuration.getAvdName(), "-c", configuration.getSdSize()));
+            if (configuration.getAbi() != null) {
+                args.add("--abi");
+                args.add(configuration.getAbi());
+            }
+            logger.info("creating new avd " + args.toString());
+            String[] argsArrays = new String[args.size()];
+            executor.execute(new HashMap<String, String>() {
+                {
+                    put("Do you wish to create a custom hardware profile [no]", "no\n");
+                }
+            }, args.toArray(argsArrays));
+        } catch (InterruptedException e) {
+            throw new AndroidExecutionException("Unable to create a new AVD Device", e);
+        } catch (ExecutionException e) {
+            throw new AndroidExecutionException("Unable to create a new AVD Device", e);
         }
-
-        logger.info(current + " " + other);
-
-        return current.equals(other);
     }
 }

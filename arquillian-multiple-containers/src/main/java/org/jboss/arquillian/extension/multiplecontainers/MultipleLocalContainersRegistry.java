@@ -21,7 +21,11 @@
  */
 package org.jboss.arquillian.extension.multiplecontainers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,9 +44,9 @@ import org.jboss.arquillian.core.spi.Validate;
 /**
  * This class registers all adapters which are specified in the arquillian.xml.
  *
- * In the case there is only one adapter implementation on the classpath, it is not necessary to specify it in the container
- * configuration since it will be used automatically. You have to specify it only in the case you are going to use more than one
- * container.
+ * In the case there is only one adapter implementation on the classpath, it is not necessary to specify it in the
+ * container configuration since it will be used automatically. You have to specify it only in the case you are going to
+ * use more than one container.
  *
  * @author Dominik Pospisil <dpospisi@redhat.com>
  * @author Stefan Miklosovic <smikloso@redhat.com>
@@ -84,7 +88,7 @@ public class MultipleLocalContainersRegistry implements ContainerRegistry {
                 Map<String, String> props = definition.getContainerProperties();
                 if (!props.containsKey("adapterImplClass")) {
                     throw new ConfigurationException("Container adapter implementation class must be provided via "
-                            + ADAPTER_IMPL_CONFIG_STRING + " property.");
+                        + ADAPTER_IMPL_CONFIG_STRING + " property.");
                 }
 
                 Class<?> dcImplClass = Class.forName(props.get(ADAPTER_IMPL_CONFIG_STRING));
