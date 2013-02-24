@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
-import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -41,9 +40,9 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * <p>
  * Android Managed container for the Arquillian project
  * </p>
- * 
+ *
  * Deployable Android Container class with the whole lifecycle.
- * 
+ *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
 public class AndroidManagedDeployableContainer implements DeployableContainer<AndroidManagedContainerConfiguration> {
@@ -53,20 +52,17 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     @Inject
     @ContainerScoped
     private InstanceProducer<AndroidManagedContainerConfiguration> configuration;
-    
+
     @Inject
     @ContainerScoped
     private InstanceProducer<AndroidSDK> androidSDK;
 
     @Inject
     private Event<AndroidContainerStart> androidContainerStartEvent;
-    
+
     @Inject
     private Event<AndroidContainerStop> androidContainerStopEvent;
-    
-    @Inject
-    private Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
-    
+
     @Override
     public Class<AndroidManagedContainerConfiguration> getConfigurationClass() {
         return AndroidManagedContainerConfiguration.class;
@@ -85,24 +81,24 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
 
     @Override
     public void start() throws LifecycleException {
-        logger.log(Level.INFO, "Starting the container {0}", configuration.get().getAvdName());
+        logger.log(Level.INFO, "Starting the container {0}.", getContainerName());
         this.androidContainerStartEvent.fire(new AndroidContainerStart());
     }
 
     @Override
     public ProtocolMetaData deploy(Archive<?> arg0) throws DeploymentException {
-        logger.log(Level.INFO, "Deploying an archive to the container {0}", configuration.get().getAvdName());
+        logger.log(Level.INFO, "Deploying an archive to the container {0}.", getContainerName());
         return new ProtocolMetaData();
     }
 
     @Override
     public void undeploy(Archive<?> arg0) throws DeploymentException {
-        logger.log(Level.INFO, "Undeploying an archive from the container {0}", configuration.get().getAvdName());
+        logger.log(Level.INFO, "Undeploying an archive from the container {0}.", getContainerName());
     }
 
     @Override
     public void stop() throws LifecycleException {
-        logger.log(Level.INFO, "Stopping container {0}", configuration.get().getAvdName());
+        logger.log(Level.INFO, "Stopping container {0}.", getContainerName());
         this.androidContainerStopEvent.fire(new AndroidContainerStop());
     }
 
@@ -114,6 +110,10 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     @Override
     public void deploy(Descriptor arg0) throws DeploymentException {
         throw new UnsupportedOperationException("Deployment of a descriptor is not supported");
+    }
+
+    private String getContainerName() {
+        return configuration.get().getAvdName() == null ? configuration.get().getSerialId() : configuration.get().getAvdName();
     }
 
 }

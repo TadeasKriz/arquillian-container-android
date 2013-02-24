@@ -8,15 +8,17 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
+import org.jboss.arquillian.container.android.managed.configuration.Validate;
+
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 
 public class AndroidBridgeImpl implements AndroidBridge {
 
     private static final Logger logger = Logger.getLogger(AndroidBridgeImpl.class.getSimpleName());
-    
+
     private AndroidDebugBridge delegate;
-    
+
     private static final long ADB_TIMEOUT_MS = 60L * 1000;
 
     private File adbLocation;
@@ -27,8 +29,8 @@ public class AndroidBridgeImpl implements AndroidBridge {
         Validate.isReadable(adbLocation, "ADB location does not represent a readable file (" + adbLocation + ")");
         this.adbLocation = adbLocation;
         this.forceNewBridge = forceNewBridge;
-    }    
-    
+    }
+
     @Override
     public void connect() throws AndroidExecutionException {
         logger.info("Connecting to the Android Debug Bridge at " + adbLocation.getAbsolutePath() + " forceNewBridge = " + forceNewBridge);
@@ -53,7 +55,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
         Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
 
         logger.info("Disconnecting Android Debug Bridge at " + adbLocation.getAbsolutePath());
-        
+
         if (isConnected()) {
             System.out.println("\t Android Debug Bridge is connected");
             if (!hasDevices()) {
@@ -75,7 +77,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
         Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
 
         IDevice[] idevices = delegate.getDevices();
-        
+
         List<AndroidDevice> devices = new ArrayList<AndroidDevice>(idevices.length);
         for (IDevice d : idevices) {
             devices.add(new AndroidDeviceImpl(d));
@@ -83,7 +85,22 @@ public class AndroidBridgeImpl implements AndroidBridge {
 
         return devices;
     }
-    
+
+    @Override
+    public List<AndroidDevice> getEmulators() {
+        Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
+
+        List<AndroidDevice> emulators = new ArrayList<AndroidDevice>();
+
+        for (AndroidDevice device : getDevices())  {
+            if (device.isEmulator()) {
+                emulators.add(device);
+            }
+        }
+
+        return emulators;
+    }
+
     @Override
     public boolean hasDevices() {
         Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");

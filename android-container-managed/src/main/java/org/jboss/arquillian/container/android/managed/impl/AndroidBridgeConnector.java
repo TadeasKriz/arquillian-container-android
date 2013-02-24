@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidBridgeTerminated;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
-import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
+import org.jboss.arquillian.android.spi.event.AndroidDeviceShutdown;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
@@ -25,13 +25,13 @@ public class AndroidBridgeConnector {
     @Inject
     @ContainerScoped
     private InstanceProducer<AndroidBridge> androidBridge;
-    
+
     @Inject
     private Instance<AndroidSDK> androidSDK;
-    
+
     @Inject
     private Instance<AndroidManagedContainerConfiguration> configuration;
-    
+
     @Inject
     private Event<AndroidBridgeInitialized> adbInitialized;
 
@@ -47,7 +47,7 @@ public class AndroidBridgeConnector {
      * @throws AndroidExecutionException
      */
     public void initAndroidDebugBridge(@Observes AndroidContainerStart event) throws AndroidExecutionException {
-        
+
         long start = System.currentTimeMillis();
         logger.info("Initializing Android Debug Bridge");
         AndroidBridge bridge = new AndroidBridgeImpl(new File(androidSDK.get().getAdbPath()), configuration.get().isForce());
@@ -64,12 +64,12 @@ public class AndroidBridgeConnector {
      * @param event
      * @throws AndroidExecutionException
      */
-    public void terminateAndroidDebugBridge(@Observes AndroidContainerStop event) throws AndroidExecutionException {
+    public void terminateAndroidDebugBridge(@Observes AndroidDeviceShutdown event) throws AndroidExecutionException {
         logger.info("terminating of Android Debug Bridge");
         androidBridge.get().disconnect();
         adbTerminated.fire(new AndroidBridgeTerminated());
     }
-    
+
     public void afterTerminateAndroidDebugBridge(@Observes AndroidBridgeTerminated event) {
         logger.info("Executing operations after destroying Android Debug Bridge");
     }

@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidDeviceOutputReciever;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
+import org.jboss.arquillian.container.android.managed.configuration.Validate;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
@@ -56,7 +57,14 @@ class AndroidDeviceImpl implements AndroidDevice {
 
     @Override
     public String getAvdName() {
-        return delegate.getAvdName();
+        if (isEmulator()) {
+            String avdName = delegate.getAvdName();
+            if (avdName.equals("<build>")) {
+                return null;
+            }
+            return avdName;
+        }
+        return null;
     }
 
     @Override
@@ -91,6 +99,10 @@ class AndroidDeviceImpl implements AndroidDevice {
     @Override
     public boolean isOffline() {
         return delegate.isOffline();
+    }
+
+    public String getConsolePort() {
+        return isEmulator() ? getSerialNumber().split("-")[1] : null;
     }
 
     @Override
@@ -250,6 +262,18 @@ class AndroidDeviceImpl implements AndroidDevice {
             return delegate.isCancelled();
         }
 
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\navdName\t\t:").append(this.getAvdName()).append("\n");
+        sb.append("consolePort\t:").append(this.getConsolePort()).append("\n");
+        sb.append("serialNumber\t:").append(this.getSerialNumber()).append("\n");
+        sb.append("isEmulator\t:").append(this.isEmulator()).append("\n");
+        sb.append("isOffline\t:").append(this.isOffline()).append("\n");
+        sb.append("isOnline\t:").append(this.isOnline()).append("\n");
+        return sb.toString();
     }
 
 }

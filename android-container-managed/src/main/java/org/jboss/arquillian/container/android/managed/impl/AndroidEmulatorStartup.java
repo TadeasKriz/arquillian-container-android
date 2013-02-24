@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.container.android.managed.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,15 +28,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidDeviceReady;
+import org.jboss.arquillian.android.spi.event.AndroidSDCardCreate;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceEvent;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
-import org.jboss.arquillian.container.android.api.AndroidEmulator;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
-import org.jboss.arquillian.container.android.managed.configuration.SDCardIdentifierGenerator;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -59,7 +57,7 @@ import com.android.ddmlib.IDevice;
  *
  * Creates:
  * <ul>
- * <li>{@link AndroidEmulatorImpl}</li>
+ * <li>{@link AndroidEmulator}</li>
  * <li>{@link AndroidDevice}</li>
  * </ul>
  *
@@ -85,107 +83,35 @@ public class AndroidEmulatorStartup {
 
     @Inject
     private Instance<AndroidBridge> androidBridge;
-    
+
     @Inject
     private Instance<AndroidManagedContainerConfiguration> configuration;
-    
+
     @Inject
     private Instance<AndroidSDK> androidSDK;
-    
+
     @Inject
     private Event<AndroidDeviceReady> androidDeviceReady;
 
-    public void createAndroidEmulator(@Observes AndroidVirtualDeviceAvailable event) throws AndroidExecutionException {
-        if (!androidBridge.get().isConnected()) {
-            throw new IllegalStateException("Android debug bridge must be connected in order to spawn the emulator");
-        }
-        
-        String avdName = configuration.get().getAvdName();
-        
-        if (avdName == null) {
-            throw new IllegalStateException("Android Virtual Device name has to be set in order to spawn the emulator");
-        }
-        
-        AndroidDevice emulator = null;
-        
-        CountDownWatch countdown = new CountDownWatch(configuration.get().getEmulatorBootupTimeoutInSeconds(),
-            TimeUnit.SECONDS);
-        logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be started and connected.", new Object[] {
-            countdown.timeout(), avdName });
-        
-        DeviceConnectDiscovery deviceDiscovery = new DeviceConnectDiscovery();
-        AndroidDebugBridge.addDeviceChangeListener(deviceDiscovery);
-        
-        ProcessExecutor emulatorProcessExecutor = new ProcessExecutor();
-        ProcessExecutor makeSdCardProcessExecutor = new ProcessExecutor();
-        
-        //Process makeSdCardProcess = makeSDCard(makeSdCardProcessExecutor, androidSDK.get(), configuration.get());
-        Process emulatorProcess = startEmulator(emulatorProcessExecutor, androidSDK.get(), configuration.get());
-        
-        androidEmulator.set(new AndroidEmulatorImpl(emulatorProcess));
-        
-        logger.log(Level.FINE, "Emulator process started, {0} seconds remaining to start the device {1}", new Object[] {
-            countdown.timeLeft(), avdName });
-        
-        waitUntilBootUpIsComplete(deviceDiscovery, emulatorProcessExecutor, androidSDK.get(), countdown);
-       
-        emulator = deviceDiscovery.getDiscoveredDevice();
-        
-        AndroidDebugBridge.removeDeviceChangeListener(deviceDiscovery);
-        
-        androidDevice.set((AndroidDeviceImpl) emulator);
-        androidDeviceReady.fire(new AndroidDeviceReady(emulator));
-        logger.log(Level.INFO, "android device ready fired");
-        
-    }
-    
-/*    public void createAndroidEmulator(@Observes AndroidVirtualDeviceAvailable event, AndroidBridge bridge,
-        AndroidManagedContainerConfiguration configuration, AndroidSDK sdk, ProcessExecutor executor)
-        throws AndroidExecutionException {
+    @Inject
+    private Event<AndroidSDCardCreate> androidSDCardCreate;
 
-        System.out.println("HEHEHEHEHEHEH");
-        
-        if (!bridge.isConnected()) {
-            throw new IllegalStateException("Android debug bridge must be connected in order to spawn the emulator");
-        }
+    private Process startEmulator(ProcessExecutor executor) throws AndroidExecutionException {
 
-        String name = configuration.getAvdName();
-
-        if (name == null) {
-            throw new IllegalStateException("Android Virtual Device name has to be set in order to spawn the emulator");
-        }
-
-        AndroidDevice running = null;
-
-        CountDownWatch countdown = new CountDownWatch(configuration.getEmulatorBootupTimeoutInSeconds(),
-            TimeUnit.SECONDS);
-        logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be started and connected.", new Object[] {
-            countdown.timeout(), name });
-
-        // discover what device was added here
-        DeviceConnectDiscovery deviceDiscovery = new DeviceConnectDiscovery();
-        AndroidDebugBridge.addDeviceChangeListener(deviceDiscovery);
-        Process emulator = startEmulator(executor, sdk, name, configuration.getEmulatorOptions());
-        androidEmulator.set(new AndroidEmulatorImpl(emulator));
-        logger.log(Level.FINE, "Emulator process started, {0} seconds remaining to start the device {1}", new Object[] {
-            countdown.timeLeft(), name });
-
-        waitUntilBootUpIsComplete(deviceDiscovery, executor, sdk, countdown);
-        running = deviceDiscovery.getDiscoveredDevice();
-        AndroidDebugBridge.removeDeviceChangeListener(deviceDiscovery);
-
-        // fire event that we have a device ready
-        androidDevice.set((AndroidDeviceImpl) running);
-        androidDeviceReady.fire(new AndroidDeviceReady(running));
-    }*/
-
-    private Process startEmulator(ProcessExecutor executor, AndroidSDK sdk, AndroidManagedContainerConfiguration configuration)
-        throws AndroidExecutionException {
+        AndroidSDK sdk = androidSDK.get();
+        AndroidManagedContainerConfiguration configuration = this.configuration.get();
 
         logger.log(Level.INFO, configuration.toString());
-        
+
         // construct emulator command
-        List<String> emulatorCommand = new ArrayList<String>(Arrays.asList(sdk.getEmulatorPath(), "-avd", configuration.getAvdName(), "-sdcard", configuration.getSdCard()));
+        List<String> emulatorCommand = new ArrayList<String>(Arrays.asList(sdk.getEmulatorPath(), "-avd",
+                configuration.getAvdName()));
+
+        if (configuration.getSdCard() != null) {
+            emulatorCommand.add("-sdCard");
+            emulatorCommand.add(configuration.getSdCard());
+        }
+
         logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
         emulatorCommand = getEmulatorOptions(emulatorCommand, configuration.getEmulatorOptions());
         logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
@@ -193,32 +119,61 @@ public class AndroidEmulatorStartup {
         try {
             return executor.spawn(emulatorCommand);
         } catch (InterruptedException e) {
-            throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}", configuration.getAvdName(),
-                configuration.getEmulatorOptions());
+            throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
+                    configuration.getAvdName(),
+                    configuration.getEmulatorOptions());
         } catch (ExecutionException e) {
-            throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}", configuration.getAvdName(),
-                configuration.getEmulatorOptions());
+            throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
+                    configuration.getAvdName(),
+                    configuration.getEmulatorOptions());
         }
 
     }
 
-/*    private void makeSDCard(ProcessExecutor executor, AndroidSDK sdk, AndroidManagedContainerConfiguration configuration) {
-        
-        String[] sdCardFileName = new File(configuration.getSdCard()).getName().split(".");
-        String sdCardLabel = sdCardFileName[0];
-        
-        List <String> makeSdCardCommand = new ArrayList<String>(Arrays.asList(
-            sdk.getMakeSdCardPath(), "-l", sdCardLabel, configuration.getSdSize(), configuration.getSdCard()));
-        executor.spawn()
-        try {
-            return execute
+    public void createAndroidEmulator(@Observes AndroidVirtualDeviceAvailable event) throws AndroidExecutionException {
+        if (!androidBridge.get().isConnected()) {
+            throw new IllegalStateException("Android debug bridge must be connected in order to spawn the emulator");
         }
-        
-    }*/
-    
-    private void waitUntilBootUpIsComplete(final DeviceConnectDiscovery deviceDiscovery,
-        final ProcessExecutor executor, final AndroidSDK sdk, final CountDownWatch countdown)
-        throws AndroidExecutionException {
+
+        AndroidManagedContainerConfiguration configuration = this.configuration.get();
+        AndroidDevice emulator = null;
+
+        logger.log(Level.INFO, "before androidSDCardCreate");
+
+        androidSDCardCreate.fire(new AndroidSDCardCreate());
+
+        logger.log(Level.INFO, "after androidSDCardCreate");
+
+        CountDownWatch countdown = new CountDownWatch(configuration.getEmulatorBootupTimeoutInSeconds(), TimeUnit.SECONDS);
+        logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be started and connected.", new Object[] {
+                countdown.timeout(), configuration.getAvdName() });
+
+        ProcessExecutor emulatorProcessExecutor = new ProcessExecutor();
+        DeviceConnectDiscovery deviceDiscovery = new DeviceConnectDiscovery();
+        AndroidDebugBridge.addDeviceChangeListener(deviceDiscovery);
+
+        Process emulatorProcess = startEmulator(emulatorProcessExecutor);
+
+        androidEmulator.set(new AndroidEmulator(emulatorProcess));
+
+        logger.log(Level.INFO, "Emulator process started, {0} seconds remaining to start the device {1}", new Object[] {
+                countdown.timeLeft(), configuration.getAvdName() });
+
+        waitUntilBootUpIsComplete(deviceDiscovery, emulatorProcessExecutor, countdown);
+
+        emulator = deviceDiscovery.getDiscoveredDevice();
+
+        AndroidDebugBridge.removeDeviceChangeListener(deviceDiscovery);
+
+        androidDevice.set(emulator);
+        androidDeviceReady.fire(new AndroidDeviceReady(emulator));
+        logger.log(Level.INFO, "android device ready fired");
+
+    }
+
+    private void waitUntilBootUpIsComplete(final DeviceConnectDiscovery deviceDiscovery, final ProcessExecutor executor,
+            final CountDownWatch countdown)
+            throws AndroidExecutionException {
 
         try {
             boolean isOnline = executor.scheduleUntilTrue(new Callable<Boolean>() {
@@ -230,19 +185,29 @@ public class AndroidEmulatorStartup {
 
             if (isOnline == false) {
                 throw new IllegalStateException(
-                    "No emulator device was brough online during "
-                        + countdown.timeout()
-                        + " seconds to Android Debug Bridge. Please increase the time limit in order to get emulator connected.");
+                        "No emulator device was brough online during "
+                                + countdown.timeout()
+                                + " seconds to Android Debug Bridge. Please increase the time limit in order to get emulator connected.");
             }
+
+            logger.log(Level.INFO, "before two executors");
 
             // device is connected to ADB
             final AndroidDevice connectedDevice = deviceDiscovery.getDiscoveredDevice();
+
+            logger.log(Level.INFO, "Serial number: " + connectedDevice.getSerialNumber());
+
+            final String adbPath = androidSDK.get().getAdbPath();
+            logger.log(Level.INFO, "adbPath: " + adbPath);
+            final String serialNumber = connectedDevice.getSerialNumber();
+            logger.log(Level.INFO, "serial number: " + serialNumber);
+
             isOnline = executor.scheduleUntilTrue(new Callable<Boolean>() {
                 @Override
                 public Boolean call() throws Exception {
                     // check properties of underlying process
-                    List<String> props = executor.execute(Collections.<String, String> emptyMap(), sdk.getAdbPath(),
-                        "-s", connectedDevice.getSerialNumber(), "shell", "getprop");
+                    List<String> props = executor.execute(Collections.<String, String> emptyMap(), adbPath,
+                            "-s", serialNumber, "shell", "getprop");
                     for (String line : props) {
                         if (line.contains("[ro.runtime.firstboot]")) {
                             // boot is completed
@@ -255,16 +220,17 @@ public class AndroidEmulatorStartup {
 
             if (logger.isLoggable(Level.INFO)) {
                 logger.log(Level.INFO, "Android emulator {0} was started within {1} seconds", new Object[] {
-                    connectedDevice.getAvdName(), countdown.timeElapsed() });
+                        connectedDevice.getAvdName(), countdown.timeElapsed() });
             }
 
             if (isOnline == false) {
                 throw new AndroidExecutionException("Emulator device hasn't started properly in " + countdown.timeout()
-                    + " seconds. Please increase the time limit in order to get emulator booted.");
+                        + " seconds. Please increase the time limit in order to get emulator booted.");
             }
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Emulator device startup failed.");
         } catch (ExecutionException e) {
+            logger.log(Level.INFO, e.getCause().toString());
             throw new AndroidExecutionException(e, "Emulator device startup failed.");
         }
     }
@@ -303,7 +269,7 @@ public class AndroidEmulatorStartup {
         public void deviceConnected(IDevice device) {
             this.discoveredDevice = device;
             logger.log(Level.FINE, "Discovered an emulator device id={0} connected to ADB bus",
-                device.getSerialNumber());
+                    device.getSerialNumber());
         }
 
         @Override

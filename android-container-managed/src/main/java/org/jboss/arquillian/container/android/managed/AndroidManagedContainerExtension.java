@@ -21,7 +21,9 @@ import org.jboss.arquillian.container.android.api.DeviceSelector;
 import org.jboss.arquillian.container.android.enricher.AndroidDeviceResourceProvider;
 import org.jboss.arquillian.container.android.managed.impl.AndroidBridgeConnector;
 import org.jboss.arquillian.container.android.managed.impl.AndroidDeviceSelector;
+import org.jboss.arquillian.container.android.managed.impl.AndroidEmulatorShutdown;
 import org.jboss.arquillian.container.android.managed.impl.AndroidEmulatorStartup;
+import org.jboss.arquillian.container.android.managed.impl.AndroidSDCardImpl;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
@@ -43,8 +45,10 @@ public class AndroidManagedContainerExtension implements LoadableExtension {
         builder.service(ResourceProvider.class, AndroidDeviceResourceProvider.class);
         builder.service(DeviceSelector.class, AndroidDeviceSelector.class);
         builder.observer(AndroidBridgeConnector.class);
-        builder.observer(AndroidEmulatorStartup.class);
         builder.observer(AndroidDeviceSelector.class);
+        builder.observer(AndroidEmulatorStartup.class);
+        builder.observer(AndroidEmulatorShutdown.class);
+        builder.observer(AndroidSDCardImpl.class);
     }
 
 }
