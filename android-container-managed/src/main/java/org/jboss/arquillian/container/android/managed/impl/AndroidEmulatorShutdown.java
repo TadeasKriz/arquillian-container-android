@@ -44,8 +44,8 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
 import org.jboss.arquillian.android.spi.event.AndroidDeviceShutdown;
+import org.jboss.arquillian.android.spi.event.AndroidEmulatorEvent;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
-import org.jboss.arquillian.container.android.api.AndroidEmulatorEvent;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.core.api.Event;

@@ -24,19 +24,20 @@ import java.util.Map;
  * Representation of Android Device
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
 public interface AndroidDevice {
 
     /**
-     * Returns serial number of device
+     * Returns serial number of device.
      *
      * @return Serial number
      */
     String getSerialNumber();
 
     /**
-     * Returns name of Android Virtual Device
+     * Returns name of Android Virtual Device.
      *
      * @return Either a virtual device name or {@code null} if device is not an emulator
      */
@@ -75,8 +76,9 @@ public interface AndroidDevice {
     boolean isEmulator();
 
     /**
-     * Returns if the device is offline
+     * Checks if the device is offline.
      *
+     * @return {@code true} if device is offline, {@code false} otherwise
      */
     boolean isOffline();
 
@@ -127,7 +129,7 @@ public interface AndroidDevice {
      * @param packageFilePath
      *        the absolute file system path to file on local host to install
      * @param reinstall
-     *        set to <code>true</code> if re-install of app should be performed
+     *        set to {@code true}if re-install of app should be performed
      * @param extraArgs
      *        optional extra arguments to pass. See 'adb shell pm install --help' for available options.
      */
@@ -152,7 +154,7 @@ public interface AndroidDevice {
 
     /**
      * @return console port of the emulator - the number after "emulator" string in the serial number string of the emulator
-     *         obtained by adb devices -l command.
+     *         obtained by {@code adb devices -l command}.
      */
     String getConsolePort();
 }

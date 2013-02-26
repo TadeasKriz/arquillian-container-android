@@ -34,12 +34,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>android-container-configuration</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>android-container-managed</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>

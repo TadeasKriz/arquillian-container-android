@@ -28,22 +28,22 @@ public class AndroidContainerConfigurationException extends ConfigurationExcepti
     private static final long serialVersionUID = -2363543684908024418L;
 
     /**
-     * @param message
+     * @param message message to be printed out
      */
     public AndroidContainerConfigurationException(String message) {
         super(message);
     }
 
     /**
-     * @param cause
+     * @param cause cause of the exception
      */
     public AndroidContainerConfigurationException(Throwable cause) {
         super(cause);
     }
 
     /**
-     * @param message
-     * @param cause
+     * @param message message to be printed out
+     * @param cause cause of the exception
      */
     public AndroidContainerConfigurationException(String message, Throwable cause) {
         super(message, cause);

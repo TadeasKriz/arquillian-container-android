@@ -14,27 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.android.managed.impl;
+package org.jboss.arquillian.android.spi.event;
 
 /**
- * An Android emulator process.
+ * Represents an action to perform upon {@link AndroidEmulator} instance such as its startup or shutdown.
  *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public class AndroidEmulator {
-
-    private Process process;
-
-    public AndroidEmulator(Process process) {
-        this.process = process;
-    }
-
-    public Process getProcess() {
-        return process;
-    }
-
-    public void setProcess(Process process) {
-        this.process = process;
-    }
+public interface AndroidEmulatorEvent {
 }

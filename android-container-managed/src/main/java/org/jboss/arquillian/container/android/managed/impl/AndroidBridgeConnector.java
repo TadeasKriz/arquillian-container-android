@@ -1,3 +1,20 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.container.android.managed.impl;
 
 import java.io.File;
@@ -18,9 +35,35 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
+/**
+ * Connects to the Android Debug Bridge. <br>
+ * <br>
+ * Observes:
+ * <ul>
+ * <li>{@link AndroidContainerStart}</li>
+ * <li>{@link AndroidDeviceShutdown}</li>
+ * <li>{@link AndroidBridgeTerminated}</li>
+ * </ul>
+ *
+ * Creates: <br>
+ * <br>
+ * <ul>
+ * <li>{@link AndroidBridge}</li>
+ * </ul>
+ *
+ * Fires: <br>
+ * <br>
+ * <ul>
+ * <li>{@link AndroidBridgeInitialized}</li>
+ * <li>{@link AndroidBridgeTerminated}</li>
+ * </ul>
+ *
+ * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
+ *
+ */
 public class AndroidBridgeConnector {
 
-    private static final Logger logger = Logger.getLogger(AndroidBridgeConnector.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(AndroidBridgeConnector.class.getName());
 
     @Inject
     @ContainerScoped
@@ -47,13 +90,16 @@ public class AndroidBridgeConnector {
      * @throws AndroidExecutionException
      */
     public void initAndroidDebugBridge(@Observes AndroidContainerStart event) throws AndroidExecutionException {
+        logger.info("Initializing Android Debug Bridge.");
 
         long start = System.currentTimeMillis();
-        logger.info("Initializing Android Debug Bridge");
-        AndroidBridge bridge = new AndroidBridgeImpl(new File(androidSDK.get().getAdbPath()), configuration.get().isForce());
+        AndroidBridge bridge = new AndroidBridgeImpl(new File(androidSDK.get().getAdbPath()), configuration.get()
+                .isForceNewBridge());
         bridge.connect();
         long delta = System.currentTimeMillis() - start;
-        logger.info("Android debug Bridge was initialized in " + delta + "ms");
+
+        logger.info("Android Debug Bridge was initialized in " + delta + "ms.");
+
         androidBridge.set(bridge);
         adbInitialized.fire(new AndroidBridgeInitialized());
     }
@@ -65,11 +111,16 @@ public class AndroidBridgeConnector {
      * @throws AndroidExecutionException
      */
     public void terminateAndroidDebugBridge(@Observes AndroidDeviceShutdown event) throws AndroidExecutionException {
-        logger.info("terminating of Android Debug Bridge");
+        logger.info("Terminating Android Debug Bridge.");
         androidBridge.get().disconnect();
         adbTerminated.fire(new AndroidBridgeTerminated());
     }
 
+    /**
+     * Listens to {@link AndroidBridgeTerminated} event and reacts accordingly.
+     *
+     * @param event
+     */
     public void afterTerminateAndroidDebugBridge(@Observes AndroidBridgeTerminated event) {
         logger.info("Executing operations after destroying Android Debug Bridge");
     }

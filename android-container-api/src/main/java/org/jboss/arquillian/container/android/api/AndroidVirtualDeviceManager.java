@@ -17,26 +17,34 @@
 package org.jboss.arquillian.container.android.api;
 
 /**
- * Abstraction of a processor for output written by shell command
+ * Manages creation and deletion of Android virtual device.
  *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
+ *
  */
-public interface AndroidDeviceOutputReciever {
+public interface AndroidVirtualDeviceManager {
 
     /**
-     * Processes output of a shell command
+     * Creates Android virtual device.
      *
-     * @param lines
-     *        Array of lines returned by shell command to be processed
+     * @throws AndroidExecutionException
      */
-    void processNewLines(String[] lines);
+    void createAndroidVirtualDevice(String avdName) throws AndroidExecutionException;
 
     /**
-     * Checks if command execution was cancelled
+     * Deletes Android virtual device.
      *
-     * @return {@code true} if command was cancelled, {@code false} otherwise
+     * @throws AndroidExecutionException
      */
-    boolean isCancelled();
+    void deleteAndroidVirtualDevice(String avdName) throws AndroidExecutionException;
 
+    /**
+     * Checks if some AVD exists or not.
+     *
+     * @param avdName
+     *        name of the AVD to check existence of
+     * @return true if AVD of name {@code avdName} exists, false otherwise
+     * @throws AndroidExecutionException
+     */
+    boolean androidVirtualDeviceExists(String avdName) throws AndroidExecutionException;
 }

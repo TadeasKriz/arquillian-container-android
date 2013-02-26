@@ -103,7 +103,7 @@ public class AndroidSDK {
                 return current.compareTo(other);
             } catch (NumberFormatException e) {
                 logger.log(Level.INFO, "Unable to compare platforms taking their api level as Integers, "
-                    + "comparison as Strings follows");
+                        + "comparison as Strings follows");
             }
 
             // failed, try to compare as strings
@@ -175,10 +175,10 @@ public class AndroidSDK {
      * @throws AndroidContainerConfigurationException
      */
     public AndroidSDK(AndroidManagedContainerConfiguration configuration) throws AndroidContainerConfigurationException {
-        
+
         Validate.notNull(configuration, "AndroidSdk configuration must be provided");
         Validate.isReadableDirectory(configuration.getHome(), "Unable to read Android SDK from directory "
-            + configuration.getHome());
+                + configuration.getHome());
         Validate.notNullOrEmpty(configuration.getApiLevel(), "Platform or API level for Android SDK must be specified");
 
         this.sdkPath = new File(configuration.getHome());
@@ -196,11 +196,11 @@ public class AndroidSDK {
             }
 
             throw new AndroidContainerConfigurationException(
-                "Invalid SDK: API level "
-                    + configuration.getApiLevel()
-                    + " is not available. Available platforms are: "
-                    + sb.toString()
-                    + ". Use either Platform identification or API level in Arquillian configuration to identify your platform.");
+                    "Invalid SDK: API level "
+                            + configuration.getApiLevel()
+                            + " is not available. Available platforms are: "
+                            + sb.toString()
+                            + ". Use either Platform identification or API level in Arquillian configuration to identify your platform.");
         }
         this.configuration = configuration;
     }
@@ -211,8 +211,8 @@ public class AndroidSDK {
 
     public void setConfiguration(AndroidManagedContainerConfiguration configuration) {
         this.configuration = configuration;
-    }    
-    
+    }
+
     private Platform findPlatformByApiLevel(String apiLevel) {
         for (Platform p : availablePlatforms) {
             if (p.apiLevel.equals(apiLevel)) {
@@ -241,25 +241,25 @@ public class AndroidSDK {
         }
 
         throw new AndroidContainerConfigurationException("Android SDK could not be identified from path \"" + sdkPath
-            + "\". ");
+                + "\". ");
     }
 
     /**
      * Returns the complete path for a tool, based on this SDK.
      *
      * @param tool
-     *            which tool, for example <code>adb</code> or <code>dx.jar</code>.
+     *        which tool, for example <code>adb</code> or <code>dx.jar</code>.
      * @return the complete path as a <code>String</code>, including the tool's filename.
      */
     public String getPathForTool(String tool) {
 
         String[] possiblePaths = { sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool,
-            sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool + ".exe",
-            sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool + ".bat",
-            sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/lib/" + tool, getPlatform() + "/tools/" + tool,
-            getPlatform() + "/tools/" + tool + ".exe", getPlatform() + "/tools/" + tool + ".bat",
-            getPlatform() + "/tools/lib/" + tool, sdkPath + "/tools/" + tool, sdkPath + "/tools/" + tool + ".exe",
-            sdkPath + "/tools/" + tool + ".bat", sdkPath + "/tools/lib/" + tool };
+                sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool + ".exe",
+                sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool + ".bat",
+                sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/lib/" + tool, getPlatform() + "/tools/" + tool,
+                getPlatform() + "/tools/" + tool + ".exe", getPlatform() + "/tools/" + tool + ".bat",
+                getPlatform() + "/tools/lib/" + tool, sdkPath + "/tools/" + tool, sdkPath + "/tools/" + tool + ".exe",
+                sdkPath + "/tools/" + tool + ".bat", sdkPath + "/tools/lib/" + tool };
 
         for (String possiblePath : possiblePaths) {
             File file = new File(possiblePath);
@@ -269,7 +269,7 @@ public class AndroidSDK {
         }
 
         throw new RuntimeException("Could not find tool '" + tool
-            + "'. Please ensure you've set it properly in Arquillian configuration");
+                + "'. Please ensure you've set it properly in Arquillian configuration");
     }
 
     /**
@@ -280,7 +280,7 @@ public class AndroidSDK {
     public String getEmulatorPath() {
         return getPathForTool("emulator");
     }
-    
+
     public String getMakeSdCardPath() {
         return getPathForTool("mksdcard");
     }
@@ -325,7 +325,7 @@ public class AndroidSDK {
 
         final File platformsDirectory = new File(sdkPath, PLATFORMS_FOLDER_NAME);
         Validate.isReadableDirectory(platformsDirectory,
-            "Unable to read Android SDK Platforms directory from directory " + platformsDirectory);
+                "Unable to read Android SDK Platforms directory from directory " + platformsDirectory);
 
         if (platform == null) {
             final File[] platformDirectories = platformsDirectory.listFiles();
@@ -334,7 +334,7 @@ public class AndroidSDK {
         } else {
             final File platformDirectory = new File(platform.path);
             Validate.isReadableDirectory(platformsDirectory,
-                "Unable to read Android SDK Platforms directory from directory " + platformsDirectory);
+                    "Unable to read Android SDK Platforms directory from directory " + platformsDirectory);
             return platformDirectory;
         }
     }
@@ -356,8 +356,8 @@ public class AndroidSDK {
                 properties.load(new FileInputStream(propFile));
             } catch (IOException e) {
                 throw new AndroidContainerConfigurationException(
-                    "Unable to read platform directory details from its configuration file "
-                        + propFile.getAbsoluteFile());
+                        "Unable to read platform directory details from its configuration file "
+                                + propFile.getAbsoluteFile());
             }
             if (properties.containsKey(PLATFORM_VERSION_PROPERTY) && properties.containsKey(API_LEVEL_PROPERTY)) {
                 String platform = properties.getProperty(PLATFORM_VERSION_PROPERTY);
@@ -385,7 +385,7 @@ public class AndroidSDK {
 
         final File platformsDirectory = new File(sdkPath, PLATFORMS_FOLDER_NAME);
         Validate.isReadableDirectory(platformsDirectory,
-            "Unable to read Android SDK Platforms directory from directory " + platformsDirectory);
+                "Unable to read Android SDK Platforms directory from directory " + platformsDirectory);
 
         final File[] platformDirectories = platformsDirectory.listFiles();
         for (File file : platformDirectories) {

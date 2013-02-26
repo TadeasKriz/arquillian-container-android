@@ -1,3 +1,20 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.container.android.managed.impl;
 
 import java.io.File;
@@ -13,9 +30,17 @@ import org.jboss.arquillian.container.android.managed.configuration.Validate;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 
+/**
+ * Implementation of the {@link AndroidBridge} by which we can connect,
+ * disconnect to the bridge and query {@link AndroidDebugBridge} for attached
+ * devices.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
+ */
 public class AndroidBridgeImpl implements AndroidBridge {
 
-    private static final Logger logger = Logger.getLogger(AndroidBridgeImpl.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(AndroidBridgeImpl.class.getName());
 
     private AndroidDebugBridge delegate;
 
@@ -26,14 +51,15 @@ public class AndroidBridgeImpl implements AndroidBridge {
     private boolean forceNewBridge;
 
     AndroidBridgeImpl(File adbLocation, boolean forceNewBridge) throws IllegalArgumentException {
-        Validate.isReadable(adbLocation, "ADB location does not represent a readable file (" + adbLocation + ")");
+        Validate.isReadable(adbLocation, "ADB location does not represent a readable file: " + adbLocation);
         this.adbLocation = adbLocation;
         this.forceNewBridge = forceNewBridge;
     }
 
     @Override
     public void connect() throws AndroidExecutionException {
-        logger.info("Connecting to the Android Debug Bridge at " + adbLocation.getAbsolutePath() + " forceNewBridge = " + forceNewBridge);
+        logger.info("Connecting to the Android Debug Bridge at " + adbLocation.getAbsolutePath() + " forceNewBridge = "
+                + forceNewBridge);
         this.delegate = AndroidDebugBridge.getBridge();
         if (delegate == null) {
             AndroidDebugBridge.init(false);
@@ -42,7 +68,6 @@ public class AndroidBridgeImpl implements AndroidBridge {
             waitForInitialDeviceList();
         }
     }
-
 
     @Override
     public boolean isConnected() {
@@ -57,17 +82,16 @@ public class AndroidBridgeImpl implements AndroidBridge {
         logger.info("Disconnecting Android Debug Bridge at " + adbLocation.getAbsolutePath());
 
         if (isConnected()) {
-            System.out.println("\t Android Debug Bridge is connected");
+            logger.fine("\t Android Debug Bridge is connected");
             if (!hasDevices()) {
-                System.out.println("\t\t Android Debug Bridge does't have devices");
+                logger.fine("\t\t Android Debug Bridge does't have devices");
                 AndroidDebugBridge.disconnectBridge();
                 AndroidDebugBridge.terminate();
             } else {
-                System.out.println("\t\t Android Debug Bridge has devices");
+                logger.fine("\t\t Android Debug Bridge has devices");
                 logger.info("There are still some devices on the Android Debug Bridge bridge will not be disconnected until none are connected.");
             }
         } else {
-            System.out.println("\t Android Debug Bridge is not connected");
             logger.info("Android Debug Bridge is already disconnected");
         }
     }
@@ -92,7 +116,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
 
         List<AndroidDevice> emulators = new ArrayList<AndroidDevice>();
 
-        for (AndroidDevice device : getDevices())  {
+        for (AndroidDevice device : getDevices()) {
             if (device.isEmulator()) {
                 emulators.add(device);
             }
@@ -142,7 +166,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(
-                        "Interrupted while waiting for initial device list from Android Debug Bridge");
+                            "Interrupted while waiting for initial device list from Android Debug Bridge");
                 }
             }
             if (!delegate.hasInitialDeviceList()) {

@@ -1,3 +1,20 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.container.android.managed.impl;
 
 import java.io.File;
@@ -14,7 +31,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.android.spi.event.AndroidSDCardCreate;
 import org.jboss.arquillian.android.spi.event.AndroidSDCardDelete;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
-import org.jboss.arquillian.container.android.api.AndroidSDCard;
+import org.jboss.arquillian.container.android.api.AndroidSDCardManager;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.android.managed.configuration.Validate;
@@ -22,9 +39,9 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
-public class AndroidSDCardImpl implements AndroidSDCard {
+public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
-    private static final Logger logger = Logger.getLogger(AndroidSDCardImpl.class.getName());
+    private static final Logger logger = Logger.getLogger(AndroidSDCardManagerImpl.class.getName());
 
     @Inject
     Instance<AndroidManagedContainerConfiguration> configuration;
@@ -38,7 +55,6 @@ public class AndroidSDCardImpl implements AndroidSDCard {
 
     public void createSDCard(@Observes AndroidSDCardCreate event) {
 
-
         logger.log(Level.INFO, "before isUsingSystemCard()");
 
         AndroidManagedContainerConfiguration configuration = this.configuration.get();
@@ -46,7 +62,7 @@ public class AndroidSDCardImpl implements AndroidSDCard {
         if (!isUsingSystemSDCard()) {
             if (generateSDCard()) {
                 logger.log(Level.INFO, "after generateSDCard()");
-                configuration.setSdCard(SD_CARD_DEFAULT_DIR_PATH + SDCardIdentifierGenerator.getRandomSDCardName());
+                configuration.setSdCard(SD_CARD_DEFAULT_DIR_PATH + IdentifierGenerator.getRandomSDCardName());
                 configuration.setSdCardFileNameGenerated(true);
             }
             createSDCard();
@@ -77,7 +93,7 @@ public class AndroidSDCardImpl implements AndroidSDCard {
         try {
 
             if (configuration.getSdCard() == null) {
-                configuration.setSdCard(SD_CARD_DEFAULT_DIR_PATH + SDCardIdentifierGenerator.getRandomSDCardName());
+                configuration.setSdCard(SD_CARD_DEFAULT_DIR_PATH + IdentifierGenerator.getRandomSDCardName());
                 configuration.setSdCardFileNameGenerated(true);
             }
 
@@ -175,7 +191,7 @@ public class AndroidSDCardImpl implements AndroidSDCard {
      *
      * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
      */
-    private static final class SDCardIdentifierGenerator {
+    private static final class IdentifierGenerator {
 
         private static final int NUM_BITS = 130;
 

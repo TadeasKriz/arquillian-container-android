@@ -34,7 +34,7 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private boolean skip;
 
-    private boolean force;
+    private boolean forceNewBridge;
 
     private String serialId;
 
@@ -109,12 +109,12 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         this.skip = skip;
     }
 
-    public boolean isForce() {
-        return force;
+    public boolean isForceNewBridge() {
+        return forceNewBridge;
     }
 
-    public void setForce(boolean force) {
-        this.force = force;
+    public void setForceNewBridge(boolean force) {
+        this.forceNewBridge = force;
     }
 
     public long getEmulatorBootupTimeoutInSeconds() {
@@ -269,7 +269,7 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         sb.append("\navdName\t\t:").append(this.avdName).append("\n");
         sb.append("apiLevel\t:").append(this.apiLevel).append("\n");
         sb.append("serialId\t:").append(this.serialId).append("\n");
-        sb.append("force\t\t:").append(this.force).append("\n");
+        sb.append("force\t\t:").append(this.forceNewBridge).append("\n");
         sb.append("skip\t\t:").append(this.skip).append("\n");
         sb.append("sdCard\t\t:").append(this.sdCard).append("\n");
         sb.append("sdSize\t\t:").append(this.sdSize).append("\n");

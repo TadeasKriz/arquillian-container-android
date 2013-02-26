@@ -36,11 +36,6 @@
             <artifactId>android-container-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>android-container-configuration</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- Arquillian dependencies -->
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>

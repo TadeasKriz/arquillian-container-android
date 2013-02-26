@@ -87,7 +87,7 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
 
     @Override
     public ProtocolMetaData deploy(Archive<?> arg0) throws DeploymentException {
-        logger.log(Level.INFO, "Deploying an archive to the container {0}.", getContainerName());
+        logger.log(Level.INFO, "Deploying the archive to the container {0}.", getContainerName());
         return new ProtocolMetaData();
     }
 
@@ -98,7 +98,7 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
 
     @Override
     public void stop() throws LifecycleException {
-        logger.log(Level.INFO, "Stopping container {0}.", getContainerName());
+        logger.log(Level.INFO, "Stopping the container {0}.", getContainerName());
         this.androidContainerStopEvent.fire(new AndroidContainerStop());
     }
 
@@ -112,6 +112,13 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
         throw new UnsupportedOperationException("Deployment of a descriptor is not supported");
     }
 
+    /**
+     * Gets name of the container.
+     *
+     * When container is backed by emulator, it gets its AVD name, otherwise it gets serial number of the physical device
+     *
+     * @return descriptive name of the container
+     */
     private String getContainerName() {
         return configuration.get().getAvdName() == null ? configuration.get().getSerialId() : configuration.get().getAvdName();
     }

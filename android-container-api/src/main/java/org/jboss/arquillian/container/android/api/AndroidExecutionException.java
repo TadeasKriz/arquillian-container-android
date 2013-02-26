@@ -20,16 +20,13 @@ import java.text.MessageFormat;
 
 /**
  * A generic error during execution on the Android device
- * 
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 public class AndroidExecutionException extends Exception {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 5649861186106271426L;
 
     public AndroidExecutionException(Throwable cause) {
         super(cause);
