@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidDeviceReady;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
-import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceCreated;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidDeviceSelector;
@@ -64,7 +63,6 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  *
  * Fires:
  * <ul>
- * <li>{@link AndroidVirtualDeviceCreated} - when we created avd of some specified name</li>
  * <li>{@link AndroidVirtualDeviceAvailable} - when there is already avd of name we want in the system</li>
  * <li>{@link AndroidDeviceReady} - when we get intance of running Android device</li>
  * </ul>
@@ -127,7 +125,6 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         logger.info("Before AVDIdentifierGenerator.getRandomAVDName");
 
         if (avdName == null) {
-
             String generatedAvdName = AndroidVirtualDeviceManagerImpl.IdentifierGenerator.getRandomAndroidVirtualDeviceName();
             configuration.get().setAvdName(generatedAvdName);
             configuration.get().setAvdGenerated(true);
@@ -142,11 +139,10 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
             logger.info("After createAVD");
             androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
             logger.info("after fire in createAVD");
-            return;
+        } else {
+            logger.info("After if(!avdExists())");
+            androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
         }
-
-        logger.info("After if(!avdExists())");
-        androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
     }
 
     private boolean isConnectingToVirtualDevice() {

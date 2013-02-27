@@ -38,9 +38,9 @@ public class CountDownWatch {
      * Creates a countdown watch and starts it
      *
      * @param timeout
-     *            timeout
+     *        timeout
      * @param unit
-     *            timeout unit
+     *        timeout unit
      */
     public CountDownWatch(long timeout, TimeUnit unit) {
 

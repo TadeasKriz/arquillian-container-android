@@ -8,8 +8,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.android.spi.event.AndroidDeviceShutdown;
 import org.jboss.arquillian.android.spi.event.AndroidEmulatorEvent;
+import org.jboss.arquillian.android.spi.event.AndroidEmulatorShuttedDown;
 import org.jboss.arquillian.android.spi.event.AndroidSDCardDelete;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceDeleted;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
@@ -54,7 +54,9 @@ public class AndroidEmulatorDelete implements AndroidEmulatorEvent {
     @Inject
     private Event<AndroidSDCardDelete> androidSDCardDelete;
 
-    public void deleteEmulator(@Observes AndroidDeviceShutdown event) {
+    public void deleteEmulator(@Observes AndroidEmulatorShuttedDown event) {
+
+        logger.info("AndroidEmulatorDelete, deleteEmulator, should appear after AndroidBridgeConnector.terminateAndroidDebugBridge");
 
         AndroidManagedContainerConfiguration configuration = this.configuration.get();
 
@@ -66,7 +68,7 @@ public class AndroidEmulatorDelete implements AndroidEmulatorEvent {
             ProcessExecutor executor = new ProcessExecutor();
             Process android = constructDeleteProcess(executor, androidSDK.get(), configuration.getAvdName());
             if (deleteAVD(android, executor) == 0) {
-                logger.log(Level.INFO, "Android Virtual Device {0} deleted", configuration.getAvdName());
+                logger.info("Android Virtual Device " + configuration.getAvdName() + " deleted.");
             } else {
                 logger.log(Level.INFO, "Unable to delete Android Virtual Device {0}", configuration.getAvdName());
             }
@@ -74,9 +76,7 @@ public class AndroidEmulatorDelete implements AndroidEmulatorEvent {
             logger.log(Level.INFO, "Unable to delete AVD", ex);
         }
         androidVirtualDeviceDeleted.fire(new AndroidVirtualDeviceDeleted(configuration.getAvdName()));
-        logger.info("Android device deleted");
         androidSDCardDelete.fire(new AndroidSDCardDelete());
-        logger.info("Android SD card deleted");
     }
 
     private int deleteAVD(final Process android, final ProcessExecutor executor) throws AndroidExecutionException {
@@ -96,10 +96,10 @@ public class AndroidEmulatorDelete implements AndroidEmulatorEvent {
     }
 
     private Process constructDeleteProcess(ProcessExecutor executor, AndroidSDK androidSDK, String avdName)
-        throws AndroidExecutionException {
+            throws AndroidExecutionException {
 
         List<String> androidCommand = new ArrayList<String>(Arrays.asList(androidSDK.getAndroidPath(), "delete", "avd",
-            "-n", avdName));
+                "-n", avdName));
 
         try {
             return executor.spawn(androidCommand);

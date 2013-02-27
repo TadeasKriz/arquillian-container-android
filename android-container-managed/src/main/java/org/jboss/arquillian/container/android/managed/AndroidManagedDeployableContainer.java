@@ -103,12 +103,12 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     }
 
     @Override
-    public void undeploy(Descriptor arg0) throws DeploymentException {
+    public void undeploy(Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException("Undeployment of a descriptor is not supported.");
     }
 
     @Override
-    public void deploy(Descriptor arg0) throws DeploymentException {
+    public void deploy(Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException("Deployment of a descriptor is not supported");
     }
 

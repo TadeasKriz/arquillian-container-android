@@ -43,8 +43,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
-import org.jboss.arquillian.android.spi.event.AndroidDeviceShutdown;
 import org.jboss.arquillian.android.spi.event.AndroidEmulatorEvent;
+import org.jboss.arquillian.android.spi.event.AndroidEmulatorShuttedDown;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
@@ -52,7 +52,6 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
@@ -63,12 +62,12 @@ import com.android.ddmlib.IDevice;
  *
  * Observes:
  * <ul>
- * <li>{@link AfterSuite}</li>
+ * <li>{@link AndroidContainerStop}</li>
  * </ul>
  *
  * Fires:
  * <ul>
- * <li>{@link AndroidDeviceShutdown}</li>
+ * <li>{@link AndroidEmulatorShuttedDown}</li>
  * </ul>
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
@@ -88,7 +87,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
     private Instance<AndroidEmulator> androidEmulator;
 
     @Inject
-    private Event<AndroidDeviceShutdown> androidDeviceShutdown;
+    private Event<AndroidEmulatorShuttedDown> androidEmulatorShuttedDown;
 
     public void shutdownEmulator(@Observes AndroidContainerStop event)
             throws AndroidExecutionException {
@@ -119,12 +118,11 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
                 stopEmulator(p, executor, device, countdown);
                 waitUntilShutDownIsComplete(device, listener, executor, countdown);
                 AndroidDebugBridge.removeDeviceChangeListener(listener);
+                androidEmulatorShuttedDown.fire(new AndroidEmulatorShuttedDown(device));
             } finally {
                 executor.removeShutdownHook(p);
             }
         }
-
-        androidDeviceShutdown.fire(new AndroidDeviceShutdown(device));
     }
 
     private void waitUntilShutDownIsComplete(final AndroidDevice device, final DeviceDisconnectDiscovery listener,

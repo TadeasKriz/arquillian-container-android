@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidDeviceReady;
+import org.jboss.arquillian.android.spi.event.AndroidEmulatorEvent;
 import org.jboss.arquillian.android.spi.event.AndroidSDCardCreate;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceEvent;
@@ -69,7 +70,7 @@ import com.android.ddmlib.IDevice;
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public class AndroidEmulatorStartup {
+public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
 
     private static final Logger logger = Logger.getLogger(AndroidEmulatorStartup.class.getName());
 
@@ -95,40 +96,6 @@ public class AndroidEmulatorStartup {
 
     @Inject
     private Event<AndroidSDCardCreate> androidSDCardCreate;
-
-    private Process startEmulator(ProcessExecutor executor) throws AndroidExecutionException {
-
-        AndroidSDK sdk = androidSDK.get();
-        AndroidManagedContainerConfiguration configuration = this.configuration.get();
-
-        logger.log(Level.INFO, configuration.toString());
-
-        // construct emulator command
-        List<String> emulatorCommand = new ArrayList<String>(Arrays.asList(sdk.getEmulatorPath(), "-avd",
-                configuration.getAvdName()));
-
-        if (configuration.getSdCard() != null) {
-            emulatorCommand.add("-sdCard");
-            emulatorCommand.add(configuration.getSdCard());
-        }
-
-        logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
-        emulatorCommand = getEmulatorOptions(emulatorCommand, configuration.getEmulatorOptions());
-        logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
-        // execute emulator
-        try {
-            return executor.spawn(emulatorCommand);
-        } catch (InterruptedException e) {
-            throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
-                    configuration.getAvdName(),
-                    configuration.getEmulatorOptions());
-        } catch (ExecutionException e) {
-            throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
-                    configuration.getAvdName(),
-                    configuration.getEmulatorOptions());
-        }
-
-    }
 
     public void createAndroidEmulator(@Observes AndroidVirtualDeviceAvailable event) throws AndroidExecutionException {
         if (!androidBridge.get().isConnected()) {
@@ -168,6 +135,40 @@ public class AndroidEmulatorStartup {
         androidDevice.set(emulator);
         androidDeviceReady.fire(new AndroidDeviceReady(emulator));
         logger.log(Level.INFO, "android device ready fired");
+
+    }
+
+    private Process startEmulator(ProcessExecutor executor) throws AndroidExecutionException {
+
+        AndroidSDK sdk = androidSDK.get();
+        AndroidManagedContainerConfiguration configuration = this.configuration.get();
+
+        logger.log(Level.INFO, configuration.toString());
+
+        // construct emulator command
+        List<String> emulatorCommand = new ArrayList<String>(Arrays.asList(sdk.getEmulatorPath(), "-avd",
+                configuration.getAvdName()));
+
+        if (configuration.getSdCard() != null) {
+            emulatorCommand.add("-sdCard");
+            emulatorCommand.add(configuration.getSdCard());
+        }
+
+        logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
+        emulatorCommand = getEmulatorOptions(emulatorCommand, configuration.getEmulatorOptions());
+        logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
+        // execute emulator
+        try {
+            return executor.spawn(emulatorCommand);
+        } catch (InterruptedException e) {
+            throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
+                    configuration.getAvdName(),
+                    configuration.getEmulatorOptions());
+        } catch (ExecutionException e) {
+            throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
+                    configuration.getAvdName(),
+                    configuration.getEmulatorOptions());
+        }
 
     }
 

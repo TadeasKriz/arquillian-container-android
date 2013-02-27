@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidBridgeTerminated;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
-import org.jboss.arquillian.android.spi.event.AndroidDeviceShutdown;
+import org.jboss.arquillian.android.spi.event.AndroidEmulatorShuttedDown;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
@@ -41,7 +41,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * Observes:
  * <ul>
  * <li>{@link AndroidContainerStart}</li>
- * <li>{@link AndroidDeviceShutdown}</li>
+ * <li>{@link AndroidEmulatorShuttedDown}</li>
  * <li>{@link AndroidBridgeTerminated}</li>
  * </ul>
  *
@@ -110,7 +110,7 @@ public class AndroidBridgeConnector {
      * @param event
      * @throws AndroidExecutionException
      */
-    public void terminateAndroidDebugBridge(@Observes AndroidDeviceShutdown event) throws AndroidExecutionException {
+    public void terminateAndroidDebugBridge(@Observes(precedence = 10) AndroidEmulatorShuttedDown event) throws AndroidExecutionException {
         logger.info("Terminating Android Debug Bridge.");
         androidBridge.get().disconnect();
         adbTerminated.fire(new AndroidBridgeTerminated());

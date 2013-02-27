@@ -24,11 +24,11 @@ import org.jboss.arquillian.container.android.api.AndroidDevice;
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public class AndroidDeviceShutdown {
+public class AndroidEmulatorShuttedDown {
 
     private AndroidDevice device;
 
-    public AndroidDeviceShutdown(AndroidDevice device) {
+    public AndroidEmulatorShuttedDown(AndroidDevice device) {
         this.device = device;
     }
 
