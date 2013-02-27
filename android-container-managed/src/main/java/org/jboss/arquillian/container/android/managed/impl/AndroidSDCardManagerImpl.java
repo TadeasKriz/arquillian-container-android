@@ -122,6 +122,12 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
     }
 
+    @Override
+    public void deleteSDCard() {
+        // TODO Auto-generated method stub
+
+    }
+
     private int createSDCard(final Process sdCardProcess, final ProcessExecutor executor) throws AndroidExecutionException {
         try {
             int created = executor.submit(new Callable<Integer>() {
@@ -170,12 +176,6 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
         } catch (ExecutionException e) {
             throw new AndroidExecutionException();
         }
-    }
-
-    @Override
-    public void deleteSDCard() {
-        // TODO Auto-generated method stub
-
     }
 
     private boolean generateSDCard() {

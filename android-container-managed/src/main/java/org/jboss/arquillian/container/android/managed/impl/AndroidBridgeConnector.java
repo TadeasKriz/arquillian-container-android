@@ -110,7 +110,7 @@ public class AndroidBridgeConnector {
      * @param event
      * @throws AndroidExecutionException
      */
-    public void terminateAndroidDebugBridge(@Observes(precedence = 10) AndroidEmulatorShuttedDown event) throws AndroidExecutionException {
+    public void terminateAndroidDebugBridge(@Observes AndroidEmulatorShuttedDown event) throws AndroidExecutionException {
         logger.info("Terminating Android Debug Bridge.");
         androidBridge.get().disconnect();
         adbTerminated.fire(new AndroidBridgeTerminated());

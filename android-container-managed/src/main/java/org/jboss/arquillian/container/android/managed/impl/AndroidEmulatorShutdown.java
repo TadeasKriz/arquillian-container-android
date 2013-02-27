@@ -45,6 +45,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
 import org.jboss.arquillian.android.spi.event.AndroidEmulatorEvent;
 import org.jboss.arquillian.android.spi.event.AndroidEmulatorShuttedDown;
+import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceDelete;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
@@ -89,6 +90,9 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
     @Inject
     private Event<AndroidEmulatorShuttedDown> androidEmulatorShuttedDown;
 
+    @Inject
+    private Event<AndroidVirtualDeviceDelete> androidVirtualDeviceDelete;
+
     public void shutdownEmulator(@Observes AndroidContainerStop event)
             throws AndroidExecutionException {
 
@@ -118,6 +122,11 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
                 stopEmulator(p, executor, device, countdown);
                 waitUntilShutDownIsComplete(device, listener, executor, countdown);
                 AndroidDebugBridge.removeDeviceChangeListener(listener);
+
+                if (configuration.isAVDGenerated()) {
+                    androidVirtualDeviceDelete.fire(new AndroidVirtualDeviceDelete());
+                }
+
                 androidEmulatorShuttedDown.fire(new AndroidEmulatorShuttedDown(device));
             } finally {
                 executor.removeShutdownHook(p);

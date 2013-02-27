@@ -16,13 +16,21 @@
  */
 package org.jboss.arquillian.container.android.managed.impl;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidDeviceReady;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
+import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceCreate;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidDeviceSelector;
@@ -63,6 +71,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  *
  * Fires:
  * <ul>
+ * <li>{@link AndroidVirtualDeviceCreate} - when we are going to create new Android virtual device</li>
  * <li>{@link AndroidVirtualDeviceAvailable} - when there is already avd of name we want in the system</li>
  * <li>{@link AndroidDeviceReady} - when we get intance of running Android device</li>
  * </ul>
@@ -92,13 +101,14 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
     private Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
 
     @Inject
+    private Event<AndroidVirtualDeviceCreate> androidVirtualDeviceCreate;
+
+    @Inject
     private Event<AndroidDeviceReady> androidDeviceReady;
 
     public void selectDevice(@Observes AndroidBridgeInitialized event) throws AndroidExecutionException {
 
         AndroidDevice device = null;
-
-        AndroidVirtualDeviceManagerImpl avdManager = new AndroidVirtualDeviceManagerImpl(configuration.get(), androidSDK.get());
 
         logger.info("Before isConnectingToPhysicalDevice");
 
@@ -125,7 +135,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         logger.info("Before AVDIdentifierGenerator.getRandomAVDName");
 
         if (avdName == null) {
-            String generatedAvdName = AndroidVirtualDeviceManagerImpl.IdentifierGenerator.getRandomAndroidVirtualDeviceName();
+            String generatedAvdName = IdentifierGenerator.getRandomAndroidVirtualDeviceName();
             configuration.get().setAvdName(generatedAvdName);
             configuration.get().setAvdGenerated(true);
         }
@@ -133,12 +143,13 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         logger.info("After AVDIdentifierGenerator.getRandomAVDName");
 
         logger.log(Level.INFO, "Before if(!avdExists())");
-        if (!avdManager.androidVirtualDeviceExists(avdName)) {
-            logger.info("Before createAVD");
-            avdManager.createAndroidVirtualDevice(avdName);
-            logger.info("After createAVD");
-            androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
-            logger.info("after fire in createAVD");
+        if (!androidVirtualDeviceExists(avdName)) {
+            logger.info("before fire in androidVirtualDeviceCreate");
+            // avdManager.createAndroidVirtualDevice(avdName);
+            // logger.info("After createAVD");
+            androidVirtualDeviceCreate.fire(new AndroidVirtualDeviceCreate());
+            // androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
+            logger.info("after fire in androidVirtualDeviceCreate");
         } else {
             logger.info("After if(!avdExists())");
             androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
@@ -247,6 +258,60 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         }
 
         throw new AndroidExecutionException("Unable to get device with serial ID " + serialId + ".");
+    }
+
+    private boolean androidVirtualDeviceExists(String avdName) throws AndroidExecutionException {
+        ProcessExecutor executor = new ProcessExecutor();
+        Set<String> devices = getAndroidVirtualDeviceNames(executor);
+        return devices.contains(avdName);
+    }
+
+    private Set<String> getAndroidVirtualDeviceNames(ProcessExecutor executor) throws AndroidExecutionException {
+
+        final Pattern deviceName = Pattern.compile("[\\s]*Name: ([^\\s]+)[\\s]*");
+
+        Set<String> names = new HashSet<String>();
+
+        List<String> output;
+        try {
+            output = executor.execute(androidSDK.get().getAndroidPath(), "list", "avd");
+        } catch (InterruptedException e) {
+            throw new AndroidExecutionException("Unable to get list of available AVDs", e);
+        } catch (ExecutionException e) {
+            throw new AndroidExecutionException("Unable to get list of available AVDs", e);
+        }
+        for (String line : output) {
+            Matcher m;
+            if (line.trim().startsWith("Name: ") && (m = deviceName.matcher(line)).matches()) {
+                String name = m.group(1);
+                // skip a device which has no name
+                if (name == null || name.trim().length() == 0) {
+                    continue;
+                }
+                names.add(name);
+                logger.info("Available Android Device: " + name);
+            }
+        }
+
+        return names;
+    }
+
+    /**
+     * Finds out some random string in order to provide some name for AVD.
+     *
+     * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
+     */
+    public static final class IdentifierGenerator {
+
+        private static final int NUM_BITS = 130;
+
+        private static final int RADIX = 30;
+
+        private static final SecureRandom random = new SecureRandom();
+
+        public static String getRandomAndroidVirtualDeviceName() {
+            return new BigInteger(NUM_BITS, random).toString(RADIX);
+        }
     }
 
 }
