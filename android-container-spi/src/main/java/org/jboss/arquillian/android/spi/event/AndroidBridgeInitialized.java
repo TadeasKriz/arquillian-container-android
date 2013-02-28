@@ -16,26 +16,12 @@
  */
 package org.jboss.arquillian.android.spi.event;
 
-import org.jboss.arquillian.container.android.api.AndroidBridge;
-
 /**
- * Event representing that Android Bridge was initialized and connected
+ * Event representing that Android Bridge was initialized and connected.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class AndroidBridgeInitialized {
-/*    private AndroidBridge bridge;
 
-    public AndroidBridgeInitialized(AndroidBridge bridge) {
-        this.bridge = bridge;
-    }
-
-    public AndroidBridge getBridge() {
-        return bridge;
-    }
-
-    public void setBridge(AndroidBridge bridge) {
-        this.bridge = bridge;
-    }*/
 }

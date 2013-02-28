@@ -88,7 +88,7 @@ public class MultipleLocalContainersRegistry implements ContainerRegistry {
                 Map<String, String> props = definition.getContainerProperties();
                 if (!props.containsKey("adapterImplClass")) {
                     throw new ConfigurationException("Container adapter implementation class must be provided via "
-                        + ADAPTER_IMPL_CONFIG_STRING + " property.");
+                            + ADAPTER_IMPL_CONFIG_STRING + " property.");
                 }
 
                 Class<?> dcImplClass = Class.forName(props.get(ADAPTER_IMPL_CONFIG_STRING));

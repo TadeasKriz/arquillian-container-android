@@ -35,9 +35,10 @@ import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 
 /**
- * Then implementation of {@link AndroidDevice}.
+ * The implementation of {@link AndroidDevice}.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
 class AndroidDeviceImpl implements AndroidDevice {
@@ -82,7 +83,7 @@ class AndroidDeviceImpl implements AndroidDevice {
             throw new AndroidExecutionException("Unable to get property '" + name + "' value, command was rejected", e);
         } catch (ShellCommandUnresponsiveException e) {
             throw new AndroidExecutionException("Unable to get property '" + name + "' value, shell is not responsive",
-                e);
+                    e);
         }
     }
 
@@ -128,7 +129,7 @@ class AndroidDeviceImpl implements AndroidDevice {
 
     @Override
     public void executeShellCommand(String command, AndroidDeviceOutputReciever reciever)
-        throws AndroidExecutionException {
+            throws AndroidExecutionException {
         try {
             delegate.executeShellCommand(command, new AndroidRecieverDelegate(reciever));
         } catch (TimeoutException e) {
@@ -137,7 +138,7 @@ class AndroidDeviceImpl implements AndroidDevice {
             throw new AndroidExecutionException("Unable to execute command '" + command + "', command was rejected", e);
         } catch (ShellCommandUnresponsiveException e) {
             throw new AndroidExecutionException("Unable to execute command '" + command + "', shell is not responsive",
-                e);
+                    e);
         } catch (IOException e) {
             throw new AndroidExecutionException("Unable to execute command '" + command + "'", e);
         }
@@ -150,10 +151,10 @@ class AndroidDeviceImpl implements AndroidDevice {
             delegate.createForward(localPort, remotePort);
         } catch (TimeoutException e) {
             throw new AndroidExecutionException("Unable to forward port (" + localPort + " to " + remotePort
-                + ") within given timeout", e);
+                    + ") within given timeout", e);
         } catch (AdbCommandRejectedException e) {
             throw new AndroidExecutionException("Unable to forward port (" + localPort + " to " + remotePort
-                + "), command was rejected", e);
+                    + "), command was rejected", e);
         } catch (IOException e) {
             throw new AndroidExecutionException("Unable to forward port (" + localPort + " to " + remotePort + ").", e);
         }
@@ -165,25 +166,25 @@ class AndroidDeviceImpl implements AndroidDevice {
             delegate.removeForward(localPort, remotePort);
         } catch (TimeoutException e) {
             throw new AndroidExecutionException("Unable to remove port forwarding (" + localPort + " to " + remotePort
-                + ") within given timeout", e);
+                    + ") within given timeout", e);
         } catch (AdbCommandRejectedException e) {
             throw new AndroidExecutionException("Unable to remove port forwarding (" + localPort + " to " + remotePort
-                + "), command was rejected", e);
+                    + "), command was rejected", e);
         } catch (IOException e) {
             throw new AndroidExecutionException("Unable to remove port forwarding (" + localPort + " to " + remotePort
-                + ").", e);
+                    + ").", e);
         }
     }
 
     @Override
     public void installPackage(File packageFilePath, boolean reinstall, String... extraArgs)
-        throws AndroidExecutionException {
+            throws AndroidExecutionException {
         Validate.isReadable(packageFilePath, "File " + packageFilePath + " must represent a readable APK file");
         try {
             String retval = delegate.installPackage(packageFilePath.getAbsolutePath(), reinstall, extraArgs);
             if (retval != null) {
                 throw new AndroidExecutionException("Unable to install APK from " + packageFilePath.getAbsolutePath()
-                    + ". Command failed with status code: " + retval);
+                        + ". Command failed with status code: " + retval);
             }
         } catch (InstallException e) {
             throw new AndroidExecutionException("Unable to install APK from " + packageFilePath.getAbsolutePath(), e);
@@ -200,7 +201,7 @@ class AndroidDeviceImpl implements AndroidDevice {
             return monkey.isInstalled();
         } catch (Exception e) {
             throw new AndroidExecutionException("Unable to decide if package " + packageName + " is installed or nor",
-                e);
+                    e);
         }
     }
 

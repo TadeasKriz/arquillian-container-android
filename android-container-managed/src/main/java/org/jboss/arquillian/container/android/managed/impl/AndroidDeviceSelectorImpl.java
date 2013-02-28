@@ -46,8 +46,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
 /**
- * Selects real physical Android device if serial id was specified in the configuration. If serial number was not specified
- * one of the following holds:
+ * Selects real physical Android device if serial id was specified in the configuration.
+ * If serial number was not specified one of the following holds:
  *
  * <br>
  * <br>
@@ -145,10 +145,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         logger.log(Level.INFO, "Before if(!avdExists())");
         if (!androidVirtualDeviceExists(avdName)) {
             logger.info("before fire in androidVirtualDeviceCreate");
-            // avdManager.createAndroidVirtualDevice(avdName);
-            // logger.info("After createAVD");
             androidVirtualDeviceCreate.fire(new AndroidVirtualDeviceCreate());
-            // androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
             logger.info("after fire in androidVirtualDeviceCreate");
         } else {
             logger.info("After if(!avdExists())");

@@ -18,13 +18,10 @@
 package org.jboss.arquillian.android.spi.event;
 
 /**
- * This class serves as the event which is fired after overall configurations of Android Container and all extensions
- * are done. This class is different from {@link AndroidContainerStop}. That class is for noticing that Android
- * container as such was configured and it is different from {@link AndroidDroneEvent} - this class is for noticing that
- * Android extensions were configured. {@code AndroidConfigurationDone} merges these two events together, saying that
- * container and extensions were fully configured.
+ * Event representing that an Android container is about to start.
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
+ *
  */
 public class AndroidContainerStart {
 

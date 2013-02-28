@@ -17,7 +17,7 @@
 package org.jboss.arquillian.android.spi.event;
 
 /**
- * Event representing that an already existing Android Device is available
+ * Event representing that an already existing Android Device is available to be used.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
@@ -25,7 +25,7 @@ package org.jboss.arquillian.android.spi.event;
 public class AndroidVirtualDeviceAvailable {
 
     String name;
-    
+
     public AndroidVirtualDeviceAvailable(String name) {
         this.name = name;
     }

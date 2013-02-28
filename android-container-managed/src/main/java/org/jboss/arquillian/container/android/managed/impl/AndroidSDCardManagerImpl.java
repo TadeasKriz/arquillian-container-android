@@ -39,6 +39,18 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
+/**
+ * Implementation class of creation and deletion of Android SD card used for an emulator. <br>
+ * <br>
+ * Observes:
+ * <ul>
+ * <li>{@link AndroidSDCardCreate}</li>
+ * <li>{@link AndroidSDCardDelete}</li>
+ * </ul>
+ *
+ * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
+ *
+ */
 public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
     private static final Logger logger = Logger.getLogger(AndroidSDCardManagerImpl.class.getName());

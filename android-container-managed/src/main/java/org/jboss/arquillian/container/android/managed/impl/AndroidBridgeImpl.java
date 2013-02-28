@@ -31,7 +31,7 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 
 /**
- * Implementation of the {@link AndroidBridge} by which we can connect,
+ * Implementation of the {@link AndroidBridge} by which we can connect or
  * disconnect to the bridge and query {@link AndroidDebugBridge} for attached
  * devices.
  *
@@ -82,17 +82,17 @@ public class AndroidBridgeImpl implements AndroidBridge {
         logger.info("Disconnecting Android Debug Bridge at " + adbLocation.getAbsolutePath());
 
         if (isConnected()) {
-            logger.fine("\t Android Debug Bridge is connected");
+            logger.fine("\t Android Debug Bridge is connected.");
             if (!hasDevices()) {
-                logger.fine("\t\t Android Debug Bridge does't have devices");
+                logger.fine("\t\t Android Debug Bridge does't have devices.");
                 AndroidDebugBridge.disconnectBridge();
                 AndroidDebugBridge.terminate();
             } else {
-                logger.fine("\t\t Android Debug Bridge has devices");
+                logger.fine("\t\t Android Debug Bridge has devices.");
                 logger.info("There are still some devices on the Android Debug Bridge bridge will not be disconnected until none are connected.");
             }
         } else {
-            logger.info("Android Debug Bridge is already disconnected");
+            logger.info("Android Debug Bridge is already disconnected.");
         }
     }
 
@@ -132,7 +132,8 @@ public class AndroidBridgeImpl implements AndroidBridge {
     }
 
     /**
-     * Run a wait loop until adb is connected or trials run out. This method seems to work more reliably then using a
+     * Run a wait loop until adb is connected or trials run out.
+     * This method seems to work more reliably then using a
      * listener.
      *
      * @param adb

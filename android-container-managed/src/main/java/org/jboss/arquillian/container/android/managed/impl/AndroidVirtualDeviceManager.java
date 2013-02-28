@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidSDCardDelete;
@@ -36,7 +35,6 @@ import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceCreate;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceDelete;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceDeleted;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
-import org.jboss.arquillian.container.android.api.AndroidVirtualDeviceManager;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.android.managed.configuration.Validate;
@@ -46,12 +44,27 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
 /**
+ * Deletes and creates Android virtual devices and initiates deletion of SD card as well.
+ *
+ * Observes:
+ * <ul>
+ * <li>{@link AndroidVirtualDeviceDelete}</li>
+ * <li>{@link AndroidVirtualDeviceCreate}</li>
+ * </ul>
+ *
+ * Fires:
+ * <ul>
+ * <li>{@link AndroidVirtualDeviceAvailable}</li>
+ * <li>{@link AndroidVirtualDeviceDeleted}</li>
+ * <li>{@link AndroidSDCardDelete}</li>
+ * </ul>
+ *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public class AndroidVirtualDeviceManagerImpl implements AndroidVirtualDeviceManager {
+public class AndroidVirtualDeviceManager {
 
-    private static final Logger logger = Logger.getLogger(AndroidVirtualDeviceManagerImpl.class.getName());
+    private static final Logger logger = Logger.getLogger(AndroidVirtualDeviceManager.class.getName());
 
     @Inject
     Instance<AndroidManagedContainerConfiguration> configuration;
@@ -78,10 +91,10 @@ public class AndroidVirtualDeviceManagerImpl implements AndroidVirtualDeviceMana
             if (deleteAVD(android, executor) == 0) {
                 logger.info("Android Virtual Device " + configuration.getAvdName() + " deleted.");
             } else {
-                logger.log(Level.INFO, "Unable to delete Android Virtual Device {0}", configuration.getAvdName());
+                logger.info("Unable to delete Android Virtual Device " + configuration.getAvdName() + ".");
             }
         } catch (AndroidExecutionException ex) {
-            logger.log(Level.INFO, "Unable to delete AVD", ex);
+            logger.info("Unable to delete AVD - " + ex.getMessage());
         }
 
         androidSDCardDelete.fire(new AndroidSDCardDelete());
@@ -130,8 +143,8 @@ public class AndroidVirtualDeviceManagerImpl implements AndroidVirtualDeviceMana
     private Process constructDeleteProcess(ProcessExecutor executor, AndroidSDK androidSDK, String avdName)
             throws AndroidExecutionException {
 
-        List<String> androidCommand = new ArrayList<String>(Arrays.asList(androidSDK.getAndroidPath(), "delete", "avd",
-                "-n", avdName));
+        List<String> androidCommand = new ArrayList<String>(Arrays.asList(androidSDK.getAndroidPath(),
+                "delete", "avd", "-n", avdName));
 
         try {
             return executor.spawn(androidCommand);

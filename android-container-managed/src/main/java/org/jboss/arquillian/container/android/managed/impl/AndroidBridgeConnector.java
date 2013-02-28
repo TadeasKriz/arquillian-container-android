@@ -58,6 +58,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * <li>{@link AndroidBridgeTerminated}</li>
  * </ul>
  *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */

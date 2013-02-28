@@ -21,6 +21,8 @@
  */
 package org.jboss.arquillian.extension.multiplecontainers;
 
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
 import org.jboss.arquillian.container.impl.client.container.ContainerDeployController;
 import org.jboss.arquillian.container.impl.client.container.ContainerLifecycleController;
@@ -36,16 +38,21 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  */
 public class MultipleContainersExtension implements LoadableExtension {
 
+    private static final Logger logger = Logger.getLogger(MultipleContainersExtension.class.getName());
+
     @Override
     public void register(ExtensionBuilder builder) {
 
-        System.out.println("Multiple containers extension registering.");
+        logger.info("Multiple containers extension registering.");
 
         builder.context(ContainerContextImpl.class).context(DeploymentContextImpl.class);
 
-        builder.observer(MultipleContainerRegistryCreator.class).observer(ContainerDeploymentContextHandler.class)
-            .observer(ContainerLifecycleController.class).observer(ContainerDeployController.class)
-            .observer(ArchiveDeploymentExporter.class).observer(DeploymentExceptionHandler.class);
+        builder.observer(MultipleContainerRegistryCreator.class)
+                .observer(ContainerDeploymentContextHandler.class)
+                .observer(ContainerLifecycleController.class)
+                .observer(ContainerDeployController.class)
+                .observer(ArchiveDeploymentExporter.class)
+                .observer(DeploymentExceptionHandler.class);
     }
 
 }

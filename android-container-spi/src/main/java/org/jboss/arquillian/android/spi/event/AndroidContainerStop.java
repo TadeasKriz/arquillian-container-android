@@ -17,9 +17,9 @@
 package org.jboss.arquillian.android.spi.event;
 
 /**
- * Event representing that Android Extension for Arquillian was configured
+ * Event representing that an Android container is about to stop.
  *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
 public class AndroidContainerStop {

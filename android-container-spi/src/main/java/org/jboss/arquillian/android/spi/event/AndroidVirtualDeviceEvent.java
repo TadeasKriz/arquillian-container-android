@@ -17,7 +17,7 @@
 package org.jboss.arquillian.android.spi.event;
 
 /**
- * General event for Android Virtual devices
+ * This class represent general event for Android virtual devices.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *

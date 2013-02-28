@@ -39,11 +39,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
-import org.jboss.arquillian.android.spi.event.AndroidEmulatorEvent;
 import org.jboss.arquillian.android.spi.event.AndroidEmulatorShuttedDown;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceDelete;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
@@ -59,8 +57,8 @@ import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 
 /**
- * Brings Android Emulator down.
- *
+ * Brings Android Emulator down. <br>
+ * <br>
  * Observes:
  * <ul>
  * <li>{@link AndroidContainerStop}</li>
@@ -69,12 +67,13 @@ import com.android.ddmlib.IDevice;
  * Fires:
  * <ul>
  * <li>{@link AndroidEmulatorShuttedDown}</li>
+ * <li>{@link AndroidVirtualDeviceDelete}</li>
  * </ul>
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- * @author Manfred Moser <manfred@simpligility.com>
+ * @author <a href="manfred@simpligility.com">Manfred Moser</a>
  */
-public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
+public class AndroidEmulatorShutdown {
 
     private static final Logger logger = Logger.getLogger(AndroidEmulatorShutdown.class.getName());
 
@@ -93,29 +92,19 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
     @Inject
     private Event<AndroidVirtualDeviceDelete> androidVirtualDeviceDelete;
 
-    public void shutdownEmulator(@Observes AndroidContainerStop event)
-            throws AndroidExecutionException {
+    public void shutdownEmulator(@Observes AndroidContainerStop event) throws AndroidExecutionException {
 
         AndroidEmulator emulator = androidEmulator.get();
         AndroidDevice device = androidDevice.get();
         AndroidManagedContainerConfiguration configuration = this.configuration.get();
 
-        if (emulator == null) {
-            logger.log(Level.INFO, "Why is emulator null?");
-        }
-
-        if (androidDevice == null) {
-            logger.log(Level.INFO, "Why is device null?");
-        }
-
-        // we created the emulator, shut it down
         if (emulator != null && device.isEmulator()) {
             final ProcessExecutor executor = new ProcessExecutor();
             final Process p = emulator.getProcess();
             CountDownWatch countdown = new CountDownWatch(configuration.getEmulatorShutdownTimeoutInSeconds(),
                     TimeUnit.SECONDS);
-            logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be disconnected and shutdown.",
-                    new Object[] { countdown.timeout(), device.getAvdName() });
+            logger.info("Waiting " + countdown.timeout() + " seconds for emulator " + device.getAvdName()
+                    + " to be disconnected and shutdown.");
             try {
                 final DeviceDisconnectDiscovery listener = new DeviceDisconnectDiscovery(device);
                 AndroidDebugBridge.addDeviceChangeListener(listener);
@@ -134,6 +123,15 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
         }
     }
 
+    /**
+     * Brings Android device down.
+     *
+     * @param device {@link AndroidDevice} to shut down
+     * @param listener
+     * @param executor
+     * @param countdown
+     * @throws AndroidExecutionException
+     */
     private void waitUntilShutDownIsComplete(final AndroidDevice device, final DeviceDisconnectDiscovery listener,
             ProcessExecutor executor, CountDownWatch countdown) throws AndroidExecutionException {
 
@@ -151,8 +149,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
                         device.getAvdName(), countdown.timeout());
             }
 
-            logger.log(Level.INFO, "Device {0} was disconnected in {1} seconds.", new Object[] { device.getAvdName(),
-                    countdown.timeElapsed() });
+            logger.info("Device " + device.getAvdName() + " was disconnected in " + countdown.timeElapsed() + " seconds.");
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Unable to disconnect AVD device {0}", device.getAvdName());
         } catch (ExecutionException e) {
@@ -173,11 +170,10 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
 
         int devicePort = extractPortFromDevice(device);
         if (devicePort == -1) {
-            logger.log(Level.SEVERE, "Unable to retrieve port to stop emulator {0}", device.getSerialNumber());
+            logger.severe("Unable to retrieve port to stop emulator " + device.getSerialNumber() + ".");
             return false;
         } else {
-            logger.log(Level.INFO, "Stopping emulator {0} via port {1}", new Object[] { device.getSerialNumber(),
-                    devicePort });
+            logger.info("Stopping emulator " + device.getSerialNumber() + " via port " + devicePort + ".");
 
             try {
                 Boolean stopped = executor.submit(sendEmulatorCommand(devicePort, "kill")).get(countdown.timeLeft(),
@@ -194,9 +190,8 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
                 return stopped && retval == 0;
             } catch (TimeoutException e) {
                 p.destroy();
-                logger.log(Level.WARNING,
-                        "Emulator process was forcibly destroyed, {0} seconds remaining to dispose the device",
-                        countdown.timeLeft());
+                logger.warning("Emulator process was forcibly destroyed, " + countdown.timeLeft()
+                        + " seconds remaining to dispose the device");
                 return false;
             } catch (InterruptedException e) {
                 p.destroy();
@@ -291,8 +286,7 @@ public class AndroidEmulatorShutdown implements AndroidEmulatorEvent {
             if (device.getAvdName().equals(connectedDevice.getAvdName())) {
                 this.offline = true;
             }
-            logger.log(Level.FINE, "Discovered an emulator device id={0} disconnected from ADB bus",
-                    device.getSerialNumber());
+            logger.fine("Discovered an emulator device id=" + device.getSerialNumber() + " disconnected from ADB bus");
         }
 
         public boolean isOffline() {

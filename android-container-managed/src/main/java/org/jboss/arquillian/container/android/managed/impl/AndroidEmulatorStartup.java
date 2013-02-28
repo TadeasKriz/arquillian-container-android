@@ -28,10 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidDeviceReady;
-import org.jboss.arquillian.android.spi.event.AndroidEmulatorEvent;
 import org.jboss.arquillian.android.spi.event.AndroidSDCardCreate;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
-import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceEvent;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
@@ -49,11 +47,11 @@ import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 
 /**
- * Starts an emulator and either connects to an existing device or creates one.
- *
+ * Starts an emulator and either connects to an existing device or creates one. <br>
+ * <br>
  * Observes:
  * <ul>
- * <li>{@link AndroidVirtualDeviceEvent}</li>
+ * <li>{@link AndroidVirtualDeviceAvailable}</li>
  * </ul>
  *
  * Creates:
@@ -68,9 +66,10 @@ import com.android.ddmlib.IDevice;
  * </ul>
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
+public class AndroidEmulatorStartup {
 
     private static final Logger logger = Logger.getLogger(AndroidEmulatorStartup.class.getName());
 
@@ -134,8 +133,6 @@ public class AndroidEmulatorStartup implements AndroidEmulatorEvent {
 
         androidDevice.set(emulator);
         androidDeviceReady.fire(new AndroidDeviceReady(emulator));
-        logger.log(Level.INFO, "android device ready fired");
-
     }
 
     private Process startEmulator(ProcessExecutor executor) throws AndroidExecutionException {

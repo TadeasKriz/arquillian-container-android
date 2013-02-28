@@ -19,12 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.jboss.arquillian.android.spi.event;
 
 /**
- * @author smikloso
+ * Event representing that an Android virtual device is about to be created.
  *
+ * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  */
 public class AndroidVirtualDeviceCreate {
 
