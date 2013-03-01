@@ -71,13 +71,13 @@ public class AndroidBridgeImpl implements AndroidBridge {
 
     @Override
     public boolean isConnected() {
-        Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
+        Validate.notNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
         return delegate.isConnected();
     }
 
     @Override
     public void disconnect() throws AndroidExecutionException {
-        Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
+        Validate.notNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
 
         logger.info("Disconnecting Android Debug Bridge at " + adbLocation.getAbsolutePath());
 
@@ -98,7 +98,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
 
     @Override
     public List<AndroidDevice> getDevices() {
-        Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
+        Validate.notNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
 
         IDevice[] idevices = delegate.getDevices();
 
@@ -112,7 +112,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
 
     @Override
     public List<AndroidDevice> getEmulators() {
-        Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
+        Validate.notNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
 
         List<AndroidDevice> emulators = new ArrayList<AndroidDevice>();
 
@@ -127,7 +127,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
 
     @Override
     public boolean hasDevices() {
-        Validate.stateNotNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
+        Validate.notNull(delegate, "Android debug bridge must be set. Please call connect() method before execution");
         return delegate.getDevices().length != 0;
     }
 

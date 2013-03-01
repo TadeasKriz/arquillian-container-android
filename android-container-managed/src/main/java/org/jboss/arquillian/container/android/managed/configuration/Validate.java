@@ -31,22 +31,22 @@ public class Validate {
     /**
      * Minimal number of console port.
      */
-    protected final static long CONSOLE_PORT_MIN = 5554;
+    public static final long CONSOLE_PORT_MIN = 5554;
 
     /**
      * Maximal number of console port.
      */
-    protected final static long CONSOLE_PORT_MAX = 5584;
+    public static final long CONSOLE_PORT_MAX = 5584;
 
     /**
      * Minimal number of adb port.
      */
-    protected final static long ADB_PORT_MIN = 5555;
+    public static final long ADB_PORT_MIN = 5555;
 
     /**
      * Maximal number of adb port.
      */
-    protected final static long ADB_PORT_MAX = 5585;
+    public static final long ADB_PORT_MAX = 5585;
 
     /**
      * Checks if some object is null or not.
@@ -57,26 +57,16 @@ public class Validate {
      *        the exception message
      * @throws IllegalStateException
      *         if object is null
+     * @throws IllegalArgumentException
+     *         when message object is null
      */
-    public final static void stateNotNull(final Object object, final String message) throws IllegalStateException {
+    public static void notNull(final Object object, final String message) throws IllegalStateException,
+            IllegalArgumentException {
+        if (message == null) {
+            throw new IllegalArgumentException("Exception message is a null object!");
+        }
         if (object == null) {
             throw new IllegalStateException(message);
-        }
-    }
-
-    /**
-     * Checks that object is not null, throws exception if it is.
-     *
-     * @param obj
-     *        The object to check
-     * @param message
-     *        The exception message
-     * @throws IllegalArgumentException
-     *         Thrown if obj is null
-     */
-    public final static void notNull(final Object obj, final String message) throws IllegalArgumentException {
-        if (obj == null) {
-            throw new IllegalArgumentException(message);
         }
     }
 
@@ -90,12 +80,13 @@ public class Validate {
      * @throws IllegalArgumentException
      *         throws if at leas one object is null
      */
-    public final static void notNulls(final Object[] objects, final String message) throws IllegalArgumentException {
-        notNull(objects, "Array to check the nullity of objects is null object.");
+    public static void notNulls(final Object[] objects, final String message) throws IllegalStateException{
+        notNull(message, "Exception message is a null object!");
+        notNull(objects, "Array to check the nullity of objects is a null object.");
 
         for (Object o : objects) {
             if (o == null) {
-                throw new IllegalArgumentException(message);
+                throw new IllegalStateException(message);
             }
         }
     }
@@ -110,9 +101,11 @@ public class Validate {
      * @throws IllegalArgumentException
      *         Thrown if string is null
      */
-    public final static void notNullOrEmpty(final String string, final String message) throws IllegalArgumentException {
+    public static void notNullOrEmpty(final String string, final String message) throws IllegalStateException {
+        notNull(message, "Exception message is a null object!");
+
         if (string == null || string.trim().length() == 0) {
-            throw new IllegalArgumentException(message);
+            throw new IllegalStateException(message);
         }
     }
 
@@ -126,8 +119,9 @@ public class Validate {
      * @throws AndroidConfigurationException
      *         Throws if all strings are null or empty
      */
-    public final static void notAllNullsOrEmpty(final String[] strings, final String message) throws IllegalArgumentException {
-        notNull(strings, "Array to check the nullity of objects is null object.");
+    public static void notAllNullsOrEmpty(final String[] strings, final String message) throws IllegalStateException {
+        notNull(message, "Exception message is a null object!");
+        notNull(strings, "Array to check the nullity of objects is null object!");
 
         for (String string : strings) {
             if (string != null && string.trim().length() != 0) {
@@ -135,7 +129,7 @@ public class Validate {
             }
         }
 
-        throw new IllegalArgumentException(message);
+        throw new IllegalStateException(message);
     }
 
     /**
@@ -149,11 +143,12 @@ public class Validate {
      * @throws IllegalArgumentException
      *         Thrown if path is empty, null or invalid
      */
-    public final static void isReadable(final String path, final String message) throws IllegalArgumentException {
+    public static boolean isReadable(final String path, final String message) throws IllegalArgumentException {
         notNullOrEmpty(path, "File to check against readability is null object or empty.");
 
         File file = new File(path);
-        isReadable(file, message);
+
+        return isReadable(file, message);
     }
 
     /**
@@ -167,7 +162,7 @@ public class Validate {
      * @throws IllegalArgumentException
      *         Thrown if path is empty, null or invalid
      */
-    public final static void isReadableDirectory(final String path, final String message) throws IllegalArgumentException {
+    public static void isReadableDirectory(final String path, final String message) throws IllegalArgumentException {
         notNullOrEmpty(path, "Directory to check against readability is null object or empty string.");
 
         File file = new File(path);
@@ -184,12 +179,13 @@ public class Validate {
      * @throws IllegalArgumentException
      *         Thrown if file is null or invalid
      */
-    public final static void isReadable(final File file, final String message) throws IllegalArgumentException {
+    public static boolean isReadable(final File file, final String message) throws IllegalArgumentException {
         notNull(file, "File to check against readability is null object.");
 
         if (!file.exists() || !file.canRead()) {
             throw new IllegalArgumentException(message);
         }
+        return true;
     }
 
     /**
@@ -202,7 +198,7 @@ public class Validate {
      * @throws IllegalArgumentException
      *         Thrown if file is null or invalid
      */
-    public final static void isReadableDirectory(final File file, final String message) throws IllegalArgumentException {
+    public static void isReadableDirectory(final File file, final String message) throws IllegalArgumentException {
         notNull(file, "Directory to check against readability is null object.");
 
         if (!file.exists() || !file.isDirectory() || !file.canRead() || !file.canExecute()) {
@@ -223,7 +219,8 @@ public class Validate {
      *        The exception message
      * @throws AndroidContainerConfigurationException when sdSize is invalid
      */
-    public final static void sdSize(final String sdSize, final String message) throws AndroidContainerConfigurationException {
+    public static void sdSize(final String sdSize, final String message) throws AndroidContainerConfigurationException {
+        notNullOrEmpty(message, "Exception message is a null object!");
         notNullOrEmpty(sdSize, "Size of the Android SD card to check is null object or empty string");
 
         if (!(sdSize.trim().length() >= 2) || !sdSize.matches("^[1-9]{1}[0-9]*[KGM]?$")) {
@@ -237,7 +234,7 @@ public class Validate {
             sizeString = sdSize.substring(0, sdSize.length() - 1);
             sizeUnit = sdSize.substring(sdSize.length() - 1);
         } else {
-            sizeString = sdSize.substring(0, sdSize.length() - 1);
+            sizeString = sdSize;
         }
 
         long size;
@@ -251,8 +248,9 @@ public class Validate {
         if (sizeUnit == null) {
             if (size > 1099511627264L || size < 9437184) {
                 throw new AndroidContainerConfigurationException(
-                        "Minimum size is 9M. The Android emulator cannot use smaller images.");
+                        "Minimum size is 9M. Maximum size is 1023G. The Android emulator cannot use smaller or bigger images.");
             }
+            return;
         }
 
         if ((size > 1023 && sizeUnit.equals("G"))
@@ -274,7 +272,7 @@ public class Validate {
      * @param message
      *        exception message
      */
-    public final static void isWritable(final File file, final String message) throws AndroidContainerConfigurationException {
+    public static void isWritable(final File file, final String message) throws AndroidContainerConfigurationException {
         notNull(file, "File to check against writability is null object.");
 
         if (file.exists()) {
@@ -302,7 +300,7 @@ public class Validate {
      * @param consolePort console port to check validity of
      * @throws AndroidContainerConfigurationException if console port is null or not a number or not valid
      */
-    public final static void isConsolePortValid(final String consolePort) throws AndroidContainerConfigurationException {
+    public static void isConsolePortValid(final String consolePort) throws AndroidContainerConfigurationException {
         notNullOrEmpty(consolePort, "console port to validate is null or empty.");
 
         try {
@@ -327,7 +325,7 @@ public class Validate {
      * @param adb adb port to check validity of
      * @throws AndroidContainerConfigurationException if adb port is null or not a number or not valid
      */
-    public final static void isAdbPortValid(final String adbPort) throws AndroidContainerConfigurationException {
+    public static void isAdbPortValid(final String adbPort) throws AndroidContainerConfigurationException {
         notNullOrEmpty(adbPort, "adb port to validate is null or empty");
 
         try {
@@ -351,14 +349,13 @@ public class Validate {
      * @param message exception message
      * @throws AndroidContainerConfigurationException if file name of SD card is not valid.
      */
-    public final static void sdCardFileName(final String fileName, final String message)
+    public static void sdCardFileName(final String fileName, final String message)
             throws AndroidContainerConfigurationException {
         notNullOrEmpty(fileName, "SD card file name to validate is null or empty string");
 
-        String[] tokens = fileName.split(".");
-        if (tokens.length != 2 || !tokens[1].equals("img")) {
+        String[] tokens = fileName.split("\\.");
+        if (!(tokens.length >= 2) || !tokens[tokens.length - 1].equals("img")) {
             throw new AndroidContainerConfigurationException(message);
         }
     }
-
 }
