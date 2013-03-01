@@ -122,6 +122,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         logger.info("After isConnectingToPhysicalDevice");
 
         if (isConnectingToVirtualDevice()) {
+            logger.info("in isConnectingToVirtualDevice()");
             device = getVirtualDevice();
             if (device != null) {
                 androidDevice.set(device);
