@@ -80,7 +80,7 @@ public class Validate {
      * @throws IllegalArgumentException
      *         throws if at leas one object is null
      */
-    public static void notNulls(final Object[] objects, final String message) throws IllegalStateException{
+    public static void notNulls(final Object[] objects, final String message) throws IllegalStateException {
         notNull(message, "Exception message is a null object!");
         notNull(objects, "Array to check the nullity of objects is a null object.");
 

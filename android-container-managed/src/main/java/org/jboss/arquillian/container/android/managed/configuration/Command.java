@@ -156,11 +156,12 @@ public class Command {
     }
 
     /**
+     * Deletes all multiple space and preserve original sense of the text input.
      *
      * @param betweenQuotes
-     * @return
+     * @return {@code text} without multiple spaces
      */
-    public String deleteTrailingSpaces(String text) {
+    private String deleteTrailingSpaces(String text) {
         if (text == null) {
             return null;
         }

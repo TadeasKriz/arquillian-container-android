@@ -116,8 +116,8 @@ public class AndroidVirtualDeviceManager {
         try {
             Command command = new Command();
             command.add(sdk.getAndroidPath()).add("create").add("-n").add(configuration.getAvdName())
-            .add("-t").add("android-" + configuration.getApiLevel()).add("-f")
-            .add("-p").add(configuration.getAvdName()).add("-c").add(configuration.getSdSize());
+                    .add("-t").add("android-" + configuration.getApiLevel()).add("-f")
+                    .add("-p").add(configuration.getAvdName()).add("-c").add(configuration.getSdSize());
             if (configuration.getAbi() != null) {
                 command.add("--abi").add(configuration.getAbi());
             }

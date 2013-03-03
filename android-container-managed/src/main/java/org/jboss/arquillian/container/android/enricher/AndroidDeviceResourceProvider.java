@@ -27,9 +27,9 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * Resource provider which allows to get control of an AVD device.
- * 
+ *
  * User can use this to install an APK, do forwardning or execute an arbitrary command on the device manually.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @see AndroidDevice
  */

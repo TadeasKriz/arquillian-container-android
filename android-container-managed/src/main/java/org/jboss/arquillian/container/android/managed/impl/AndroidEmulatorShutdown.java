@@ -149,7 +149,8 @@ public class AndroidEmulatorShutdown {
                         device.getAvdName(), countdown.timeout());
             }
 
-            logger.info("Device " + device.getAvdName() + " on port " + device.getConsolePort() + " was disconnected in " + countdown.timeElapsed() + " seconds.");
+            logger.info("Device " + device.getAvdName() + " on port " + device.getConsolePort() + " was disconnected in "
+                    + countdown.timeElapsed() + " seconds.");
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Unable to disconnect AVD device {0}", device.getAvdName());
         } catch (ExecutionException e) {
