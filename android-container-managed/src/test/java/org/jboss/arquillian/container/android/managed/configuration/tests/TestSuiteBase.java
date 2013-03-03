@@ -36,8 +36,9 @@ import org.junit.runners.Suite.SuiteClasses;
         ValidateTestCase.class,
         SDCardTestCaseSizesOK.class,
         SDCardTestCaseSizesBad.class,
-        SDCardTestCaseSizesBadFormat.class
+        SDCardTestCaseSizesBadFormat.class,
+        CommandTestCase.class
 })
-public class ValidationSuiteBase {
+public class TestSuiteBase {
 
 }

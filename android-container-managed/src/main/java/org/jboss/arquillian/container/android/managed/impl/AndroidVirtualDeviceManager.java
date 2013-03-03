@@ -21,10 +21,7 @@
  */
 package org.jboss.arquillian.container.android.managed.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
@@ -37,6 +34,7 @@ import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceDeleted;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
+import org.jboss.arquillian.container.android.managed.configuration.Command;
 import org.jboss.arquillian.container.android.managed.configuration.Validate;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -108,31 +106,31 @@ public class AndroidVirtualDeviceManager {
 
         logger.info("In AndroidVirtualDeviceManagerImpl.createAndroidVirtualDevice");
 
-        String apiLevel = configuration.get().getApiLevel();
-        String avdName = configuration.get().getAvdName();
-        String sdSize = configuration.get().getSdSize();
-        String abi = configuration.get().getAbi();
+        AndroidManagedContainerConfiguration configuration = this.configuration.get();
+        Validate.notNullOrEmpty(configuration.getSdSize(), "Memory SD card size must be defined");
+
+        AndroidSDK sdk = this.androidSDK.get();
 
         ProcessExecutor executor = new ProcessExecutor();
-        Validate.notNullOrEmpty(sdSize, "Memory SD card size must be defined");
 
         try {
-            List<String> args = new ArrayList<String>(Arrays.asList(androidSDK.get().getAndroidPath(), "create", "avd", "-n",
-                    avdName, "-t", "android-" + apiLevel, "-f", "-p", avdName, "-c", sdSize));
-            if (abi != null) {
-                args.add("--abi");
-                args.add(abi);
+            Command command = new Command();
+            command.add(sdk.getAndroidPath()).add("create").add("-n").add(configuration.getAvdName())
+            .add("-t").add("android-" + configuration.getApiLevel()).add("-f")
+            .add("-p").add(configuration.getAvdName()).add("-c").add(configuration.getSdSize());
+            if (configuration.getAbi() != null) {
+                command.add("--abi").add(configuration.getAbi());
             }
 
-            logger.info("Creating new avd " + args.toString());
-            String[] argsArrays = new String[args.size()];
+            logger.info("Creating new avd " + command);
+            String[] argsArrays = new String[command.size()];
             executor.execute(new HashMap<String, String>() {
                 {
                     put("Do you wish to create a custom hardware profile [no]", "no\n");
                 }
-            }, args.toArray(argsArrays));
+            }, command.get().toArray(argsArrays));
 
-            androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
+            androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(configuration.getAvdName()));
         } catch (InterruptedException e) {
             throw new AndroidExecutionException("Unable to create a new AVD Device", e);
         } catch (ExecutionException e) {
@@ -143,11 +141,11 @@ public class AndroidVirtualDeviceManager {
     private Process constructDeleteProcess(ProcessExecutor executor, AndroidSDK androidSDK, String avdName)
             throws AndroidExecutionException {
 
-        List<String> androidCommand = new ArrayList<String>(Arrays.asList(androidSDK.getAndroidPath(),
-                "delete", "avd", "-n", avdName));
+        Command command = new Command();
+        command.add(androidSDK.getAndroidPath()).add("delete").add("avd").add("-n").add(avdName);
 
         try {
-            return executor.spawn(androidCommand);
+            return executor.spawn(command.get());
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Unable to delete AVD {0}.", avdName);
         } catch (ExecutionException e) {

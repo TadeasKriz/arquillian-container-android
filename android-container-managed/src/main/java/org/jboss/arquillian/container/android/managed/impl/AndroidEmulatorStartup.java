@@ -16,11 +16,8 @@
  */
 package org.jboss.arquillian.container.android.managed.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +32,7 @@ import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
+import org.jboss.arquillian.container.android.managed.configuration.Command;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -137,26 +135,25 @@ public class AndroidEmulatorStartup {
 
     private Process startEmulator(ProcessExecutor executor) throws AndroidExecutionException {
 
-        AndroidSDK sdk = androidSDK.get();
+        AndroidSDK sdk = this.androidSDK.get();
         AndroidManagedContainerConfiguration configuration = this.configuration.get();
 
         logger.log(Level.INFO, configuration.toString());
 
-        // construct emulator command
-        List<String> emulatorCommand = new ArrayList<String>(Arrays.asList(sdk.getEmulatorPath(), "-avd",
-                configuration.getAvdName()));
+        Command command = new Command();
+        command.add(sdk.getEmulatorPath()).add("-avd").add(configuration.getAvdName());
 
         if (configuration.getSdCard() != null) {
-            emulatorCommand.add("-sdCard");
-            emulatorCommand.add(configuration.getSdCard());
+            command.add("-sdCard");
+            command.add(configuration.getSdCard());
         }
 
-        logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
-        emulatorCommand = getEmulatorOptions(emulatorCommand, configuration.getEmulatorOptions());
-        logger.log(Level.INFO, "emulator command -> {0}", emulatorCommand.toString());
+        command.addAsString(configuration.getEmulatorOptions());
+
+        logger.log(Level.INFO, "emulator command -> {0}", command);
         // execute emulator
         try {
-            return executor.spawn(emulatorCommand);
+            return executor.spawn(command.get());
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
                     configuration.getAvdName(),
@@ -231,21 +228,6 @@ public class AndroidEmulatorStartup {
             logger.log(Level.INFO, e.getCause().toString());
             throw new AndroidExecutionException(e, "Emulator device startup failed.");
         }
-    }
-
-    private List<String> getEmulatorOptions(List<String> properties, String valueString) {
-        if (valueString == null) {
-            return properties;
-        }
-
-        // FIXME this should accept properties encapsulated in quotes as well
-        StringTokenizer tokenizer = new StringTokenizer(valueString, " ");
-        while (tokenizer.hasMoreTokens()) {
-            String property = tokenizer.nextToken().trim();
-            properties.add(property);
-        }
-
-        return properties;
     }
 
     private class DeviceConnectDiscovery implements IDeviceChangeListener {
