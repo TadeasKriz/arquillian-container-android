@@ -23,7 +23,11 @@ package org.jboss.arquillian.container.android.managed.configuration.tests;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.arquillian.container.android.managed.configuration.Command;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -34,8 +38,43 @@ import org.junit.Test;
  */
 public class CommandTestCase {
 
+    Command command;
+
+    @Before
+    public void init() {
+        command = new Command();
+    }
+
     @Test
-    public void testCommand() {
-        assertTrue(true);
+    public void testDeleteTrailingSpaces() {
+        String testString = " abcd   \"  a   \"  \"    c    d\" \"${HOME}\"";
+        List<String> list = new ArrayList<String>();
+        list.add("abcd");
+        list.add("\"a\"");
+        list.add("\"c d\"");
+        list.add("\"${HOME}\"");
+        assertTrue(listsAreSame(list, command.addAsString(testString).get()));
+    }
+
+    private boolean listsAreSame(List<String> list1, List<String> list2) {
+        if (list1 == null && list2 == null) {
+            return true;
+        }
+
+        if ((list1 == null && list2 != null) || (list1 != null && list2 == null)) {
+            return false;
+        }
+
+        if (list1.size() != list2.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < list1.size(); i++) {
+            if (!list1.get(i).equals(list2.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

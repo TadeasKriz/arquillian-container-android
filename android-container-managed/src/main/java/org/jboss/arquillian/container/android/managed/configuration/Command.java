@@ -84,9 +84,11 @@ public class Command {
             return this;
         }
 
+        tokens = deleteTrailingSpaces(tokens);
+
         // we tokenize string so every word delimited by spaces will be one token
         List<String> tokenized = new ArrayList<String>();
-        StringTokenizer tokenizer = new StringTokenizer(tokens, " ");
+        StringTokenizer tokenizer = new StringTokenizer(deleteTrailingSpaces(tokens), " ");
         while (tokenizer.hasMoreTokens()) {
             tokenized.add(tokenizer.nextToken().trim());
         }
@@ -151,6 +153,21 @@ public class Command {
         }
 
         return this;
+    }
+
+    /**
+     *
+     * @param betweenQuotes
+     * @return
+     */
+    public String deleteTrailingSpaces(String text) {
+        if (text == null) {
+            return null;
+        }
+
+        return text.replaceAll("^ +| +$|( )+", "$1")
+                .replaceAll("\" ([^\"])", "\"$1")
+                .replaceAll("\"([^ \"]) \"", "\"$1\"");
     }
 
     /**
