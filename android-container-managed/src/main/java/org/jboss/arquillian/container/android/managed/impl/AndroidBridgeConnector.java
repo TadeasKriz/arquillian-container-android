@@ -94,6 +94,13 @@ public class AndroidBridgeConnector {
         logger.info("Initializing Android Debug Bridge.");
 
         long start = System.currentTimeMillis();
+        if (androidSDK.get() == null) {
+            System.out.println("androidSDK is null");
+        }
+
+        if (configuration.get() == null) {
+            System.out.println("configuration is null");
+        }
         AndroidBridge bridge = new AndroidBridgeImpl(new File(androidSDK.get().getAdbPath()), configuration.get()
                 .isForceNewBridge());
         bridge.connect();

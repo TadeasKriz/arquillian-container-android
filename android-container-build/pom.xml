@@ -27,7 +27,7 @@
     </developers>
 
     <properties>
-        <version.arquillian.core>1.0.3.Final</version.arquillian.core>
+        <version.arquillian.core>1.0.4.Final-SNAPSHOT</version.arquillian.core>
         <version.com.android>r16</version.com.android>
     </properties>
 
@@ -107,9 +107,28 @@
             <dependency>
                 <groupId>org.jboss.arquillian.core</groupId>
                 <artifactId>arquillian-core-impl-base</artifactId>
+                <version>${version.arquillian.core}</version>
+                <scope>test</scope>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.core</groupId>
+                <artifactId>arquillian-core-impl-base</artifactId>
+                <version>${version.arquillian.core}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.container</groupId>
+                <artifactId>arquillian-container-impl-base</artifactId>
                 <scope>test</scope>
                 <version>${version.arquillian.core}</version>
                 <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.container</groupId>
+                <artifactId>arquillian-container-impl-base</artifactId>
+                <version>${version.arquillian.core}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Android -->

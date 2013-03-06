@@ -37,7 +37,7 @@ import org.junit.runners.Suite.SuiteClasses;
         SDCardTestCaseSizesOK.class,
         SDCardTestCaseSizesBad.class,
         SDCardTestCaseSizesBadFormat.class,
-        CommandTestCase.class
+        CommandTestCase.class,
 })
 public class TestSuiteBase {
 
