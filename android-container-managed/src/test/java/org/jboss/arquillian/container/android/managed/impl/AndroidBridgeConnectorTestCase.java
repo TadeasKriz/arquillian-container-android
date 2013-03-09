@@ -24,29 +24,37 @@ package org.jboss.arquillian.container.android.managed.impl;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
+import org.jboss.arquillian.container.android.managed.AbstractAndroidTestTestBase;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
-import org.jboss.arquillian.container.test.AbstractContainerTestBase;
+import org.jboss.arquillian.test.spi.context.TestContext;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Tests connection of the container to the {@link AndroidBridge}.
+ * Tests connection of the containers to the {@link AndroidBridge}.
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
+public class AndroidBridgeConnectorTestCase extends AbstractAndroidTestTestBase {
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -54,9 +62,14 @@ public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
     }
 
     @Test
-    public void testConnectTwoContainersToAndroidBridge() throws AndroidExecutionException {
+    public void testConnectTwoContainersToAndroidBridge() throws AndroidExecutionException, SecurityException, NoSuchMethodException {
         // container 1
         getManager().getContext(ContainerContext.class).activate("container1");
+
+        Object instance = new DummyClass();
+        Method testMethod = DummyClass.class.getMethod("testDummyMethod");
+
+        getManager().getContext(TestContext.class).activate(instance);
 
         AndroidManagedContainerConfiguration configuration = new AndroidManagedContainerConfiguration();
         AndroidSDK androidSDK = new AndroidSDK(configuration);
@@ -69,12 +82,17 @@ public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
         AndroidBridge bridge = getManager().getContext(ContainerContext.class).getObjectStore().get(AndroidBridge.class);
         assertNotNull("Android Bridge should be created but is null!", bridge);
 
-        bridge.disconnect();
-
         assertEventFired(AndroidBridgeInitialized.class, 1);
 
-        getManager().getContext(ContainerContext.class).getObjectStore().clear();
-        getManager().getContext(ContainerContext.class).deactivate();
+        fire(new BeforeSuite());
+
+        fire(new BeforeClass(DummyClass.class));
+        fire(new Before(instance, testMethod));
+
+        fire(new After(instance, testMethod));
+        fire(new AfterClass(DummyClass.class));
+
+        fire(new AfterSuite());
 
         // container 2
         getManager().getContext(ContainerContext.class).activate("container2");
@@ -93,6 +111,22 @@ public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
         bridge2.disconnect();
 
         assertEventFired(AndroidBridgeInitialized.class, 2);
+
+        fire(new BeforeSuite());
+
+        fire(new BeforeClass(DummyClass.class));
+        fire(new Before(instance, testMethod));
+
+        fire(new After(instance, testMethod));
+        fire(new AfterClass(DummyClass.class));
+
+        fire(new AfterSuite());
+
+        assertEventFired(BeforeSuite.class, 2);
     }
 
+    static class DummyClass {
+        public void testDummyMethod() {
+        }
+    }
 }
