@@ -35,7 +35,6 @@ import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.test.AbstractContainerTestBase;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -54,15 +53,10 @@ public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
         extensions.add(AndroidBridgeConnector.class);
     }
 
-    @After
-    public void disposeMocks() throws AndroidExecutionException {
-        AndroidBridge bridge = getManager().getContext(ContainerContext.class).getObjectStore().get(AndroidBridge.class);
-        bridge.disconnect();
-    }
-
     @Test
-    public void testConnectToAndroidBridge() {
-        getManager().getContext(ContainerContext.class).activate("doesnotmatter");
+    public void testConnectTwoContainersToAndroidBridge() throws AndroidExecutionException {
+        // container 1
+        getManager().getContext(ContainerContext.class).activate("container1");
 
         AndroidManagedContainerConfiguration configuration = new AndroidManagedContainerConfiguration();
         AndroidSDK androidSDK = new AndroidSDK(configuration);
@@ -75,7 +69,30 @@ public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
         AndroidBridge bridge = getManager().getContext(ContainerContext.class).getObjectStore().get(AndroidBridge.class);
         assertNotNull("Android Bridge should be created but is null!", bridge);
 
+        bridge.disconnect();
+
         assertEventFired(AndroidBridgeInitialized.class, 1);
+
+        getManager().getContext(ContainerContext.class).getObjectStore().clear();
+        getManager().getContext(ContainerContext.class).deactivate();
+
+        // container 2
+        getManager().getContext(ContainerContext.class).activate("container2");
+
+        AndroidManagedContainerConfiguration configuration2 = new AndroidManagedContainerConfiguration();
+        AndroidSDK androidSDK2 = new AndroidSDK(configuration2);
+
+        bind(ContainerScoped.class, AndroidManagedContainerConfiguration.class, configuration2);
+        bind(ContainerScoped.class, AndroidSDK.class, androidSDK2);
+
+        fire(new AndroidContainerStart());
+
+        AndroidBridge bridge2 = getManager().getContext(ContainerContext.class).getObjectStore().get(AndroidBridge.class);
+        assertNotNull("Android Bridge should be created but is null!", bridge2);
+
+        bridge2.disconnect();
+
+        assertEventFired(AndroidBridgeInitialized.class, 2);
     }
 
 }
