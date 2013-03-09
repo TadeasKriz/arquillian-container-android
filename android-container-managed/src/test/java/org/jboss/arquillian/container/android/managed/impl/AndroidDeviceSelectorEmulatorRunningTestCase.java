@@ -44,18 +44,25 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Tests getting of real Android device via {@link AndroidDeviceSelectorImpl}
+ * Tests connecting to the running emulator of specific avd and console port.
+ *
+ * Emulator of the avd name test01 which listens at the console port 5554 has to be started
+ * in order to pass the test.
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
 @RunWith(MockitoJUnitRunner.class)
 @org.junit.Ignore
-public class AndroidDeviceSelectorRealDeviceTestCase extends AbstractContainerTestBase {
+public class AndroidDeviceSelectorEmulatorRunningTestCase extends AbstractContainerTestBase {
 
     private AndroidManagedContainerConfiguration configuration;
 
     private AndroidSDK androidSDK;
+
+    private String RUNNING_EMULATOR_AVD_NAME = "test01";
+
+    private String RUNNING_EMULATOR_CONSOLE_PORT = "5554";
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -66,8 +73,8 @@ public class AndroidDeviceSelectorRealDeviceTestCase extends AbstractContainerTe
     @Before
     public void setup() {
         configuration = new AndroidManagedContainerConfiguration();
-        configuration.setForceNewBridge(true);
-        configuration.setSerialId("42583930325742355458");
+        configuration.setAvdName(RUNNING_EMULATOR_AVD_NAME);
+        configuration.setConsolePort(RUNNING_EMULATOR_CONSOLE_PORT);
         androidSDK = new AndroidSDK(configuration);
 
         getManager().getContext(ContainerContext.class).activate("doesnotmatter");
@@ -83,11 +90,10 @@ public class AndroidDeviceSelectorRealDeviceTestCase extends AbstractContainerTe
     }
 
     @Test
-    public void testGetRealDevice() {
+    public void testGetRunningEmulator() {
         fire(new AndroidContainerStart());
 
         AndroidBridge bridge = getManager().getContext(ContainerContext.class).getObjectStore().get(AndroidBridge.class);
-
         bind(ContainerScoped.class, AndroidBridge.class, bridge);
 
         AndroidDevice runningDevice = getManager().getContext(ContainerContext.class)
@@ -102,5 +108,4 @@ public class AndroidDeviceSelectorRealDeviceTestCase extends AbstractContainerTe
         assertEventFiredInContext(AndroidBridgeInitialized.class, ContainerContext.class);
         assertEventFiredInContext(AndroidDeviceReady.class, ContainerContext.class);
     }
-
 }

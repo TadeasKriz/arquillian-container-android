@@ -22,18 +22,28 @@
 
 package org.jboss.arquillian.container.android.managed.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 
 import java.util.List;
 
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
-import org.jboss.arquillian.android.spi.event.AndroidDeviceReady;
+import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
+import org.jboss.arquillian.android.spi.event.AndroidEmulatorShuttedDown;
+import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
+import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceCreate;
+import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceDelete;
+import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceDeleted;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
+import org.jboss.arquillian.container.android.utils.IdentifierGenerator;
+import org.jboss.arquillian.container.android.utils.IdentifierType;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.test.AbstractContainerTestBase;
@@ -41,39 +51,49 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Tests getting of real Android device via {@link AndroidDeviceSelectorImpl}
+ * Tests creating of AVD name from scratch and staring of emulator
+ * of newly created AVD.
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
 @RunWith(MockitoJUnitRunner.class)
 @org.junit.Ignore
-public class AndroidDeviceSelectorRealDeviceTestCase extends AbstractContainerTestBase {
+public class AndroidEmulatorStartupAVDtoBeCreatedTestCase extends AbstractContainerTestBase {
 
     private AndroidManagedContainerConfiguration configuration;
 
     private AndroidSDK androidSDK;
 
+    @Mock
+    private IdentifierGenerator idGenerator;
+
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(AndroidBridgeConnector.class);
         extensions.add(AndroidDeviceSelectorImpl.class);
+        extensions.add(AndroidEmulatorStartup.class);
+        extensions.add(AndroidEmulatorShutdown.class);
+        extensions.add(AndroidVirtualDeviceManager.class);
     }
 
     @Before
     public void setup() {
         configuration = new AndroidManagedContainerConfiguration();
-        configuration.setForceNewBridge(true);
-        configuration.setSerialId("42583930325742355458");
         androidSDK = new AndroidSDK(configuration);
 
         getManager().getContext(ContainerContext.class).activate("doesnotmatter");
 
+        Mockito.when(idGenerator.getIdentifier(eq(IdentifierType.AVD))).thenReturn("ab1be336-d30f-4d3c-90de-56bdaf198a3e");
+
         bind(ContainerScoped.class, AndroidManagedContainerConfiguration.class, configuration);
         bind(ContainerScoped.class, AndroidSDK.class, androidSDK);
+        bind(ContainerScoped.class, IdentifierGenerator.class, idGenerator);
     }
 
     @After
@@ -83,24 +103,43 @@ public class AndroidDeviceSelectorRealDeviceTestCase extends AbstractContainerTe
     }
 
     @Test
-    public void testGetRealDevice() {
+    public void testCreateAVDandStartEmulator() {
         fire(new AndroidContainerStart());
 
         AndroidBridge bridge = getManager().getContext(ContainerContext.class).getObjectStore().get(AndroidBridge.class);
-
         bind(ContainerScoped.class, AndroidBridge.class, bridge);
 
         AndroidDevice runningDevice = getManager().getContext(ContainerContext.class)
                 .getObjectStore().get(AndroidDevice.class);
+        assertNotNull("Android device is null!", runningDevice);
+        bind(ContainerScoped.class, AndroidDevice.class, runningDevice);
 
-        assertNotNull("Android device is null object!", runningDevice);
+        AndroidEmulator emulator = getManager().getContext(ContainerContext.class)
+                .getObjectStore().get(AndroidEmulator.class);
+        assertNotNull("Android emulator is null!", emulator);
+        bind(ContainerScoped.class, AndroidEmulator.class, emulator);
+
+        assertTrue(configuration.isAVDGenerated());
+        assertEquals("ab1be336-d30f-4d3c-90de-56bdaf198a3e", runningDevice.getAvdName());
+
+        fire(new AndroidContainerStop());
 
         assertEventFired(AndroidContainerStart.class, 1);
         assertEventFired(AndroidBridgeInitialized.class, 1);
-        assertEventFired(AndroidDeviceReady.class, 1);
+        assertEventFired(AndroidVirtualDeviceCreate.class, 1);
+        assertEventFired(AndroidVirtualDeviceAvailable.class, 1);
+        assertEventFired(AndroidContainerStop.class, 1);
+        assertEventFired(AndroidEmulatorShuttedDown.class, 1);
+        assertEventFired(AndroidVirtualDeviceDelete.class, 1);
+        assertEventFired(AndroidVirtualDeviceDeleted.class, 1);
+
         assertEventFiredInContext(AndroidContainerStart.class, ContainerContext.class);
         assertEventFiredInContext(AndroidBridgeInitialized.class, ContainerContext.class);
-        assertEventFiredInContext(AndroidDeviceReady.class, ContainerContext.class);
+        assertEventFiredInContext(AndroidVirtualDeviceCreate.class, ContainerContext.class);
+        assertEventFiredInContext(AndroidVirtualDeviceAvailable.class, ContainerContext.class);
+        assertEventFiredInContext(AndroidContainerStop.class, ContainerContext.class);
+        assertEventFiredInContext(AndroidEmulatorShuttedDown.class, ContainerContext.class);
+        assertEventFiredInContext(AndroidVirtualDeviceDelete.class, ContainerContext.class);
+        assertEventFiredInContext(AndroidVirtualDeviceDeleted.class, ContainerContext.class);
     }
-
 }

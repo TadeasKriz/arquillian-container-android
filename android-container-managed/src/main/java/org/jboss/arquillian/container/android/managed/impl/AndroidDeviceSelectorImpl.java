@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.container.android.managed.impl;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +36,8 @@ import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.android.managed.configuration.Validate;
+import org.jboss.arquillian.container.android.utils.IdentifierGenerator;
+import org.jboss.arquillian.container.android.utils.IdentifierType;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -98,6 +98,9 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
     private Instance<AndroidSDK> androidSDK;
 
     @Inject
+    private Instance<IdentifierGenerator> idGenerator;
+
+    @Inject
     private Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
 
     @Inject
@@ -136,7 +139,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         logger.info("Before AVDIdentifierGenerator.getRandomAVDName");
 
         if (avdName == null) {
-            String generatedAvdName = IdentifierGenerator.getRandomAndroidVirtualDeviceName();
+            String generatedAvdName = idGenerator.get().getIdentifier(IdentifierType.AVD);
             configuration.get().setAvdName(generatedAvdName);
             configuration.get().setAvdGenerated(true);
         }
@@ -292,24 +295,6 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         }
 
         return names;
-    }
-
-    /**
-     * Finds out some random string in order to provide some name for AVD.
-     *
-     * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
-     */
-    public static final class IdentifierGenerator {
-
-        private static final int NUM_BITS = 130;
-
-        private static final int RADIX = 30;
-
-        private static final SecureRandom random = new SecureRandom();
-
-        public static String getRandomAndroidVirtualDeviceName() {
-            return new BigInteger(NUM_BITS, random).toString(RADIX);
-        }
     }
 
 }

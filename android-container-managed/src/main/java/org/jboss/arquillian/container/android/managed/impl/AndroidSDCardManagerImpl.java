@@ -18,8 +18,6 @@
 package org.jboss.arquillian.container.android.managed.impl;
 
 import java.io.File;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +33,8 @@ import org.jboss.arquillian.container.android.api.AndroidSDCardManager;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.android.managed.configuration.Validate;
+import org.jboss.arquillian.container.android.utils.IdentifierGenerator;
+import org.jboss.arquillian.container.android.utils.IdentifierType;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -61,6 +61,9 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
     @Inject
     Instance<AndroidSDK> androidSDK;
 
+    @Inject
+    Instance<IdentifierGenerator> idGenerator;
+
     private static final String SD_CARD_DEFAULT_DIR_PATH = "/tmp/";
 
     private static final String SD_CARD_DEFAULT_SIZE = "128M";
@@ -74,7 +77,7 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
         if (!isUsingSystemSDCard()) {
             if (generateSDCard()) {
                 logger.log(Level.INFO, "after generateSDCard()");
-                configuration.setSdCard(SD_CARD_DEFAULT_DIR_PATH + IdentifierGenerator.getRandomSDCardName());
+                configuration.setSdCard(SD_CARD_DEFAULT_DIR_PATH + idGenerator.get().getIdentifier(IdentifierType.SD_CARD));
                 configuration.setSdCardFileNameGenerated(true);
             }
             createSDCard();
@@ -105,7 +108,7 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
         try {
 
             if (configuration.getSdCard() == null) {
-                configuration.setSdCard(SD_CARD_DEFAULT_DIR_PATH + IdentifierGenerator.getRandomSDCardName());
+                configuration.setSdCard(SD_CARD_DEFAULT_DIR_PATH + idGenerator.get().getIdentifier(IdentifierType.SD_CARD));
                 configuration.setSdCardFileNameGenerated(true);
             }
 
@@ -196,24 +199,6 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
     private boolean isUsingSystemSDCard() {
         return configuration.get().getSdCard() == null;
-    }
-
-    /**
-     * Finds out some random string in order to provide some name for SD card.
-     *
-     * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
-     */
-    private static final class IdentifierGenerator {
-
-        private static final int NUM_BITS = 130;
-
-        private static final int RADIX = 30;
-
-        private static final SecureRandom random = new SecureRandom();
-
-        private static String getRandomSDCardName() {
-            return new BigInteger(NUM_BITS, random).toString(RADIX).concat(".img");
-        }
     }
 
 }

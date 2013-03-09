@@ -40,6 +40,8 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private String avdName;
 
+    private String generatedAvdPath = "/tmp/";
+
     private String emulatorOptions;
 
     private String sdSize = "128M";
@@ -83,6 +85,14 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     public void setAvdName(String avdName) {
         this.avdName = avdName;
+    }
+
+    public void setGeneratedAvdPath(String generatedAvdPath) {
+        this.generatedAvdPath = generatedAvdPath;
+    }
+
+    public String getGeneratedAvdPath() {
+        return this.generatedAvdPath;
     }
 
     public String getSerialId() {
@@ -236,6 +246,10 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
                     "All \"avdName\", \"serialId\" and \"consolePort\" are not defined.");
         }
 
+        if (generatedAvdPath != null) {
+            Validate.isWritable(new File(generatedAvdPath), "Path you want to store generated AVD is not writable!");
+        }
+
         if (consolePort != null) {
             Validate.isConsolePortValid(consolePort);
         }
@@ -266,19 +280,20 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\navdName\t\t:").append(this.avdName).append("\n");
-        sb.append("apiLevel\t:").append(this.apiLevel).append("\n");
-        sb.append("serialId\t:").append(this.serialId).append("\n");
-        sb.append("force\t\t:").append(this.forceNewBridge).append("\n");
-        sb.append("skip\t\t:").append(this.skip).append("\n");
-        sb.append("sdCard\t\t:").append(this.sdCard).append("\n");
-        sb.append("sdSize\t\t:").append(this.sdSize).append("\n");
-        sb.append("generateSD\t:").append(this.generateSDCard).append("\n");
-        sb.append("abi\t\t:").append(this.abi).append("\n");
-        sb.append("emuBoot\t\t:").append(this.emulatorBootupTimeoutInSeconds).append("\n");
-        sb.append("emuShut\t\t:").append(this.emulatorShutdownTimeoutInSeconds).append("\n");
-        sb.append("emuOpts\t\t:").append(this.emulatorOptions).append("\n");
-        sb.append("home\t\t:").append(this.home).append("\n");
+        sb.append("\navdName\t\t\t:").append(this.avdName).append("\n");
+        sb.append("generatedAvdPath\t:").append(this.generatedAvdPath).append("\n");
+        sb.append("apiLevel\t\t:").append(this.apiLevel).append("\n");
+        sb.append("serialId\t\t:").append(this.serialId).append("\n");
+        sb.append("force\t\t\t:").append(this.forceNewBridge).append("\n");
+        sb.append("skip\t\t\t:").append(this.skip).append("\n");
+        sb.append("sdCard\t\t\t:").append(this.sdCard).append("\n");
+        sb.append("sdSize\t\t\t:").append(this.sdSize).append("\n");
+        sb.append("generateSD\t\t:").append(this.generateSDCard).append("\n");
+        sb.append("abi\t\t\t:").append(this.abi).append("\n");
+        sb.append("emuBoot\t\t\t:").append(this.emulatorBootupTimeoutInSeconds).append("\n");
+        sb.append("emuShut\t\t\t:").append(this.emulatorShutdownTimeoutInSeconds).append("\n");
+        sb.append("emuOpts\t\t\t:").append(this.emulatorOptions).append("\n");
+        sb.append("home\t\t\t:").append(this.home).append("\n");
         return sb.toString();
     }
 
