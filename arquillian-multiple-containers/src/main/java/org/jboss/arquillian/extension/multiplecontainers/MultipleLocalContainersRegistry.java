@@ -79,7 +79,7 @@ public class MultipleLocalContainersRegistry implements ContainerRegistry {
             DeployableContainer<?> dcService = null;
 
             if (services.size() == 0) {
-                throw new ContainerAdapterNotFoundException("No suitable container adapter implementation found");
+                throw new ContainerAdapterNotFoundException("There are not any container adapters on the classpath");
             }
 
             if (services.size() == 1) {
@@ -92,6 +92,7 @@ public class MultipleLocalContainersRegistry implements ContainerRegistry {
                 }
 
                 Class<?> dcImplClass = Class.forName(props.get(ADAPTER_IMPL_CONFIG_STRING));
+
                 for (DeployableContainer<?> dc : services) {
                     if (dcImplClass.isInstance(dc)) {
                         dcService = dc;
@@ -104,9 +105,8 @@ public class MultipleLocalContainersRegistry implements ContainerRegistry {
                 throw new ContainerAdapterNotFoundException("No suitable container adapter implementation found");
             }
 
-            return addContainer(
             // before a Container is added to a collection of containers, inject into its injection point
-            injector.inject(new ContainerImpl(definition.getContainerName(), dcService, definition)));
+            return addContainer(injector.inject(new ContainerImpl(definition.getContainerName(), dcService, definition)));
         } catch (Exception e) {
             throw new ContainerCreationException("Could not create Container " + definition.getContainerName(), e);
         }

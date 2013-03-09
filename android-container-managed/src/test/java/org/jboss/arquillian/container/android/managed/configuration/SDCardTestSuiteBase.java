@@ -19,49 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.arquillian.container.android.managed.configuration;
 
-package org.jboss.arquillian.container.android.managed.configuration.tests;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.jboss.arquillian.container.android.managed.configuration.Validate;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * Test class which tests all border values which are of valid size of SD card.
+ * Represents test suite which covers additional suite classes to be tested.
  *
  * @author <a href="@mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-@RunWith(Parameterized.class)
-public class SDCardTestCaseSizesOK {
+@RunWith(Suite.class)
+@SuiteClasses({
+        SDCardTestCaseSizesOK.class,
+        SDCardTestCaseSizesBad.class,
+        SDCardTestCaseSizesBadFormat.class,
+})
+public class SDCardTestSuiteBase {
 
-    private String sdSizeOk;
-
-    public SDCardTestCaseSizesOK(String sdSize) {
-        this.sdSizeOk = sdSize;
-    }
-
-    @Parameters
-    public static Collection<Object[]> data() {
-        Object[][] data = new Object[][] {
-                { "9126K" },
-                { "9M" },
-                { "9437184" },
-                { "1099511627264" },
-                { "1073741823K" },
-                { "1048575M" },
-                { "1023G" }
-        };
-        return Arrays.asList(data);
-    }
-
-    @Test
-    public void testSdSizeOkSize() {
-        Validate.sdSize(sdSizeOk, "Not valid size of sd card!");
-    }
 }

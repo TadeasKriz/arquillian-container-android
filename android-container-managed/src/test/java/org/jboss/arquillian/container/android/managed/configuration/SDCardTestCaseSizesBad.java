@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.arquillian.container.android.managed.configuration.tests;
+package org.jboss.arquillian.container.android.managed.configuration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

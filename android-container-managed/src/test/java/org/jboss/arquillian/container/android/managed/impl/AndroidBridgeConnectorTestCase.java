@@ -20,46 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.arquillian.container.android.managed;
+package org.jboss.arquillian.container.android.managed.impl;
 
 import static org.junit.Assert.assertTrue;
 
-import org.jboss.arquillian.container.android.managed.AndroidManagedDeployableContainer;
-import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
-import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.container.test.AbstractContainerTestBase;
-import org.jboss.arquillian.core.api.Injector;
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.junit.Before;
+import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
+ * Tests connection of the container to the {@link AndroidBridge}.
+ *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
-
-    @Inject
-    private Instance<Injector> injector;
-
-    @Mock
-    private ServiceLoader serviceLoader;
-
-    @Mock
-    private AndroidManagedDeployableContainer deployableContainer;
-
-    @Before
-    public void setup() throws Exception {
-        Mockito.when(serviceLoader.onlyOne(Mockito.same(DeployableContainer.class))).thenReturn(deployableContainer);
-        Mockito.when(deployableContainer.getConfigurationClass()).thenReturn(AndroidManagedContainerConfiguration.class);
-    }
+public class AndroidBridgeConnectorTestCase {
 
     @Test
     public void test01() {
