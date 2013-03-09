@@ -22,12 +22,11 @@
 
 package org.jboss.arquillian.container.android.managed.impl;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
 
 import org.jboss.arquillian.android.spi.event.AndroidBridgeInitialized;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
+import org.jboss.arquillian.android.spi.event.AndroidDeviceReady;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
@@ -36,22 +35,42 @@ import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.test.AbstractContainerTestBase;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Tests connection of the container to the {@link AndroidBridge}.
+ * Tests getting of real Android device via {@link AndroidDeviceSelectorImpl}
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
+public class AndroidDeviceSelectorRealDeviceTestCase extends AbstractContainerTestBase {
+
+    private AndroidManagedContainerConfiguration configuration;
+
+    private AndroidSDK androidSDK;
+
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(AndroidBridgeConnector.class);
+        extensions.add(AndroidDeviceSelectorImpl.class);
+    }
+
+    @Before
+    public void setup() {
+        configuration = new AndroidManagedContainerConfiguration();
+        configuration.setForceNewBridge(true);
+        configuration.setSerialId("42583930325742355458");
+        androidSDK = new AndroidSDK(configuration);
+
+        getManager().getContext(ContainerContext.class).activate("doesnotmatter");
+
+        bind(ContainerScoped.class, AndroidManagedContainerConfiguration.class, configuration);
+        bind(ContainerScoped.class, AndroidSDK.class, androidSDK);
     }
 
     @After
@@ -61,21 +80,19 @@ public class AndroidBridgeConnectorTestCase extends AbstractContainerTestBase {
     }
 
     @Test
-    public void testConnectToAndroidBridge() {
-        getManager().getContext(ContainerContext.class).activate("doesnotmatter");
-
-        AndroidManagedContainerConfiguration configuration = new AndroidManagedContainerConfiguration();
-        AndroidSDK androidSDK = new AndroidSDK(configuration);
-
-        bind(ContainerScoped.class, AndroidManagedContainerConfiguration.class, configuration);
-        bind(ContainerScoped.class, AndroidSDK.class, androidSDK);
-
+    public void testGetRealDevice() {
         fire(new AndroidContainerStart());
 
         AndroidBridge bridge = getManager().getContext(ContainerContext.class).getObjectStore().get(AndroidBridge.class);
-        assertNotNull("Android Bridge should be created but is null!", bridge);
 
+        bind(ContainerScoped.class, AndroidBridge.class, bridge);
+
+        assertEventFired(AndroidContainerStart.class, 1);
         assertEventFired(AndroidBridgeInitialized.class, 1);
+        assertEventFired(AndroidDeviceReady.class, 1);
+        assertEventFiredInContext(AndroidContainerStart.class, ContainerContext.class);
+        assertEventFiredInContext(AndroidBridgeInitialized.class, ContainerContext.class);
+        assertEventFiredInContext(AndroidDeviceReady.class, ContainerContext.class);
     }
 
 }

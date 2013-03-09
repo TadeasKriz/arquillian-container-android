@@ -45,7 +45,6 @@ import org.jboss.as.arquillian.container.CommonDeployableContainer;
 import org.jboss.as.arquillian.container.managed.ManagedContainerConfiguration;
 import org.jboss.as.arquillian.container.managed.ManagedDeployableContainer;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -71,8 +70,28 @@ public class MultipleContainersTestCase extends AbstractContainerTestBase {
 
     private CommonDeployableContainer<ManagedContainerConfiguration> deployableJBossContainer = new ManagedDeployableContainer();
 
-    @Before
-    public void setup() throws Exception {
+    @Test
+    public void testCreateOnlyAndroidContainer() {
+
+        @SuppressWarnings("rawtypes")
+        Collection<DeployableContainer> containers = new ArrayList<DeployableContainer>();
+        containers.add(deployableContainer);
+
+        Mockito.when(serviceLoader.all(DeployableContainer.class)).thenReturn(containers);
+
+        ContainerRegistry registry = new MultipleLocalContainersRegistry(injector.get());
+
+        // adapterImplClass is not required since it is only the adapter on the classpath
+        registry.create(Descriptors.create(ArquillianDescriptor.class)
+                .group("containers").container("android1").setDefault(), serviceLoader);
+
+        Container android1 = registry.getContainer("android1");
+        assertNotNull(android1);
+        assertEquals("android1", android1.getName());
+    }
+
+    @Test
+    public void testCreateAndroidContainersInGroup() {
 
         @SuppressWarnings("rawtypes")
         Collection<DeployableContainer> containers = new ArrayList<DeployableContainer>();
@@ -80,10 +99,6 @@ public class MultipleContainersTestCase extends AbstractContainerTestBase {
         containers.add(deployableJBossContainer);
 
         Mockito.when(serviceLoader.all(DeployableContainer.class)).thenReturn(containers);
-    }
-
-    @Test
-    public void testCreateAndroidContainersInGroup() {
 
         ContainerRegistry registry = new MultipleLocalContainersRegistry(injector.get());
 
@@ -120,6 +135,13 @@ public class MultipleContainersTestCase extends AbstractContainerTestBase {
 
     @Test
     public void testCreateAndroidContainersWithoutGroup() {
+
+        @SuppressWarnings("rawtypes")
+        Collection<DeployableContainer> containers = new ArrayList<DeployableContainer>();
+        containers.add(deployableContainer);
+        containers.add(deployableJBossContainer);
+
+        Mockito.when(serviceLoader.all(DeployableContainer.class)).thenReturn(containers);
 
         ContainerRegistry registry = new MultipleLocalContainersRegistry(injector.get());
 
