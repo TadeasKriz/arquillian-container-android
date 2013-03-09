@@ -34,6 +34,12 @@ public class IdentifierGenerator {
 
     private String sdCardSuffix = ".img";
 
+    /**
+     * Gets identifier of specified {@link IdentifierType}
+     *
+     * @param type type of identifier we want
+     * @return identifier of some {@link IdentifierType}
+     */
     public String getIdentifier(IdentifierType type) {
         String uuid = UUID.randomUUID().toString();
 
@@ -47,9 +53,15 @@ public class IdentifierGenerator {
         return null;
     }
 
-    public void setSdCardSuffix(String suffix) {
+    /**
+     * Sets suffix of SD card file name.
+     *
+     * @param suffix suffix of SD card file
+     * @return
+     */
+    public IdentifierGenerator setSdCardSuffix(String suffix) {
         if (suffix == null || suffix.trim().equals("")) {
-            return;
+            return this;
         }
 
         if (!suffix.startsWith(".")) {
@@ -58,5 +70,6 @@ public class IdentifierGenerator {
 
         sdCardSuffix = suffix;
 
+        return this;
     }
 }
