@@ -83,8 +83,6 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
     public void createSDCard(@Observes AndroidSDCardCreate event) throws AndroidExecutionException {
 
-        logger.log(Level.INFO, "before isUsingSystemCard()");
-
         AndroidManagedContainerConfiguration configuration = this.configuration.get();
 
         AndroidSDCard sdCard = new AndroidSDCard();
@@ -122,12 +120,12 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
                 // use default sd card for android emulator
             } else {
                 if (new File(sdCard.getFileName()).exists()) {
-                    // use this sdCard
+                    logger.log(Level.INFO, "Using SD card at " + sdCard.getFileName());
                 } else {
                     // use default sd card for android emulator but notice user that sd card
                     // he specified does not exist
-                    logger.log(Level.INFO, "SD card you specified does not exist and its generation is set to false." +
-                            "Default SD card for android emulator will be used.");
+                    logger.log(Level.INFO, "SD card you specified does not exist and its generation is set to false. " +
+                            "Default SD card for Android emulator will be used.");
                 }
             }
         }
