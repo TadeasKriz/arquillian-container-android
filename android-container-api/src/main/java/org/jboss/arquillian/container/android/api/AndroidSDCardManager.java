@@ -24,12 +24,17 @@ package org.jboss.arquillian.container.android.api;
 public interface AndroidSDCardManager {
 
     /**
-     * Creates Android SD Card.
+     * Creates Android SD card.
+     *
+     * @param sdCard sdCard to create
+     * @throws AndroidExecutionException
      */
-    void createSDCard();
+    void createSDCard(SDCard sdCard) throws AndroidExecutionException;
 
     /**
      * Deletes Android SD Card.
+     *
+     * @param sdCard sdCard to delete
      */
-    void deleteSDCard();
+    void deleteSDCard(SDCard sdCard);
 }

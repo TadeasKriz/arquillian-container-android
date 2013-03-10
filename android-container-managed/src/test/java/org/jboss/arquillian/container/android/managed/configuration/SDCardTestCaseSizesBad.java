@@ -28,8 +28,6 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.jboss.arquillian.container.android.managed.configuration.AndroidContainerConfigurationException;
-import org.jboss.arquillian.container.android.managed.configuration.Validate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

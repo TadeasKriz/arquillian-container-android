@@ -49,6 +49,9 @@ public class IdentifierGenerator {
         if (type.name().equals("SD_CARD")) {
             return uuid + sdCardSuffix;
         }
+        if (type.name().equals("SD_CARD_LABEL")) {
+            return uuid;
+        }
 
         return null;
     }

@@ -352,9 +352,15 @@ public class Validate {
     public static void sdCardFileName(final String fileName, final String message)
             throws AndroidContainerConfigurationException {
         notNullOrEmpty(fileName, "SD card file name to validate is null or empty string");
+        notNullOrEmpty(message, "exception message can't be null or empty string");
 
-        String[] tokens = fileName.split("\\.");
-        if (!(tokens.length >= 2) || !tokens[tokens.length - 1].equals("img")) {
+        if (fileName.endsWith(System.getProperty("file.separator"))) {
+            throw new AndroidContainerConfigurationException("File name of SD card can't end with " +
+                    "system file separator. It denotes a directory and not a file!");
+        }
+
+        String[] tokens = new File(fileName).getName().split("\\.");
+        if (!(tokens.length >= 2) || !tokens[tokens.length - 1].equals("img") || tokens[0].trim().isEmpty()) {
             throw new AndroidContainerConfigurationException(message);
         }
     }

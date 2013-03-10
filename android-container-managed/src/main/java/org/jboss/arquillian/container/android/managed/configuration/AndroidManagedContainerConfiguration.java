@@ -62,8 +62,6 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private boolean avdGenerated;
 
-    private boolean SdCardFileNameGenerated;
-
     private String consolePort;
 
     private String adbPort;
@@ -203,14 +201,6 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         return this.avdGenerated;
     }
 
-    public boolean isSdCardFileNameGenerated() {
-        return SdCardFileNameGenerated;
-    }
-
-    public void setSdCardFileNameGenerated(boolean SdCardFileNameGenerated) {
-        this.SdCardFileNameGenerated = SdCardFileNameGenerated;
-    }
-
     public String getConsolePort() {
         return consolePort;
     }
@@ -259,13 +249,8 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         }
 
         if (sdCard != null) {
-            File sdCardFile = new File(sdCard);
-            Validate.isReadableDirectory(sdCardFile.getParentFile(),
-                    "Directory of the sd card for '" + avdName + "' is not readable.");
-            Validate.isWritable(sdCardFile, "Location of the SD card for the Android container '" + avdName
-                    + "' is not writable.");
-            Validate.sdCardFileName(sdCardFile.getName(), "File name of sd card to create '" + sdCardFile.getName()
-                    + "' does not have '.img' suffix.");
+            Validate.sdCardFileName(sdCard, "File name (or path) of SD card to use '" + sdCard
+                    + "' is not valid. Check it is under existing and writable directory does have '.img' suffix.");
         }
 
         if (sdCardLabel != null) {

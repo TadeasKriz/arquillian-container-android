@@ -20,14 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.arquillian.container.android.utils;
+package org.jboss.arquillian.android.spi.event;
 
 /**
- * Type of identifier we want to get from {@link IdentifierGenerator#getIdentifier(IdentifierType)}
+ * Event representing that SD card for Android emulator was deleted.
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public enum IdentifierType {
-    AVD, SD_CARD, SD_CARD_LABEL
+public class AndroidSDCardDeleted {
+
 }

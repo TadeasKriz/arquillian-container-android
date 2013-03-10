@@ -41,11 +41,9 @@ import org.jboss.arquillian.test.spi.context.TestContext;
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public class AbstractAndroidTestTestBase extends AbstractManagerTestBase
-{
+public class AbstractAndroidTestTestBase extends AbstractManagerTestBase {
     @Override
-    protected void addContexts(List<Class<? extends Context>> contexts)
-    {
+    protected void addContexts(List<Class<? extends Context>> contexts) {
         super.addContexts(contexts);
         contexts.add(ContainerContextImpl.class);
         contexts.add(SuiteContextImpl.class);
@@ -54,8 +52,7 @@ public class AbstractAndroidTestTestBase extends AbstractManagerTestBase
     }
 
     @Override
-    protected void startContexts(Manager manager)
-    {
+    protected void startContexts(Manager manager) {
         super.startContexts(manager);
         manager.getContext(SuiteContext.class).activate();
         manager.getContext(ClassContext.class).activate(super.getClass());

@@ -54,6 +54,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@org.junit.Ignore
 public class AndroidBridgeConnectorTestCase extends AbstractAndroidTestTestBase {
 
     @Override
@@ -62,7 +63,8 @@ public class AndroidBridgeConnectorTestCase extends AbstractAndroidTestTestBase 
     }
 
     @Test
-    public void testConnectTwoContainersToAndroidBridge() throws AndroidExecutionException, SecurityException, NoSuchMethodException {
+    public void testConnectTwoContainersToAndroidBridge() throws AndroidExecutionException, SecurityException,
+            NoSuchMethodException {
         // container 1
         getManager().getContext(ContainerContext.class).activate("container1");
 

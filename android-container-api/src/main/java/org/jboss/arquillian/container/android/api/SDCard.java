@@ -20,14 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.arquillian.container.android.utils;
+package org.jboss.arquillian.container.android.api;
 
 /**
- * Type of identifier we want to get from {@link IdentifierGenerator#getIdentifier(IdentifierType)}
+ * Generic SD card which concrete Android card extends from.
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public enum IdentifierType {
-    AVD, SD_CARD, SD_CARD_LABEL
+public abstract class SDCard {
+
 }

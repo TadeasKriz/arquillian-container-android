@@ -36,6 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
         SDCardTestCaseSizesOK.class,
         SDCardTestCaseSizesBad.class,
         SDCardTestCaseSizesBadFormat.class,
+        SDCardTestCaseValidNames.class
 })
 public class SDCardTestSuiteBase {
 
