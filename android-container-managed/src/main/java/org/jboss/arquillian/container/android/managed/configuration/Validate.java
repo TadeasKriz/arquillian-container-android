@@ -342,6 +342,13 @@ public class Validate {
         }
     }
 
+    public static boolean isPortValid(int port) {
+        if (!(port > 0 && port < 65535)) {
+            throw new AndroidContainerConfigurationException("Ports have to be in range [0,65535].");
+        }
+        return true;
+    }
+
     /**
      * Checks if file name of the SD card is valid which means it has to have suffix of ".img".
      *

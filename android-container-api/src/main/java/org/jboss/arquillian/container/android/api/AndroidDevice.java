@@ -157,4 +157,28 @@ public interface AndroidDevice {
      *         obtained by {@code adb devices -l command}.
      */
     String getConsolePort();
+
+    /**
+     *
+     * @return
+     */
+    int getDroneHostPort();
+
+    /**
+     *
+     * @return
+     */
+    int getDroneGuestPort();
+
+    /**
+     *
+     * @param droneHostPort
+     */
+    void setDroneHostPort(int droneHostPort);
+
+    /**
+     *
+     * @param droneGuestPort
+     */
+    void setDroneGuestPort(int droneGuestPort);
 }

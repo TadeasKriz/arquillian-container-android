@@ -66,6 +66,10 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private String adbPort;
 
+    private int droneHostPort = 14444;
+
+    private int droneGuestPort = 8080;
+
     // Android 2.3.3 is the default
     private String apiLevel = "10";
 
@@ -217,6 +221,22 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         this.adbPort = adbPort;
     }
 
+    public int getDroneHostPort() {
+        return droneHostPort;
+    }
+
+    public int getDroneGuestPort() {
+        return droneGuestPort;
+    }
+
+    public void setDroneHostPort(int droneHostPort) {
+        this.droneHostPort = droneHostPort;
+    }
+
+    public void setDroneGuestPort(int droneGuestPort) {
+        this.droneGuestPort = droneGuestPort;
+    }
+
     @Override
     public void validate() throws AndroidContainerConfigurationException {
         Validate.isReadableDirectory(home,
@@ -277,6 +297,14 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
         if (sdSize != null) {
             Validate.sdSize(sdSize, "Check you did specify your sdSize property in arquillian.xml properly.");
+        }
+
+        if (droneHostPort != 14444) {
+            Validate.isPortValid(droneHostPort);
+        }
+
+        if (droneGuestPort != 8080) {
+            Validate.isPortValid(droneGuestPort);
         }
     }
 

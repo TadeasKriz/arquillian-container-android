@@ -120,9 +120,12 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
 
         if (isConnectingToPhysicalDevice()) {
             device = getPhysicalDevice();
-            androidDevice.set(device);
-            androidDeviceReady.fire(new AndroidDeviceReady(device));
-            return;
+            if (device != null) {
+                setDronePorts(device);
+                androidDevice.set(device);
+                androidDeviceReady.fire(new AndroidDeviceReady(device));
+                return;
+            }
         }
 
         logger.info("After isConnectingToPhysicalDevice");
@@ -131,6 +134,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
             logger.info("in isConnectingToVirtualDevice()");
             device = getVirtualDevice();
             if (device != null) {
+                setDronePorts(device);
                 androidDevice.set(device);
                 androidDeviceReady.fire(new AndroidDeviceReady(device));
                 return;
@@ -156,6 +160,11 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
             logger.info("After if(!avdExists())");
             androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(configuration.get().getAvdName()));
         }
+    }
+
+    private void setDronePorts(AndroidDevice device) {
+        device.setDroneHostPort(configuration.get().getDroneHostPort());
+        device.setDroneGuestPort(configuration.get().getDroneGuestPort());
     }
 
     private boolean isConnectingToVirtualDevice() {

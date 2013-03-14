@@ -116,11 +116,17 @@ public class AndroidEmulatorStartup {
         waitUntilBootUpIsComplete(deviceDiscovery, emulatorProcessExecutor, countdown);
 
         emulator = deviceDiscovery.getDiscoveredDevice();
+        setDronePorts(emulator);
 
         AndroidDebugBridge.removeDeviceChangeListener(deviceDiscovery);
 
         androidDevice.set(emulator);
         androidDeviceReady.fire(new AndroidDeviceReady(emulator));
+    }
+
+    private void setDronePorts(AndroidDevice device) {
+        device.setDroneHostPort(configuration.get().getDroneHostPort());
+        device.setDroneGuestPort(configuration.get().getDroneGuestPort());
     }
 
     private Process startEmulator(ProcessExecutor executor) throws AndroidExecutionException {

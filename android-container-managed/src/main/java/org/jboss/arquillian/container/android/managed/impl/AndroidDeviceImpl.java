@@ -47,6 +47,10 @@ class AndroidDeviceImpl implements AndroidDevice {
 
     private IDevice delegate;
 
+    private int droneHostPort = 14444;
+
+    private int droneGuestPort = 8080;
+
     AndroidDeviceImpl(IDevice delegate) {
         this.delegate = delegate;
     }
@@ -200,8 +204,7 @@ class AndroidDeviceImpl implements AndroidDevice {
             executeShellCommand(command, monkey);
             return monkey.isInstalled();
         } catch (Exception e) {
-            throw new AndroidExecutionException("Unable to decide if package " + packageName + " is installed or nor",
-                    e);
+            throw new AndroidExecutionException("Unable to decide if package " + packageName + " is installed or nor", e);
         }
     }
 
@@ -213,6 +216,26 @@ class AndroidDeviceImpl implements AndroidDevice {
             throw new AndroidExecutionException("Unable to uninstall APK named " + packageName, e);
         }
 
+    }
+
+    @Override
+    public int getDroneHostPort() {
+        return droneHostPort;
+    }
+
+    @Override
+    public int getDroneGuestPort() {
+        return droneGuestPort;
+    }
+
+    @Override
+    public void setDroneHostPort(int droneHostPort) {
+        this.droneHostPort = droneHostPort;
+    }
+
+    @Override
+    public void setDroneGuestPort(int droneGuestPort) {
+        this.droneGuestPort = droneGuestPort;
     }
 
     private static class PackageInstalledMonkey implements AndroidDeviceOutputReciever {
