@@ -55,9 +55,12 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * If we fails to connect, {@link AndroidExecutionException} is thrown. <br>
  * 2. If avd name was specified but console port was not, we try to connect to the first running emulator of such avd name. <br>
  * 3. If both avd name and console port were specified, we try to connect to this combination. <br>
- * 4. We can fail to get device in the step 3 so we check if there is such avd present in the system. If it is not, we create
- * it and connect to it afterwards. <br>
- * <br>
+ * 4. We can fail to get device in all above steps:
+ * <ol>
+ *  <li>If AVD name was not specified, random AVD indentifier is generated.</li>
+ *  <li>Checking whether such AVD is already existing is performed, if it does not, such AVD
+ *  name is created and marked as generated one. This AVD will be deleted after the whole test suite.</li>
+ * </ol>
  *
  * Observes:
  * <ul>
@@ -134,26 +137,24 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
             }
         }
 
-        String avdName = configuration.get().getAvdName();
-
-        logger.info("Before AVDIdentifierGenerator.getRandomAVDName");
-
-        if (avdName == null) {
+        if (configuration.get().getAvdName() == null) {
             String generatedAvdName = idGenerator.get().getIdentifier(IdentifierType.AVD.getClass());
             configuration.get().setAvdName(generatedAvdName);
             configuration.get().setAvdGenerated(true);
         }
 
+        logger.info("Before AVDIdentifierGenerator.getRandomAVDName");
+
         logger.info("After AVDIdentifierGenerator.getRandomAVDName");
 
         logger.log(Level.INFO, "Before if(!avdExists())");
-        if (!androidVirtualDeviceExists(avdName)) {
+        if (!androidVirtualDeviceExists(configuration.get().getAvdName())) {
             logger.info("before fire in androidVirtualDeviceCreate");
             androidVirtualDeviceCreate.fire(new AndroidVirtualDeviceCreate());
             logger.info("after fire in androidVirtualDeviceCreate");
         } else {
             logger.info("After if(!avdExists())");
-            androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(avdName));
+            androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(configuration.get().getAvdName()));
         }
     }
 
@@ -190,21 +191,39 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         String avdName = configuration.get().getAvdName();
 
         if (isOnlyConsolePortAvailable()) {
-            return getVirtualDeviceByConsolePort(consolePort);
+            try {
+                return getVirtualDeviceByConsolePort(consolePort);
+            } catch(AndroidExecutionException ex) {
+                return null;
+            }
         }
 
         if (isOnlyAvdNameAvailable()) {
-            return getVirtualDeviceByAvdName(avdName);
+            try {
+                return getVirtualDeviceByAvdName(avdName);
+            } catch(AndroidExecutionException ex) {
+                return null;
+            }
+
         }
 
-        return getVirtualDevice(consolePort, avdName);
+        try {
+            return getVirtualDevice(consolePort, avdName);
+        } catch (AndroidExecutionException ex) {
+            return null;
+        }
+
     }
 
     private AndroidDevice getVirtualDevice(String consolePort, String avdName) throws AndroidExecutionException {
-        Validate.notNullOrEmpty(consolePort, "Console port to get emulator of is a null object or an empty string");
-        Validate.notNullOrEmpty(avdName, "AVD name to get emulator of is a null object or an empty string");
+        Validate.notNullOrEmpty(consolePort, "Console port to get emulator of is a null object or an empty string.");
+        Validate.notNullOrEmpty(avdName, "AVD name to get emulator of is a null object or an empty string.");
 
         List<AndroidDevice> devices = androidBridge.get().getEmulators();
+
+        if (devices == null || devices.size() == 0) {
+            throw new AndroidExecutionException("There are no emulators on the Android bridge.");
+        }
 
         for (AndroidDevice device : devices) {
             if (device.getConsolePort().equals(consolePort) && device.getAvdName().equals(avdName)) {
@@ -216,9 +235,13 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
     }
 
     private AndroidDevice getVirtualDeviceByConsolePort(String consolePort) throws AndroidExecutionException {
-        Validate.notNullOrEmpty(consolePort, "Console port to get emulator of is a null object or an empty string");
+        Validate.notNullOrEmpty(consolePort, "Console port to get emulator of is a null object or an empty string.");
 
-        List<AndroidDevice> devices = androidBridge.get().getDevices();
+        List<AndroidDevice> devices = androidBridge.get().getEmulators();
+
+        if (devices == null || devices.size() == 0) {
+            throw new AndroidExecutionException("There are no emulators on the Android bridge.");
+        }
 
         for (AndroidDevice device : devices) {
             String deviceConsolePort = device.getConsolePort();
@@ -227,13 +250,17 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
             }
         }
 
-        throw new AndroidExecutionException("Unable to get Android device running on the console port " + consolePort);
+        throw new AndroidExecutionException("Unable to get Android emulator running on the console port " + consolePort);
     }
 
     private AndroidDevice getVirtualDeviceByAvdName(String avdName) throws AndroidExecutionException {
         Validate.notNullOrEmpty(avdName, "AVD name to get emulator of is a null object or an empty string");
 
-        List<AndroidDevice> devices = androidBridge.get().getDevices();
+        List<AndroidDevice> devices = androidBridge.get().getEmulators();
+
+        if (devices == null || devices.size() == 0) {
+            throw new AndroidExecutionException("There are no emulators on the Android bridge.");
+        }
 
         for (AndroidDevice device : devices) {
             String deviceAvdName = device.getAvdName();
@@ -242,7 +269,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
             }
         }
 
-        return null;
+        throw new AndroidExecutionException("No running emulator of AVD name " + avdName + ".");
     }
 
     private AndroidDevice getPhysicalDevice() throws AndroidExecutionException {
@@ -251,8 +278,12 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
 
         List<AndroidDevice> devices = androidBridge.get().getDevices();
 
+        if (devices == null || devices.size() == 0) {
+            throw new AndroidExecutionException("There are no devices on the Android bridge.");
+        }
+
         for (AndroidDevice device : devices) {
-            if (serialId.equals(device.getSerialNumber())) {
+            if (!device.isEmulator() && serialId.equals(device.getSerialNumber())) {
                 logger.info("Detected physical device with serial ID " + serialId + ".");
                 return device;
             }

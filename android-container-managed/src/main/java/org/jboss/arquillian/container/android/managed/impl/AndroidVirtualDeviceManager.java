@@ -21,11 +21,13 @@
  */
 package org.jboss.arquillian.container.android.managed.impl;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.android.spi.event.AndroidSDCardCreate;
 import org.jboss.arquillian.android.spi.event.AndroidSDCardDelete;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceCreate;
@@ -55,6 +57,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * <li>{@link AndroidVirtualDeviceAvailable}</li>
  * <li>{@link AndroidVirtualDeviceDeleted}</li>
  * <li>{@link AndroidSDCardDelete}</li>
+ * <li>{@link AndroidSDCardCreate}</li>
  * </ul>
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
@@ -78,6 +81,9 @@ public class AndroidVirtualDeviceManager {
 
     @Inject
     Event<AndroidSDCardDelete> androidSDCardDelete;
+
+    @Inject
+    Event<AndroidSDCardCreate> androidSDCardCreate;
 
     public void deleteAndroidVirtualDevice(@Observes AndroidVirtualDeviceDelete event) {
 
@@ -106,10 +112,11 @@ public class AndroidVirtualDeviceManager {
 
         logger.info("In AndroidVirtualDeviceManagerImpl.createAndroidVirtualDevice");
 
-        AndroidManagedContainerConfiguration configuration = this.configuration.get();
-        Validate.notNullOrEmpty(configuration.getSdSize(), "Memory SD card size must be defined");
+        androidSDCardCreate.fire(new AndroidSDCardCreate());
 
+        AndroidManagedContainerConfiguration configuration = this.configuration.get();
         AndroidSDK sdk = this.androidSDK.get();
+        Validate.notNullOrEmpty(configuration.getSdSize(), "Memory SD card size must be defined");
 
         ProcessExecutor executor = new ProcessExecutor();
 
@@ -117,8 +124,12 @@ public class AndroidVirtualDeviceManager {
             Command command = new Command();
             command.add(sdk.getAndroidPath()).add("create").add("avd").add("-n").add(configuration.getAvdName())
                     .add("-t").add("android-" + configuration.getApiLevel()).add("-f")
-                    .add("-p").add(configuration.getGeneratedAvdPath() + configuration.getAvdName()).add("-c")
-                    .add(configuration.getSdSize());
+                    .add("-p").add(configuration.getGeneratedAvdPath() + configuration.getAvdName());
+            if (configuration.getSdCard() != null && new File(configuration.getSdCard()).exists()) {
+                command.add("-c").add(configuration.getSdCard());
+            } else {
+                command.add("-c").add(configuration.getSdSize());
+            }
             if (configuration.getAbi() != null) {
                 command.add("--abi").add(configuration.getAbi());
             }

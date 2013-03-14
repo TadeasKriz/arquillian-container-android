@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidDeviceReady;
-import org.jboss.arquillian.android.spi.event.AndroidSDCardCreate;
 import org.jboss.arquillian.android.spi.event.AndroidVirtualDeviceAvailable;
 import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
@@ -91,9 +90,6 @@ public class AndroidEmulatorStartup {
     @Inject
     private Event<AndroidDeviceReady> androidDeviceReady;
 
-    @Inject
-    private Event<AndroidSDCardCreate> androidSDCardCreate;
-
     public void createAndroidEmulator(@Observes AndroidVirtualDeviceAvailable event) throws AndroidExecutionException {
         if (!androidBridge.get().isConnected()) {
             throw new IllegalStateException("Android debug bridge must be connected in order to spawn the emulator");
@@ -101,12 +97,6 @@ public class AndroidEmulatorStartup {
 
         AndroidManagedContainerConfiguration configuration = this.configuration.get();
         AndroidDevice emulator = null;
-
-        logger.log(Level.INFO, "before androidSDCardCreate");
-
-        androidSDCardCreate.fire(new AndroidSDCardCreate());
-
-        logger.log(Level.INFO, "after androidSDCardCreate");
 
         CountDownWatch countdown = new CountDownWatch(configuration.getEmulatorBootupTimeoutInSeconds(), TimeUnit.SECONDS);
         logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be started and connected.", new Object[] {
@@ -144,7 +134,7 @@ public class AndroidEmulatorStartup {
         command.add(sdk.getEmulatorPath()).add("-avd").add(configuration.getAvdName());
 
         if (configuration.getSdCard() != null) {
-            command.add("-sdCard");
+            command.add("-sdcard");
             command.add(configuration.getSdCard());
         }
 

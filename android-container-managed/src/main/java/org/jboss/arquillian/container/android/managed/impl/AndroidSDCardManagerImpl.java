@@ -104,6 +104,7 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
             if (sdCard.getFileName() == null) {
                 String sdCardName = SD_CARD_DEFAULT_DIR_PATH + idGenerator.get().getIdentifier(IdentifierType.SD_CARD.getClass());
                 sdCard.setFileName(sdCardName);
+                configuration.setSdCard(sdCardName);
                 createSDCard(sdCard);
                 androidSDCardCreated.fire(new AndroidSDCardCreated());
             } else {
@@ -124,8 +125,8 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
                 } else {
                     // use default sd card for android emulator but notice user that sd card
                     // he specified does not exist
-                    logger.log(Level.INFO, "SD card you specified does not exist and its generation is set to false. " +
-                            "Default SD card for Android emulator will be used.");
+                    logger.log(Level.INFO, "SD card you specified does not exist (" + sdCard.getFileName() + ") and its " +
+                    		"generation is set to false. Default system SD card for Android emulator will be used.");
                 }
             }
         }

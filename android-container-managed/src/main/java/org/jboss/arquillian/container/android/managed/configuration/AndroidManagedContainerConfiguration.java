@@ -237,6 +237,24 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         }
 
         if (generatedAvdPath != null) {
+            Validate.notNullOrEmpty(generatedAvdPath, "Directory you specified to store AVD to is empty string or null.");
+            if (!generatedAvdPath.endsWith(System.getProperty("file.separator"))) {
+                generatedAvdPath += System.getProperty("file.separator");
+            }
+
+            File f = new File(generatedAvdPath);
+            if (!f.exists()) {
+                try {
+                    if (!f.mkdirs()) {
+                        throw new AndroidContainerConfigurationException("Unable to create directory where AVD will be stored.");
+                    }
+                } catch (Exception e) {
+                    throw new AndroidContainerConfigurationException("Unable to create directory where AVD will be stored " +
+                            "(" + generatedAvdPath + "). Check that you have permission to create directory you specified.");
+                }
+            }
+            Validate.isReadableDirectory(new File(generatedAvdPath), "Directory you specified as place where newly " +
+                    "generated AVD will be placed does not exist (" + generatedAvdPath + ").");
             Validate.isWritable(new File(generatedAvdPath), "Path you want to store generated AVD is not writable!");
         }
 
