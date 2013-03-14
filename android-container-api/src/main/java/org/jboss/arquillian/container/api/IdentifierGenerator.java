@@ -20,14 +20,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.arquillian.container.android.utils;
+package org.jboss.arquillian.container.api;
 
 /**
- * Type of identifier we want to get from {@link AndroidIdentifierGenerator#getIdentifier(IdentifierType)}
+ * Generates random identifier.
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
- *
  */
-public enum IdentifierType {
-    AVD {}, SD_CARD {}, SD_CARD_LABEL {}
+public interface IdentifierGenerator {
+
+    /**
+     * Generates random identifier.
+     *
+     * @param identifierType type of identifier we want to get
+     * @return random identifier as a string
+     * @throws IdentifierGeneratorException when no identifier can be returned
+     */
+    String getIdentifier(Class<?> identifierType) throws IdentifierGeneratorException;
 }

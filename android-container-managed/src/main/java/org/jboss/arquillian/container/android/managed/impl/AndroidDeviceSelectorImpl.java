@@ -36,8 +36,8 @@ import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.android.managed.configuration.Validate;
-import org.jboss.arquillian.container.android.utils.IdentifierGenerator;
 import org.jboss.arquillian.container.android.utils.IdentifierType;
+import org.jboss.arquillian.container.api.IdentifierGenerator;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -98,7 +98,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
     private Instance<AndroidSDK> androidSDK;
 
     @Inject
-    private Instance<IdentifierGenerator> idGenerator;
+    Instance<IdentifierGenerator> idGenerator;
 
     @Inject
     private Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
@@ -139,7 +139,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         logger.info("Before AVDIdentifierGenerator.getRandomAVDName");
 
         if (avdName == null) {
-            String generatedAvdName = idGenerator.get().getIdentifier(IdentifierType.AVD);
+            String generatedAvdName = idGenerator.get().getIdentifier(IdentifierType.AVD.getClass());
             configuration.get().setAvdName(generatedAvdName);
             configuration.get().setAvdGenerated(true);
         }

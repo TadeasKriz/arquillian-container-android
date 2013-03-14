@@ -24,6 +24,8 @@ import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
+import org.jboss.arquillian.container.android.utils.AndroidIdentifierGenerator;
+import org.jboss.arquillian.container.api.IdentifierGenerator;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -58,6 +60,10 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     private InstanceProducer<AndroidSDK> androidSDK;
 
     @Inject
+    @ContainerScoped
+    private InstanceProducer<IdentifierGenerator> idGenerator;
+
+    @Inject
     private Event<AndroidContainerStart> androidContainerStartEvent;
 
     @Inject
@@ -77,6 +83,7 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     public void setup(AndroidManagedContainerConfiguration configuration) {
         this.configuration.set(configuration);
         this.androidSDK.set(new AndroidSDK(this.configuration.get()));
+        this.idGenerator.set(new AndroidIdentifierGenerator());
     }
 
     @Override

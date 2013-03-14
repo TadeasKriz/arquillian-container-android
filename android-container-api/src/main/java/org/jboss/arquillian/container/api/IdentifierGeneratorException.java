@@ -20,14 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.arquillian.container.android.utils;
+package org.jboss.arquillian.container.api;
 
 /**
- * Type of identifier we want to get from {@link AndroidIdentifierGenerator#getIdentifier(IdentifierType)}
- *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public enum IdentifierType {
-    AVD {}, SD_CARD {}, SD_CARD_LABEL {}
+public class IdentifierGeneratorException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+
+    public IdentifierGeneratorException() {
+        super();
+    }
+
+    public IdentifierGeneratorException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public IdentifierGeneratorException(String message) {
+        super(message);
+    }
+
+    public IdentifierGeneratorException(Throwable cause) {
+        super(cause);
+    }
+
 }

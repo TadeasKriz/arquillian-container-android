@@ -25,7 +25,6 @@ package org.jboss.arquillian.container.android.managed.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
 
 import java.util.List;
 
@@ -42,8 +41,8 @@ import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
-import org.jboss.arquillian.container.android.utils.IdentifierGenerator;
 import org.jboss.arquillian.container.android.utils.IdentifierType;
+import org.jboss.arquillian.container.api.IdentifierGenerator;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.test.AbstractContainerTestBase;
@@ -65,6 +64,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 @org.junit.Ignore
 public class AndroidEmulatorStartupAVDtoBeCreatedTestCase extends AbstractContainerTestBase {
+
+    private String AVD_GENERATED_NAME = "ab1be336-d30f-4d3c-90de-56bdaf198a3e";
 
     private AndroidManagedContainerConfiguration configuration;
 
@@ -89,7 +90,7 @@ public class AndroidEmulatorStartupAVDtoBeCreatedTestCase extends AbstractContai
 
         getManager().getContext(ContainerContext.class).activate("doesnotmatter");
 
-        Mockito.when(idGenerator.getIdentifier(eq(IdentifierType.AVD))).thenReturn("ab1be336-d30f-4d3c-90de-56bdaf198a3e");
+        Mockito.when(idGenerator.getIdentifier(IdentifierType.AVD.getClass())).thenReturn(AVD_GENERATED_NAME);
 
         bind(ContainerScoped.class, AndroidManagedContainerConfiguration.class, configuration);
         bind(ContainerScoped.class, AndroidSDK.class, androidSDK);
@@ -120,7 +121,7 @@ public class AndroidEmulatorStartupAVDtoBeCreatedTestCase extends AbstractContai
         bind(ContainerScoped.class, AndroidEmulator.class, emulator);
 
         assertTrue(configuration.isAVDGenerated());
-        assertEquals("ab1be336-d30f-4d3c-90de-56bdaf198a3e", runningDevice.getAvdName());
+        assertEquals(AVD_GENERATED_NAME, runningDevice.getAvdName());
 
         fire(new AndroidContainerStop());
 

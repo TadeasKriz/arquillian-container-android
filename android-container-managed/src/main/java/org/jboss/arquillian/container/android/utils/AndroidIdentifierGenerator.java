@@ -24,36 +24,33 @@ package org.jboss.arquillian.container.android.utils;
 
 import java.util.UUID;
 
+import org.jboss.arquillian.container.api.IdentifierGenerator;
+import org.jboss.arquillian.container.api.IdentifierGeneratorException;
+
 /**
  * Generates random identifier.
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public class IdentifierGenerator {
+public class AndroidIdentifierGenerator implements IdentifierGenerator {
 
     private String sdCardSuffix = ".img";
 
-    /**
-     * Gets identifier of specified {@link IdentifierType}
-     *
-     * @param type type of identifier we want
-     * @return identifier of some {@link IdentifierType}
-     */
-    public String getIdentifier(IdentifierType type) {
+    @Override
+    public String getIdentifier(Class<?> identifierType) {
         String uuid = UUID.randomUUID().toString();
 
-        if (type.name().equals("AVD")) {
+        if (identifierType.isInstance(IdentifierType.AVD)) {
             return uuid;
         }
-        if (type.name().equals("SD_CARD")) {
+        if (identifierType.isInstance(IdentifierType.SD_CARD)) {
             return uuid + sdCardSuffix;
         }
-        if (type.name().equals("SD_CARD_LABEL")) {
+        if (identifierType.isInstance(IdentifierType.SD_CARD_LABEL)) {
             return uuid;
         }
-
-        return null;
+        throw new IdentifierGeneratorException("Not possible to generate any identifier of type " + identifierType.getName());
     }
 
     /**
@@ -62,7 +59,7 @@ public class IdentifierGenerator {
      * @param suffix suffix of SD card file
      * @return
      */
-    public IdentifierGenerator setSdCardSuffix(String suffix) {
+    public AndroidIdentifierGenerator setSdCardSuffix(String suffix) {
         if (suffix == null || suffix.trim().equals("")) {
             return this;
         }
@@ -75,4 +72,5 @@ public class IdentifierGenerator {
 
         return this;
     }
+
 }

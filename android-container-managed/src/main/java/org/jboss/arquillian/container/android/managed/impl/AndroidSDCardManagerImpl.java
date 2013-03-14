@@ -33,8 +33,8 @@ import org.jboss.arquillian.container.android.api.SDCard;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.android.managed.configuration.Command;
-import org.jboss.arquillian.container.android.utils.IdentifierGenerator;
 import org.jboss.arquillian.container.android.utils.IdentifierType;
+import org.jboss.arquillian.container.api.IdentifierGenerator;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -92,7 +92,7 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
         sdCard.setSize(configuration.getSdSize());
 
         if (sdCard.getLabel() == null) {
-            String sdCardLabel = idGenerator.get().getIdentifier(IdentifierType.SD_CARD_LABEL);
+            String sdCardLabel = idGenerator.get().getIdentifier(IdentifierType.SD_CARD_LABEL.getClass());
             sdCard.setLabel(sdCardLabel);
         }
 
@@ -102,7 +102,7 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
         if (sdCard.isGenerated()) {
             if (sdCard.getFileName() == null) {
-                String sdCardName = SD_CARD_DEFAULT_DIR_PATH + idGenerator.get().getIdentifier(IdentifierType.SD_CARD);
+                String sdCardName = SD_CARD_DEFAULT_DIR_PATH + idGenerator.get().getIdentifier(IdentifierType.SD_CARD.getClass());
                 sdCard.setFileName(sdCardName);
                 createSDCard(sdCard);
                 androidSDCardCreated.fire(new AndroidSDCardCreated());
