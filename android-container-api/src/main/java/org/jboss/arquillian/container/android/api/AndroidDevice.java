@@ -53,8 +53,7 @@ public interface AndroidDevice {
     /**
      * Returns a value of property with given name
      *
-     * @param name
-     *        A key
+     * @param name A key
      * @return Value of property or {@code null} if not present
      * @throws IOException
      * @throws AndroidExecutionException
@@ -85,8 +84,7 @@ public interface AndroidDevice {
     /**
      * Executes a shell command on the device. Silently discards command output.
      *
-     * @param command
-     *        The command to be executed
+     * @param command The command to be executed
      * @throws AndroidExecutionException
      */
     void executeShellCommand(String command) throws AndroidExecutionException;
@@ -94,10 +92,8 @@ public interface AndroidDevice {
     /**
      * Executes a shell command on the device
      *
-     * @param command
-     *        The command to be executed
-     * @param reciever
-     *        A processor to process command output
+     * @param command The command to be executed
+     * @param reciever A processor to process command output
      * @throws AndroidExecutionException
      */
     void executeShellCommand(String command, AndroidDeviceOutputReciever reciever) throws AndroidExecutionException;
@@ -105,20 +101,16 @@ public interface AndroidDevice {
     /**
      * Creates a port forwarding between a local and a remote port.
      *
-     * @param localPort
-     *        the local port to forward
-     * @param remotePort
-     *        the remote port.
+     * @param localPort the local port to forward
+     * @param remotePort the remote port.
      */
     void createPortForwarding(int localPort, int remotePort) throws AndroidExecutionException;
 
     /**
      * Removes a port forwarding between a local and a remote port.
      *
-     * @param localPort
-     *        the local port to forward
-     * @param remotePort
-     *        the remote port.
+     * @param localPort the local port to forward
+     * @param remotePort the remote port.
      */
     void removePortForwarding(int localPort, int remotePort) throws AndroidExecutionException;
 
@@ -126,28 +118,23 @@ public interface AndroidDevice {
      * Installs an Android application on device. This is a helper method that combines the syncPackageToDevice,
      * installRemotePackage, and removePackage steps
      *
-     * @param packageFilePath
-     *        the absolute file system path to file on local host to install
-     * @param reinstall
-     *        set to {@code true}if re-install of app should be performed
-     * @param extraArgs
-     *        optional extra arguments to pass. See 'adb shell pm install --help' for available options.
+     * @param packageFilePath the absolute file system path to file on local host to install
+     * @param reinstall set to {@code true}if re-install of app should be performed
+     * @param extraArgs optional extra arguments to pass. See 'adb shell pm install --help' for available options.
      */
     void installPackage(File packageFilePath, boolean reinstall, String... extraArgs) throws AndroidExecutionException;
 
     /**
      * Uninstalls an package from the device.
      *
-     * @param packageName
-     *        the Android application package name to uninstall
+     * @param packageName the Android application package name to uninstall
      */
     void uninstallPackage(String packageName) throws AndroidExecutionException;
 
     /**
      * Checks if an APK package of name {@code packageName} is installed or not.
      *
-     * @param packageName
-     *        name of the installed package
+     * @param packageName name of the installed package
      * @return true if a package of {@code packageName} is installed, false otherwise
      */
     boolean isPackageInstalled(String packageName) throws AndroidExecutionException;

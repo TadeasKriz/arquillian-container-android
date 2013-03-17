@@ -27,8 +27,7 @@ public interface AndroidDeviceOutputReciever {
     /**
      * Processes output of a shell command
      *
-     * @param lines
-     *        Array of lines returned by shell command to be processed
+     * @param lines Array of lines returned by shell command to be processed
      */
     void processNewLines(String[] lines);
 

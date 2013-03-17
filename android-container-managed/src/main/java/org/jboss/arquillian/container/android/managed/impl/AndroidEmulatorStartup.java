@@ -100,7 +100,7 @@ public class AndroidEmulatorStartup {
 
         CountDownWatch countdown = new CountDownWatch(configuration.getEmulatorBootupTimeoutInSeconds(), TimeUnit.SECONDS);
         logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be started and connected.", new Object[] {
-                countdown.timeout(), configuration.getAvdName() });
+            countdown.timeout(), configuration.getAvdName() });
 
         ProcessExecutor emulatorProcessExecutor = new ProcessExecutor();
         DeviceConnectDiscovery deviceDiscovery = new DeviceConnectDiscovery();
@@ -111,7 +111,7 @@ public class AndroidEmulatorStartup {
         androidEmulator.set(new AndroidEmulator(emulatorProcess));
 
         logger.log(Level.INFO, "Emulator process started, {0} seconds remaining to start the device {1}", new Object[] {
-                countdown.timeLeft(), configuration.getAvdName() });
+            countdown.timeLeft(), configuration.getAvdName() });
 
         waitUntilBootUpIsComplete(deviceDiscovery, emulatorProcessExecutor, countdown);
 
@@ -152,19 +152,19 @@ public class AndroidEmulatorStartup {
             return executor.spawn(command.get());
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
-                    configuration.getAvdName(),
-                    configuration.getEmulatorOptions());
+                configuration.getAvdName(),
+                configuration.getEmulatorOptions());
         } catch (ExecutionException e) {
             throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
-                    configuration.getAvdName(),
-                    configuration.getEmulatorOptions());
+                configuration.getAvdName(),
+                configuration.getEmulatorOptions());
         }
 
     }
 
     private void waitUntilBootUpIsComplete(final DeviceConnectDiscovery deviceDiscovery, final ProcessExecutor executor,
-            final CountDownWatch countdown)
-            throws AndroidExecutionException {
+        final CountDownWatch countdown)
+        throws AndroidExecutionException {
 
         try {
             boolean isOnline = executor.scheduleUntilTrue(new Callable<Boolean>() {
@@ -176,9 +176,9 @@ public class AndroidEmulatorStartup {
 
             if (isOnline == false) {
                 throw new IllegalStateException(
-                        "No emulator device was brough online during "
-                                + countdown.timeout()
-                                + " seconds to Android Debug Bridge. Please increase the time limit in order to get emulator connected.");
+                    "No emulator device was brough online during "
+                        + countdown.timeout()
+                        + " seconds to Android Debug Bridge. Please increase the time limit in order to get emulator connected.");
             }
 
             logger.log(Level.INFO, "before two executors");
@@ -198,7 +198,7 @@ public class AndroidEmulatorStartup {
                 public Boolean call() throws Exception {
                     // check properties of underlying process
                     List<String> props = executor.execute(Collections.<String, String> emptyMap(), adbPath,
-                            "-s", serialNumber, "shell", "getprop");
+                        "-s", serialNumber, "shell", "getprop");
                     for (String line : props) {
                         if (line.contains("[ro.runtime.firstboot]")) {
                             // boot is completed
@@ -211,12 +211,12 @@ public class AndroidEmulatorStartup {
 
             if (logger.isLoggable(Level.INFO)) {
                 logger.log(Level.INFO, "Android emulator {0} was started within {1} seconds", new Object[] {
-                        connectedDevice.getAvdName(), countdown.timeElapsed() });
+                    connectedDevice.getAvdName(), countdown.timeElapsed() });
             }
 
             if (isOnline == false) {
                 throw new AndroidExecutionException("Emulator device hasn't started properly in " + countdown.timeout()
-                        + " seconds. Please increase the time limit in order to get emulator booted.");
+                    + " seconds. Please increase the time limit in order to get emulator booted.");
             }
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Emulator device startup failed.");
@@ -245,7 +245,7 @@ public class AndroidEmulatorStartup {
         public void deviceConnected(IDevice device) {
             this.discoveredDevice = device;
             logger.log(Level.FINE, "Discovered an emulator device id={0} connected to ADB bus",
-                    device.getSerialNumber());
+                device.getSerialNumber());
         }
 
         @Override

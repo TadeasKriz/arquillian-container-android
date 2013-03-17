@@ -31,9 +31,8 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 
 /**
- * Implementation of the {@link AndroidBridge} by which we can connect or
- * disconnect to the bridge and query {@link AndroidDebugBridge} for attached
- * devices.
+ * Implementation of the {@link AndroidBridge} by which we can connect or disconnect to the bridge and query
+ * {@link AndroidDebugBridge} for attached devices.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
@@ -59,7 +58,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
     @Override
     public void connect() throws AndroidExecutionException {
         logger.info("Connecting to the Android Debug Bridge at " + adbLocation.getAbsolutePath() + " forceNewBridge = "
-                + forceNewBridge);
+            + forceNewBridge);
         this.delegate = AndroidDebugBridge.getBridge();
         if (delegate == null) {
             AndroidDebugBridge.init(false);
@@ -89,7 +88,8 @@ public class AndroidBridgeImpl implements AndroidBridge {
                 AndroidDebugBridge.terminate();
             } else {
                 logger.fine("\t\t Android Debug Bridge has devices.");
-                logger.info("There are still some devices on the Android Debug Bridge bridge will not be disconnected until none are connected.");
+                logger
+                    .info("There are still some devices on the Android Debug Bridge bridge will not be disconnected until none are connected.");
             }
         } else {
             logger.info("Android Debug Bridge is already disconnected.");
@@ -132,9 +132,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
     }
 
     /**
-     * Run a wait loop until adb is connected or trials run out.
-     * This method seems to work more reliably then using a
-     * listener.
+     * Run a wait loop until adb is connected or trials run out. This method seems to work more reliably then using a listener.
      *
      * @param adb
      */
@@ -167,7 +165,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(
-                            "Interrupted while waiting for initial device list from Android Debug Bridge");
+                        "Interrupted while waiting for initial device list from Android Debug Bridge");
                 }
             }
             if (!delegate.hasInitialDeviceList()) {

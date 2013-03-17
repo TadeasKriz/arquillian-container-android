@@ -102,7 +102,8 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
         if (sdCard.isGenerated()) {
             if (sdCard.getFileName() == null) {
-                String sdCardName = SD_CARD_DEFAULT_DIR_PATH + idGenerator.get().getIdentifier(IdentifierType.SD_CARD.getClass());
+                String sdCardName = SD_CARD_DEFAULT_DIR_PATH
+                    + idGenerator.get().getIdentifier(IdentifierType.SD_CARD.getClass());
                 sdCard.setFileName(sdCardName);
                 configuration.setSdCard(sdCardName);
                 createSDCard(sdCard);
@@ -126,7 +127,7 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
                     // use default sd card for android emulator but notice user that sd card
                     // he specified does not exist
                     logger.log(Level.INFO, "SD card you specified does not exist (" + sdCard.getFileName() + ") and its " +
-                    		"generation is set to false. Default system SD card for Android emulator will be used.");
+                        "generation is set to false. Default system SD card for Android emulator will be used.");
                 }
             }
         }
@@ -155,10 +156,10 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
         Process sdCardProcess = constructCreateSdCardProcess(executor, sdCard);
         if (createSDCard(sdCardProcess, executor) == 0) {
             logger.log(Level.INFO, "Android SD card labelled {0} located at {1} with size of {2} was created.",
-                    new Object[] { androidSDCard.getLabel(), androidSDCard.getFileName(), androidSDCard.getSize() });
+                new Object[] { androidSDCard.getLabel(), androidSDCard.getFileName(), androidSDCard.getSize() });
         } else {
             logger.log(Level.INFO, "Unable to create SD card labelled {0} located at {1} with size of {2}.",
-                    new Object[] { androidSDCard.getLabel(), androidSDCard.getFileName(), androidSDCard.getSize() });
+                new Object[] { androidSDCard.getLabel(), androidSDCard.getFileName(), androidSDCard.getSize() });
         }
 
     }
@@ -171,10 +172,10 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
         if (androidSdCard.getFileName() != null && androidSdCard.isGenerated()) {
             if (new File(androidSdCard.getFileName()).delete()) {
                 logger.log(Level.INFO, "Android SD card labelled {0} located at {1} was deleted",
-                        new Object[] { androidSdCard.getLabel(), androidSdCard.getFileName() });
+                    new Object[] { androidSdCard.getLabel(), androidSdCard.getFileName() });
             } else {
                 logger.log(Level.INFO, "Unable to delete android SD card labelled {0} located at {1}.",
-                        new Object[] { androidSdCard.getLabel(), androidSdCard.getFileName() });
+                    new Object[] { androidSdCard.getLabel(), androidSdCard.getFileName() });
             }
         }
     }
@@ -201,10 +202,10 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
         Command command = new Command();
         command.add(this.androidSDK.get().getMakeSdCardPath())
-                .add("-l")
-                .add(androidSDCard.getLabel())
-                .add(androidSDCard.getSize())
-                .add(androidSDCard.getFileName());
+            .add("-l")
+            .add(androidSDCard.getLabel())
+            .add(androidSDCard.getSize())
+            .add(androidSDCard.getFileName());
 
         try {
             return executor.spawn(command.get());

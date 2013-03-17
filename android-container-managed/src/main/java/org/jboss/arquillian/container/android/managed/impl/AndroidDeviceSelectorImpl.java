@@ -46,8 +46,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
 /**
- * Selects real physical Android device if serial id was specified in the configuration.
- * If serial number was not specified one of the following holds:
+ * Selects real physical Android device if serial id was specified in the configuration. If serial number was not specified one
+ * of the following holds:
  *
  * <br>
  * <br>
@@ -57,9 +57,9 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * 3. If both avd name and console port were specified, we try to connect to this combination. <br>
  * 4. We can fail to get device in all above steps:
  * <ol>
- *  <li>If AVD name was not specified, random AVD indentifier is generated.</li>
- *  <li>Checking whether such AVD is already existing is performed, if it does not, such AVD
- *  name is created and marked as generated one. This AVD will be deleted after the whole test suite.</li>
+ * <li>If AVD name was not specified, random AVD indentifier is generated.</li>
+ * <li>Checking whether such AVD is already existing is performed, if it does not, such AVD name is created and marked as
+ * generated one. This AVD will be deleted after the whole test suite.</li>
  * </ol>
  *
  * Observes:
@@ -202,7 +202,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         if (isOnlyConsolePortAvailable()) {
             try {
                 return getVirtualDeviceByConsolePort(consolePort);
-            } catch(AndroidExecutionException ex) {
+            } catch (AndroidExecutionException ex) {
                 return null;
             }
         }
@@ -210,7 +210,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         if (isOnlyAvdNameAvailable()) {
             try {
                 return getVirtualDeviceByAvdName(avdName);
-            } catch(AndroidExecutionException ex) {
+            } catch (AndroidExecutionException ex) {
                 return null;
             }
 

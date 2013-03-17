@@ -29,5 +29,10 @@ package org.jboss.arquillian.container.android.utils;
  *
  */
 public enum IdentifierType {
-    AVD {}, SD_CARD {}, SD_CARD_LABEL {}
+    AVD {
+    },
+    SD_CARD {
+    },
+    SD_CARD_LABEL {
+    }
 }

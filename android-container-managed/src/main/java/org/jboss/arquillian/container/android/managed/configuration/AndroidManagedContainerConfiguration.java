@@ -240,20 +240,20 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
     @Override
     public void validate() throws AndroidContainerConfigurationException {
         Validate.isReadableDirectory(home,
-                "You must provide Android SDK home directory. The value you've provided is not valid ("
-                        + (home == null ? "" : home)
-                        + "). You can either set it via an environment variable ANDROID_HOME or via"
-                        + " a property called \"home\" in Arquillian configuration.");
+            "You must provide Android SDK home directory. The value you've provided is not valid ("
+                + (home == null ? "" : home)
+                + "). You can either set it via an environment variable ANDROID_HOME or via"
+                + " a property called \"home\" in Arquillian configuration.");
 
         if (avdName != null && serialId != null) {
             logger.warning("Both \"avdName\" and \"serialId\" properties are defined, the device "
-                    + "specified by \"serialId\" will get priority if connected.");
+                + "specified by \"serialId\" will get priority if connected.");
         }
 
         if (avdName == null && serialId == null && consolePort == null) {
             logger.severe("All \"avdName\", \"serialId\" and \"consolePort\" are not defined.");
             throw new AndroidContainerConfigurationException(
-                    "All \"avdName\", \"serialId\" and \"consolePort\" are not defined.");
+                "All \"avdName\", \"serialId\" and \"consolePort\" are not defined.");
         }
 
         if (generatedAvdPath != null) {
@@ -270,11 +270,11 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
                     }
                 } catch (Exception e) {
                     throw new AndroidContainerConfigurationException("Unable to create directory where AVD will be stored " +
-                            "(" + generatedAvdPath + "). Check that you have permission to create directory you specified.");
+                        "(" + generatedAvdPath + "). Check that you have permission to create directory you specified.");
                 }
             }
             Validate.isReadableDirectory(new File(generatedAvdPath), "Directory you specified as place where newly " +
-                    "generated AVD will be placed does not exist (" + generatedAvdPath + ").");
+                "generated AVD will be placed does not exist (" + generatedAvdPath + ").");
             Validate.isWritable(new File(generatedAvdPath), "Path you want to store generated AVD is not writable!");
         }
 
@@ -288,7 +288,7 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
         if (sdCard != null) {
             Validate.sdCardFileName(sdCard, "File name (or path) of SD card to use '" + sdCard
-                    + "' is not valid. Check it is under existing and writable directory does have '.img' suffix.");
+                + "' is not valid. Check it is under existing and writable directory does have '.img' suffix.");
         }
 
         if (sdCardLabel != null) {

@@ -108,7 +108,7 @@ public class AndroidVirtualDeviceManager {
     @SuppressWarnings("serial")
     public void createAndroidVirtualDevice(@Observes AndroidVirtualDeviceCreate event) throws AndroidExecutionException {
         Validate.notNulls(new Object[] { configuration.get(), androidSDK.get() },
-                "container configuration injection or Android SDK injection is null");
+            "container configuration injection or Android SDK injection is null");
 
         logger.info("In AndroidVirtualDeviceManagerImpl.createAndroidVirtualDevice");
 
@@ -123,8 +123,8 @@ public class AndroidVirtualDeviceManager {
         try {
             Command command = new Command();
             command.add(sdk.getAndroidPath()).add("create").add("avd").add("-n").add(configuration.getAvdName())
-                    .add("-t").add("android-" + configuration.getApiLevel()).add("-f")
-                    .add("-p").add(configuration.getGeneratedAvdPath() + configuration.getAvdName());
+                .add("-t").add("android-" + configuration.getApiLevel()).add("-f")
+                .add("-p").add(configuration.getGeneratedAvdPath() + configuration.getAvdName());
             if (configuration.getSdCard() != null && new File(configuration.getSdCard()).exists()) {
                 command.add("-c").add(configuration.getSdCard());
             } else {
@@ -151,7 +151,7 @@ public class AndroidVirtualDeviceManager {
     }
 
     private Process constructDeleteProcess(ProcessExecutor executor, AndroidSDK androidSDK, String avdName)
-            throws AndroidExecutionException {
+        throws AndroidExecutionException {
 
         Command command = new Command();
         command.add(androidSDK.getAndroidPath()).add("delete").add("avd").add("-n").add(avdName);

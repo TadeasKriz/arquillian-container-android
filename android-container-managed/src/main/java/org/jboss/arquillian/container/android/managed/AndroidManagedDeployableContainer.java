@@ -122,9 +122,8 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     /**
      * Gets name of the container.
      *
-     * When container is backed by emulator, it gets its AVD name, otherwise it gets
-     * serial number of the physical device. If we are connecting to a running emulator,
-     * its console port is taken as the identification.
+     * When container is backed by emulator, it gets its AVD name, otherwise it gets serial number of the physical device. If we
+     * are connecting to a running emulator, its console port is taken as the identification.
      *
      * @return descriptive name of the container
      */

@@ -18,11 +18,11 @@
 package org.jboss.arquillian.android.spi.event;
 
 /**
- * This class serves as a base event class for all extensions of the Android container, when we want to perform some
- * action after container as such is configured.
+ * This class serves as a base event class for all extensions of the Android container, when we want to perform some action
+ * after container as such is configured.
  *
- * It serves as an extension point for all extensions to be configured right after container is configured but before
- * Android Bridge is about to initialize. It is a gap where container extension can be hooked.
+ * It serves as an extension point for all extensions to be configured right after container is configured but before Android
+ * Bridge is about to initialize. It is a gap where container extension can be hooked.
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */

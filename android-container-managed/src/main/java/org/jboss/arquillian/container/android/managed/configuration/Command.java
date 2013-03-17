@@ -167,8 +167,8 @@ public class Command {
         }
 
         return text.replaceAll("^ +| +$|( )+", "$1")
-                .replaceAll("\" ([^\"])", "\"$1")
-                .replaceAll("\"([^ \"]) \"", "\"$1\"");
+            .replaceAll("\" ([^\"])", "\"$1")
+            .replaceAll("\"([^ \"]) \"", "\"$1\"");
     }
 
     /**
