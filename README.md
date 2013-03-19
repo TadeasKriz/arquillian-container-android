@@ -1,22 +1,299 @@
-arquillian-container-android
-============================
+Android container for Arquillian platform
+=========================================
 
-arquillian-container-android extension is a logical continuation of Arquillan Drone and Arquillian Android extensions.
+The aim of this document is to describe how use Android container for Arquillian platform. The reader can expect 
+various use cases of arquillian.xml configuration as well as all needed artifact dependecies for Maven in order to 
+be able to start some container successfuly.
 
-The major portion of the code is the same, but underlying concept is different. Arquillian container implements the 
-deployable container SPI and the whole run of the container as such follows just the same pattern as the all other 
-containers for Arquillian (managed ones). There are no extensions which are hooked to the execution process.
+Concepts
+--------
 
-After completition, the user just codes deployment logic against well defined SPI, Arquillian Drone and Android will be 
-merged together.
+The significant difference between ordinary container adapter for Arquillian and Android container is that while
+using the ordinary one, you have to use only that one type of the container you are deploying the archives to. 
+There is not the support for multiple container implementations in 1.0.x version of Arquillian out of the box 
+so you are normaly forced not to mix two different container adapter implementations together.
 
-The main advantage of container approach is to be able to let construct the archive for the deployment on ShrinkWrap. 
-The other advantage is to be able to create more then one Android device (physicall, virtual or both) and to test 
-scenarios where more then one mobile device is involved, e.g. testing their communication. 
+Setup
+-----
 
-A lot of bugs is repaired, e.g. stopping of AVD device is done propperly, generation of AVD is done dynamically in 
-the case there is no such AVD present in the system (and it is deleted afterwards). The code is more robust and reformatted. 
-The internal logic is more concise.
+When you want to try Android container, you have to basically put into `pom.xml` just this dependency:
 
-The code is under very heavy development and it is not production ready at all. Deployment and enrichment of the archive 
-(e.g. constructed by ShrinkWrap) is not done and the central part of the deployment process is missing. 
+    <dependency>
+        <groupId>org.jboss.arquillian.container</groupId>
+        <artifactId>android-container-depchain</artifactId>
+        <type>pom</type>
+        <scope>test</scope>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
+Android container uses arquillian-multiple-containers module in this repository. That module, while on the 
+classpath, is able to register containers of various types, so you can mix two (three, four ...) different 
+container implementations. This module has to know what container configuration stands for what container adapter 
+so in order to make the difference there is property `adapterImplClass` in the container configuration.
+
+Android container implementation class is of name `AndroidManagedDeployableContainer` at this moment. JBoss AS has 
+implementation class of name `ManagedDeployableContainer`.
+
+Lets see the very basic setup in `arquillian.xml` (which is located in `src/test/resources` for every test) 
+to grasp the basics:
+
+    <group qualifier="containers" default="true">
+        <container qualifier="jbossas">
+            <configuration>
+                <property name="adapterImplClass">
+                    org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
+                </property>
+            </configuration>
+        </container>
+        <container qualifier="android">
+            <configuration>
+                <property name="adapterImplClass">
+                    org.jboss.arquillian.container.android.managed.AndroidManagedDeployableContainer
+                </property>
+            </configuration>
+        </container>
+    </group>
+
+You have to provide `adapterImplClass` property per container configuration only when you are using more then one 
+container adapter on your classpath. When you are using Android container alone, you do not have to specify 
+that property since it is the only class on the classpath which implemets Arquillian container API.
+
+So theoretically you can use just Android container itself as:
+
+    <container qualifier="android"/>
+
+You can also use more then one Android container as well:
+
+    <group qualifier="containers" default="true">
+        <container qualifier="android1"/>
+        <container qualifier="android2"/>
+    </group>
+
+Android Container Configuration
+-------------------------------
+
+After seeing how to put containers in `arquillian.xml`, the configuration of the Android container itself is 
+following. The list of all properties and its meaning is following, accompanied with examples. The division 
+between physical Android Device and emulator is done.
+
+### General properties
+
+#### home
+##### default: $ANDROID_HOME
+
+`home` property holds the directory where your Android SDK is installed. It is not necessary to specify it 
+since it is automatically read from the system environment property `$ANDROID_HOME`, which can be easily exported 
+as `export $ANDROID_HOME=/path/to/your/sdk` for the current shell on it can be put into `~/.bash_profile` to be 
+persisted.
+
+    <configuration>
+        <property name="home">/path/to/your/android/sdk</property>
+    </configuration>
+
+#### forceNewBridge
+##### default: false
+
+`forceNewBridge` boolean property specifies if Android Debug Bridge (ADB) should be forced to be created even it 
+already is. It can have only `true` or `false` value. When not used, it is set to false.
+
+    <configuration>
+        <property name="forceNewBridge">true</property>
+    </configuration>
+
+### Real Android Device Configuration
+
+#### serialId
+##### default: not defined
+
+`serialId` property holds the identification number of your physical mobile phone. That number can be find out 
+by command `adb devices -l` after your mobile phone is connected via usb cable with your computer.
+
+    <configuration>
+        <property name="serialId">42583930325742351234</property>
+    </configuration>
+
+### Virtual Android Device Configuration
+
+#### avdName
+##### default: not defined
+
+`avdName` property is about telling Android container which Android Virtual Device it should use. When you are 
+creating some AVD, you have to enter its name. This property is that name.
+
+    <configuration>
+        <property name="avdName">my-avd</property>
+    </configuration>
+
+#### abi
+##### default: as `android` uses
+
+Pretty straightforward. Which ABI you container should use.
+
+    <configuration>
+        <property name="abi">armeabi-v7a</property>
+    </configuration>
+
+#### emulatorBootupTimeoutInSeconds
+#### default: 120 seconds
+
+Specifies a timeout after which container is considered to be unsuccessfuly started. When emulator is not 
+started after this amount of time, the whole test fails. It can be used as a prevention to wait for the 
+start of the container for ever in case it somehow hangs or your computer is slow to start it faster. 
+The value has to be positive non-zero integer.
+
+    <configuration>
+        <property name="emulatorBootupTimeoutInSeconds">180</property>
+    </configuration>
+
+#### emulatorShutdownTimeoutInSeconds
+##### default: 60 seconds
+
+Similar as `emulatorBootupTimeoutInSeconds` but regarding of the emulator shutdown process. The value 
+has to be positive non-zero integer.
+
+    <configuration>
+        <property name="emulatorShutdownTimeoutInSeconds">45</property>
+    </configuration>
+
+#### 
+
+#### emulatorOptions
+##### default: empty string
+
+All other configuration switches you want to use for your emulator instance but there is not the configuration 
+property for it. It is the string which is append to the `emulator` command. Strings with quotes shoud work as 
+well but its number has to be even. (They have to logically enclose some string).
+
+    <configuration>
+        <property name="emulatorOptions">-memory 256 -nocache</property>
+    </configuration>
+
+#### consolePort
+##### default: not specified, selected by `emulator` automatically
+
+Specifies which console port an emulator should use. It has to be even number in range 5554 - 5584. When this 
+property is used and `adbPort` property is not, `adb` automatically selects as `adbPort` number `consolePort + 1`. 
+
+    <configuration>
+        <property name="consolePort">5558</property>
+    </configuration>
+    
+#### adbPort
+##### default: console port + 1
+
+Specifies which adb port should emulator connect to. It has to be odd number in range 5555 - 5585.
+
+    <configuration>
+        <property name="consolePort">5559</property>
+    </configuration>
+
+#### generatedAvdPath
+##### default: `/tmp/` plus `avdName`
+
+This property instructs Android container adapter that the newly generated AVD should be saved in this directory.
+Directory has to exist and user has to have write and read permissions. Newly created AVD is placed under this 
+directory. The directory files are saved in has the name of `avdName`. By default, all newly created AVDs are 
+saved in `/tmp/avdName` as well.
+
+    <configuration>
+        <property name="generatedAvdPath">/tmp/generated_avds/</property>
+    </configuration>
+
+SD Card configuration
+---------------------
+
+It is possible to use SD card while creating some emulator instance. When we are using more then one emulator 
+and SD card is used, these emulators are using the same SD card which results in the clash. Creation of 
+a SD card is backed by command `mksdcard` which is bundled in Android SDK. All inputs are validated. Size
+constrains are the same as for the `mksdcard` itself and are check for its validity on the container side.
+
+Options you can use in connection with SD card configuration are as follows:
+
+#### sdSize
+##### default: 128M
+
+Specifies that SD card of size `sdSize` is going to be used. In order to create SD card of size 512MB you have to
+put this in the configuration:
+
+    <configuration>
+        <property name="sdSize">512M</property>
+    </configuration>
+
+#### sdCard
+##### default: `android` specifies
+
+Specifies filename where `sdCard` is placed or where it should be created when it does not exist. The suffix 
+of the sdCard *has* to end with `.img`.
+
+    <configuration>
+        <property name="sdCard">/tmp/my_sdcard.img</property>
+    </configuration>
+
+#### sdCardLabel
+##### default: generated randomly
+
+Specifies label to use for a SD card we are want to be created automatically. It does not have to be used.
+
+    <configuration>
+        <property name="sdCardLabel">my_sdcard_label</property>
+    </configuration>
+
+#### generateSDCard
+##### default: false
+
+Tells Arquillian that we want to generate card we specified. When this flag is used, the card is deleted after 
+tests.
+
+    <configuration>
+        <property name="generateSDCard">true</property>
+    </configuration>
+
+Connection logic
+----------------
+
+When the container you want to use, of some particular `avdName`, is not started, it is automatically started 
+for you. You can look on this feature as the "managed" container adapted does. The emulator is started upon 
+every Arquillian test and it is also automatically shutted down after your tests are finished. Just as any 
+managed container adapter.
+
+If your Android emulator is already started, just use its `avdName`. Android container implementation is
+automatically connected to it. This container is not shutted down afterwards. You can look at this as the
+"remote" version of the ordinary container adapter.
+
+In general, we could sum up the logic which is used while trying to connect to an emulator instance or to 
+create the new one as follows.
+
+1. If `serialId` was specified, we try to connect to that running physical device.
+2. If `consolePort` was specified but `avdName` name was not, we try to connect to running emulator which listens to specified `consolePort`. If we fail to connect, exception is thrown.
+3. If `avdName` was specified but `consolePort` was not, we try to connect to the first running emulator of such `avdName`.
+4. If both `avdName` and `consolePort` were specified, we try to connect to this combination or to start such emulator.
+
+If we fail to get the device in the all above steps:
+
+1. If `avdName` was not specified, random AVD indentifier is generated.
+2. If there is not such `avdName` in the system, (generated from the step 1) the AVD of name `avdName` is automatically created.
+3. Emulator of AVD (possibly just created from scratch) is started.
+
+After the test run, when `avdName` was generated randomly, this AVD is going to be deleted automatically.
+
+Identifies are simple UUID strings. SD card identifiers are UUID strings as well. UUID identifiers are generated 
+only when there is a need for them. 
+
+SD Card usage logic
+-------------------
+
+Creation of SD card depends on the combination of a few facts. Let's check the logic:
+
+    1. If generateSDCard property is specified
+        1.1. If sdCard is not specified
+            1.1.1. Generate random sdCard identifier
+            1.1.2. Create the card and use it
+        1.2. If sdCard is specified
+            1.2.1. If such sdCard already exists, use that card
+            1.2.2. Create such sdCard and use it
+    2. If generateSDCard property is not specified
+        2.1. If sdCard is not specified
+            2.1.1 use default system SD card from Android
+        2.2. If sdCard is specified
+            2.2.1. If it exists, use it
+            2.2.2. If it does not exist, use default system one.
