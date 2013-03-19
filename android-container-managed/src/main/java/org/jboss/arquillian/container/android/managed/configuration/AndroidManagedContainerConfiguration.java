@@ -306,6 +306,16 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         if (droneGuestPort != 8080) {
             Validate.isPortValid(droneGuestPort);
         }
+
+        if (emulatorBootupTimeoutInSeconds <= 0) {
+            throw new AndroidContainerConfigurationException(
+                "Emulator bootup timeout has to be bigger then 0.");
+        }
+
+        if (emulatorShutdownTimeoutInSeconds <= 0) {
+            throw new AndroidContainerConfigurationException(
+                "Emulator shutdown timeout has to be bigger then 0.");
+        }
     }
 
     @Override
@@ -325,6 +335,8 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         sb.append("emuShut\t\t\t:").append(this.emulatorShutdownTimeoutInSeconds).append("\n");
         sb.append("emuOpts\t\t\t:").append(this.emulatorOptions).append("\n");
         sb.append("home\t\t\t:").append(this.home).append("\n");
+        sb.append("consolePort\t\t:").append(this.consolePort).append("\n");
+        sb.append("adbPort\t\t\t:").append(this.adbPort).append("\n");
         return sb.toString();
     }
 

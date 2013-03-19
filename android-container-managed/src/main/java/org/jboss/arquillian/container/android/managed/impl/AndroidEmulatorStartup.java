@@ -144,6 +144,12 @@ public class AndroidEmulatorStartup {
             command.add(configuration.getSdCard());
         }
 
+        if (configuration.getConsolePort() != null && configuration.getAdbPort() != null) {
+            command.add("-ports").addAsString(configuration.getConsolePort() + "," + configuration.getAdbPort());
+        } else if (configuration.getConsolePort() != null) {
+            command.add("-port").add(configuration.getConsolePort());
+        }
+
         command.addAsString(configuration.getEmulatorOptions());
 
         logger.log(Level.INFO, "emulator command -> {0}", command);
