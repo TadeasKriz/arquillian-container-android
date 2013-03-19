@@ -1,7 +1,7 @@
 Android container for Arquillian platform
 =========================================
 
-The aim of this document is to describe how use Android container for Arquillian platform. The reader can expect 
+The aim of this document is to describe how to use Android container for Arquillian platform. The reader can expect 
 various use cases of arquillian.xml configuration as well as all needed artifact dependecies for Maven in order to 
 be able to start some container successfuly.
 
@@ -12,6 +12,17 @@ The significant difference between ordinary container adapter for Arquillian and
 using the ordinary one, you have to use only that one type of the container you are deploying the archives to. 
 There is not the support for multiple container implementations in 1.0.x version of Arquillian out of the box 
 so you are normaly forced not to mix two different container adapter implementations together.
+
+The container is event driven, when some 
+event is fired, all registered observers which listens to such kind of event executes appropriate method. This 
+model is tree-like. The control is not returned to the initial fire point until all subsequent logic is 
+executed as well. Events can be chained, meaning when one event is fired and some method listens to it 
+(via `@Observes` annotation), that method can fire another event to which some other method of some observer 
+is listening as well. 
+
+Observers are registered in `AndroidManagedContainerExtension` class in `android-container-managed` module.
+
+While inspecting the code, it is handy to have [this](https://raw.github.com/smiklosovic/arquillian-thesis/master/resources/container_model.png) chart in mind.
 
 Setup
 -----
