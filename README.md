@@ -91,7 +91,7 @@ in tests only when:
 * and
 * is running in the context of a deployment that targets the container
   * or
-* you use @OperatesOnDeployment as a qualifier on the ArquillianResource injection point
+* you use `@OperatesOnDeployment` as a qualifier on the ArquillianResource injection point
 
 `@Deployment` has to be specified.
 
@@ -171,6 +171,49 @@ these tests have to be executed:
         }
     }
 
+As you spotted, we were using `@Deployment(testable = false)`. That means we are testing in so called _client mode_.
+We are looking on the test from the outside of the container, we are not modifying archive in order to be 
+able to communicate with test which runs in container. We are dealing with the container as it appears to us.
+It does not repackage your `@Deployment` nor does it forward the test execution to a remote server (our device).
+
+The second run mode is called _in container_ mode. It means that while using it, we want to repackage our 
+`@Deployment` to add our own classes and infrastructure to have the ability to communicate with the test and 
+enrich the test and run the test remotely. This mode is used by Arquillian by default.
+
+The example which explains the above is following:
+
+    @RunWith(Arquillian.class)
+    public class ContainerTest {
+
+        @Deployment(name = "android1", testable = true)
+        @TargetsContainer("android1")
+        public static Archive<?> createArchive() {
+            return ShrinkWrap.create(GenericArchive.class);
+        }
+
+        @Test
+        @InSequence(1)
+        @OperateOnDeployment("android1")
+        public void test01(@ArquillianResource AndroidDevice device) {
+            assertTrue(device != null);
+        }
+    }
+
+Right now, Android container does not provide any way how to modify our deployment when we are running in the 
+_in container_ mode. This feature is about to be implemented. Testing of the web application is finished because 
+we are not using the `AndroidDevice` itself in the tests. When we want to use injection of `AndroidDevice`, 
+we have to specify `@Deployment` against which it acts because `AndroidDevice` is `@ContainerScoped` and without 
+telling Arquillian what `@Deployment` our `@Test` operates on, it is unable to find the injected resource.
+
+When we are writing web related tests, some JBoss AS is running and we are using only WebDriver injection 
+and `AndroidDevice` is absolutely useless here since we are not interacting with it at all. Because of that, 
+`@Deployment` in WebDriver-related tests which `@TargetsContainer` of Android are not necessary nor needed. Only 
+`@Deployment` for JBoss AS is required (which is ideally bunch of classes representing isolated use case or the 
+whole war file of the web application).
+
+Modification of the `@Deployment` is required to be done in order to be able to test native Android applications.
+This is going to be implemented or at least we are trying to do so, in connection with the framework called 
+[Transfuse](http://androidtransfuse.org/).
 
 Android Container Configuration
 -------------------------------
