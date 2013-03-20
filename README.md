@@ -114,6 +114,8 @@ valid examples:
             assertTrue(android != null);
         }
     }
+    
+You can use `@OperateOnDeployment` as well: 
 
     @RunWith(Arquillian.class)
     @RunAsClient
