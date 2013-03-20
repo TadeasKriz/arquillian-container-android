@@ -80,6 +80,96 @@ You can also use more then one Android container as well:
         <container qualifier="android2"/>
     </group>
 
+Basic usage
+----------
+
+There are some problems regarding of injecting of Android Container into the tests. It is because 
+`AndroidDevice` is `ContainerScoped`. Classes which are registered in `ContainerScoped` are available 
+in tests only when:
+
+* the test is running on the client side
+* and
+* is running in the context of a deployment that targets the container
+  * or
+* you use @OperatesOnDeployment as a qualifier on the ArquillianResource injection point
+
+`@Deployment` has to be specified.
+
+valid examples:
+
+    @RunWith(Arquillian.class)
+    @RunAsClient
+    public class ContainerTest {
+
+        @ArquillianResource
+        AndroidDevice android;
+
+        @Deployment(testable = false)
+        public static Archive<?> createArchive() {
+             return ShrinkWrap.create(GenericArchive.class);
+        }
+
+        @Test
+        public void test01() {
+            assertTrue(android != null);
+        }
+    }
+
+    @RunWith(Arquillian.class)
+    @RunAsClient
+    public class ContainerTest {
+
+        @ArquillianResource
+        AndroidDevice android;
+
+        @Deployment(name = "android1", testable = false)
+        public static Archive<?> createArchive() {
+           return ShrinkWrap.create(GenericArchive.class);
+        }
+
+        @Test
+        @OperateOnDeployment("android1")
+        public void test01() {
+            assertTrue(android != null);
+        }
+    }
+
+When you want to use multiple `AndroidDevice`s you have to specify against which deployments and containers 
+these tests have to be executed:
+
+    @RunWith(Arquillian.class)
+    @RunAsClient
+    public class ContainerTest {
+
+        @ArquillianResource
+        AndroidDevice android;
+
+        @Deployment(name = "android1", testable = false)
+        @TargetsContainer("android1")
+        public static Archive<?> createArchive() {
+            return ShrinkWrap.create(GenericArchive.class);
+        }
+
+        @Deployment(name = "android2", testable = false)
+        @TargetsContainer("android2")
+        public static Archive<?> createArchive2() {
+            return ShrinkWrap.create(GenericArchive.class);
+        }
+
+        @Test
+        @OperateOnDeployment("android1")
+        public void test01() {
+            assertTrue(android != null);
+        }
+
+        @Test
+        @OperateOnDeployment("android2")
+        public void test02() {
+            assertTrue(android != null);
+        }
+    }
+
+
 Android Container Configuration
 -------------------------------
 
