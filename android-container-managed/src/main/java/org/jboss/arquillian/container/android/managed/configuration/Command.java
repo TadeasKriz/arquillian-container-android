@@ -132,7 +132,6 @@ public class Command {
                     command.add(tokenized.get(i));
                 } else {
                     StringBuilder sb = new StringBuilder();
-                    ;
                     sb.append(tokenized.get(i));
                     int j = i;
                     while (true) {
@@ -182,8 +181,8 @@ public class Command {
             return this;
         }
 
-        while (command.remove(token))
-            ;
+        while (command.remove(token)) {
+        }
 
         return this;
     }
