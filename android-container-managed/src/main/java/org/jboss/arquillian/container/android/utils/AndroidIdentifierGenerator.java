@@ -57,7 +57,7 @@ public class AndroidIdentifierGenerator implements IdentifierGenerator {
      * Sets suffix of SD card file name.
      *
      * @param suffix suffix of SD card file
-     * @return
+     * @return instance of this {@link AndroidIdentifierGenerator}
      */
     public AndroidIdentifierGenerator setSdCardSuffix(String suffix) {
         if (suffix == null || suffix.trim().equals("")) {

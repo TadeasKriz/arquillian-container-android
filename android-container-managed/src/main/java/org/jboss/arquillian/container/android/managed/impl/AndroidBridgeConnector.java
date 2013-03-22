@@ -86,8 +86,6 @@ public class AndroidBridgeConnector {
      * Initializes Android Debug Bridge and fires {@link AndroidBridgeInitialized} event.
      *
      * @param event
-     * @param sdk
-     * @param configuration
      * @throws AndroidExecutionException
      */
     public void initAndroidDebugBridge(@Observes AndroidContainerStart event) throws AndroidExecutionException {

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
 /**
- * A {@link org.jboss.arquillian.spi.client.container.ContainerConfiguration} implementation for the Android containers.
+ * Configuration for Android container.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>

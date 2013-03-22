@@ -147,13 +147,13 @@ public interface AndroidDevice {
 
     /**
      *
-     * @return
+     * @return host port for drone-like extensions
      */
     int getDroneHostPort();
 
     /**
      *
-     * @return
+     * @return guest port for drone-like extensions
      */
     int getDroneGuestPort();
 

@@ -103,10 +103,8 @@ public class ProcessExecutor {
     /**
      * Spawns a process defined by command. Process output is discarded.
      *
-     * @param timeout Total timeout
-     * @param unit Timeout unit
-     * @param command the command to be executed
-     * @return
+     * @param command
+     * @return spawned process
      * @throws InterruptedException
      * @throws ExecutionException
      */
@@ -118,7 +116,7 @@ public class ProcessExecutor {
      * Spawns a process defined by command. Process output is discarded
      *
      * @param command the command to be executed
-     * @return
+     * @return spawned process
      * @throws InterruptedException
      * @throws ExecutionException
      */
@@ -135,7 +133,7 @@ public class ProcessExecutor {
      *
      * @param input
      * @param command
-     * @return
+     * @return pending results of the task
      * @throws InterruptedException
      * @throws ExecutionException
      */
@@ -149,7 +147,7 @@ public class ProcessExecutor {
     /**
      *
      * @param command
-     * @return
+     * @return pending results of the task
      * @throws InterruptedException
      * @throws ExecutionException
      */

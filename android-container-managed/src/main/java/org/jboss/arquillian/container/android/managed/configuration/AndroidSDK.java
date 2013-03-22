@@ -274,7 +274,7 @@ public class AndroidSDK {
     /**
      * Get the emulator path.
      *
-     * @return
+     * @return path to {@code emulator} command
      */
     public String getEmulatorPath() {
         return getPathForTool("emulator");
@@ -287,7 +287,7 @@ public class AndroidSDK {
     /**
      * Get the android debug tool path (adb).
      *
-     * @return
+     * @return path to {@code adb} command
      */
     public String getAdbPath() {
         return getPathForTool("adb");
@@ -296,7 +296,7 @@ public class AndroidSDK {
     /**
      * Get the android tool path
      *
-     * @return
+     * @return path to {@code android} command
      */
     public String getAndroidPath() {
         return getPathForTool("android");

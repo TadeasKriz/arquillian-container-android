@@ -291,9 +291,9 @@ public class Validate {
     /**
      * Checks if adb port is in valid range.
      *
-     * Adb port has to be odd number in range {@value #ADB_PORT_MIN} - {@value #ADB_PORT_MAX}
+     * {@code adbPort} port has to be odd number in range {@value #ADB_PORT_MIN} - {@value #ADB_PORT_MAX}
      *
-     * @param adb adb port to check validity of
+     * @param adbPort adb port to check validity of
      * @throws AndroidContainerConfigurationException if adb port is null or not a number or not valid
      */
     public static void isAdbPortValid(final String adbPort) throws AndroidContainerConfigurationException {

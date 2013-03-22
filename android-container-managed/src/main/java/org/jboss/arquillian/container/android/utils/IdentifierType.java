@@ -23,7 +23,7 @@
 package org.jboss.arquillian.container.android.utils;
 
 /**
- * Type of identifier we want to get from {@link AndroidIdentifierGenerator#getIdentifier(IdentifierType)}
+ * Type of identifier we want to get from {@link AndroidIdentifierGenerator#getIdentifier(Class)}
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
