@@ -24,6 +24,12 @@ Observers are registered in `AndroidManagedContainerExtension` class in `android
 
 While inspecting the code, it is handy to have [this](https://raw.github.com/smiklosovic/arquillian-thesis/master/resources/container_model.png) chart in mind.
 
+Javadoc Documentation
+---------------------
+
+Javadoc documentation is located on github pages of this repository. You are welcome to check it at 
+[smiklosovic.github.com/arquillian-container-android/](http://smiklosovic.github.com/arquillian-container-android/).
+
 Setup
 -----
 
