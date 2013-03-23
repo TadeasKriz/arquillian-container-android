@@ -1,0 +1,9 @@
+org.jboss.arquillian.android.spi.event
+org.jboss.arquillian.container.android.api
+org.jboss.arquillian.container.android.enricher
+org.jboss.arquillian.container.android.managed
+org.jboss.arquillian.container.android.managed.configuration
+org.jboss.arquillian.container.android.managed.impl
+org.jboss.arquillian.container.android.utils
+org.jboss.arquillian.container.api
+org.jboss.arquillian.extension.multiplecontainers
