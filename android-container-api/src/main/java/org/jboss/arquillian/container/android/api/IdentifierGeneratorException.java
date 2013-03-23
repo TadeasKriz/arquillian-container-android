@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.arquillian.container.api;
+package org.jboss.arquillian.container.android.api;
 
 /**
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>

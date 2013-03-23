@@ -24,8 +24,8 @@ package org.jboss.arquillian.container.android.utils;
 
 import java.util.UUID;
 
-import org.jboss.arquillian.container.api.IdentifierGenerator;
-import org.jboss.arquillian.container.api.IdentifierGeneratorException;
+import org.jboss.arquillian.container.android.api.IdentifierGenerator;
+import org.jboss.arquillian.container.android.api.IdentifierGeneratorException;
 
 /**
  * Generates random identifier.

@@ -110,8 +110,6 @@ public class AndroidVirtualDeviceManager {
         Validate.notNulls(new Object[] { configuration.get(), androidSDK.get() },
             "container configuration injection or Android SDK injection is null");
 
-        logger.info("In AndroidVirtualDeviceManagerImpl.createAndroidVirtualDevice");
-
         androidSDCardCreate.fire(new AndroidSDCardCreate());
 
         AndroidManagedContainerConfiguration configuration = this.configuration.get();

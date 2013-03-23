@@ -22,10 +22,10 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
+import org.jboss.arquillian.container.android.api.IdentifierGenerator;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.android.utils.AndroidIdentifierGenerator;
-import org.jboss.arquillian.container.api.IdentifierGenerator;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;

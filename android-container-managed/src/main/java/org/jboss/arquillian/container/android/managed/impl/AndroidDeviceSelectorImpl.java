@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,11 +32,11 @@ import org.jboss.arquillian.container.android.api.AndroidBridge;
 import org.jboss.arquillian.container.android.api.AndroidDevice;
 import org.jboss.arquillian.container.android.api.AndroidDeviceSelector;
 import org.jboss.arquillian.container.android.api.AndroidExecutionException;
+import org.jboss.arquillian.container.android.api.IdentifierGenerator;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
 import org.jboss.arquillian.container.android.managed.configuration.Validate;
 import org.jboss.arquillian.container.android.utils.IdentifierType;
-import org.jboss.arquillian.container.api.IdentifierGenerator;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -116,8 +115,6 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
 
         AndroidDevice device = null;
 
-        logger.info("Before isConnectingToPhysicalDevice");
-
         if (isConnectingToPhysicalDevice()) {
             device = getPhysicalDevice();
             if (device != null) {
@@ -128,10 +125,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
             }
         }
 
-        logger.info("After isConnectingToPhysicalDevice");
-
         if (isConnectingToVirtualDevice()) {
-            logger.info("in isConnectingToVirtualDevice()");
             device = getVirtualDevice();
             if (device != null) {
                 setDronePorts(device);
@@ -147,17 +141,9 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
             configuration.get().setAvdGenerated(true);
         }
 
-        logger.info("Before AVDIdentifierGenerator.getRandomAVDName");
-
-        logger.info("After AVDIdentifierGenerator.getRandomAVDName");
-
-        logger.log(Level.INFO, "Before if(!avdExists())");
         if (!androidVirtualDeviceExists(configuration.get().getAvdName())) {
-            logger.info("before fire in androidVirtualDeviceCreate");
             androidVirtualDeviceCreate.fire(new AndroidVirtualDeviceCreate());
-            logger.info("after fire in androidVirtualDeviceCreate");
         } else {
-            logger.info("After if(!avdExists())");
             androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(configuration.get().getAvdName()));
         }
     }
