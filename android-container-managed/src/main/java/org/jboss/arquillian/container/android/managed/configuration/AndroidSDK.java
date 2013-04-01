@@ -165,6 +165,7 @@ public class AndroidSDK {
     }
 
     private final File sdkPath;
+    private final File javaPath;
     private final Platform platform;
 
     private Set<Platform> availablePlatforms;
@@ -179,9 +180,11 @@ public class AndroidSDK {
         Validate.notNull(configuration, "AndroidSdk configuration must be provided");
         Validate.isReadableDirectory(configuration.getHome(), "Unable to read Android SDK from directory "
             + configuration.getHome());
+        Validate.isReadableDirectory(configuration.getJavaHome(), "Unable to determine JAVA_HOME");
         Validate.notNullOrEmpty(configuration.getApiLevel(), "Platform or API level for Android SDK must be specified");
 
         this.sdkPath = new File(configuration.getHome());
+        this.javaPath = new File(configuration.getJavaHome());
         this.availablePlatforms = findAvailablePlatforms();
 
         platform = findPlatformByApiLevel(configuration.getApiLevel());
@@ -242,6 +245,20 @@ public class AndroidSDK {
 
         throw new AndroidContainerConfigurationException("Android SDK could not be identified from path \"" + sdkPath
             + "\". ");
+    }
+
+    public String getPathForJavaTool(String tool) {
+        String[] possiblePaths = { javaPath + "/bin/" + tool };
+
+        for (String possiblePath : possiblePaths) {
+            File file = new File(possiblePath);
+            if (file.exists() && !file.isDirectory()) {
+                return file.getAbsolutePath();
+            }
+        }
+
+        throw new RuntimeException("Could not find tool '" + tool + "'.Please ensure you've set JAVA_HOME environment " +
+        		"property properly and that it points to your Java installation directory.");
     }
 
     /**

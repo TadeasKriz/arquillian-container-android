@@ -35,7 +35,7 @@ import org.jboss.arquillian.container.android.api.IdentifierGeneratorException;
  */
 public class AndroidIdentifierGenerator implements IdentifierGenerator {
 
-    private String sdCardSuffix = ".img";
+    private static String sdCardSuffix = ".img";
 
     @Override
     public String getIdentifier(Class<?> identifierType) {

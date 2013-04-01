@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.arquillian.container.android.managed.configuration.Command;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,7 +52,7 @@ public class CommandTestCase {
         list.add("\"a\"");
         list.add("\"c d\"");
         list.add("\"${HOME}\"");
-        assertTrue(listsAreSame(list, command.addAsString(testString).get()));
+        assertTrue(listsAreSame(list, command.addAsString(testString).getAsList()));
     }
 
     private boolean listsAreSame(List<String> list1, List<String> list2) {

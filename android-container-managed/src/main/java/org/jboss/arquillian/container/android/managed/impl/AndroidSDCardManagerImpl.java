@@ -208,7 +208,7 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
             .add(androidSDCard.getFileName());
 
         try {
-            return executor.spawn(command.get());
+            return executor.spawn(command.getAsList());
         } catch (InterruptedException e) {
             throw new AndroidExecutionException();
         } catch (ExecutionException e) {

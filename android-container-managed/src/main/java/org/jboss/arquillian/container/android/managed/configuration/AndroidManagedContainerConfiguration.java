@@ -60,6 +60,8 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private String home = System.getenv("ANDROID_HOME");
 
+    private String javaHome = System.getenv("JAVA_HOME");
+
     private boolean avdGenerated;
 
     private String consolePort;
@@ -79,6 +81,14 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     public void setHome(String home) {
         this.home = home;
+    }
+
+    public String getJavaHome() {
+        return javaHome;
+    }
+
+    public void setJavaHome(String javaHome) {
+        this.javaHome = javaHome;
     }
 
     public String getAvdName() {

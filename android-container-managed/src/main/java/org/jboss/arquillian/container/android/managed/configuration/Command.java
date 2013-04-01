@@ -210,8 +210,17 @@ public class Command {
      *
      * @return command we constructed
      */
-    public List<String> get() {
+    public List<String> getAsList() {
         return command;
+    }
+
+    public String getAsString() {
+        StringBuilder sb = new StringBuilder();
+        for (String s : command) {
+            sb.append(s);
+            sb.append(" ");
+        }
+        return sb.toString().trim();
     }
 
     /**
@@ -230,6 +239,6 @@ public class Command {
 
     @Override
     public String toString() {
-        return get().toString();
+        return getAsString();
     }
 }

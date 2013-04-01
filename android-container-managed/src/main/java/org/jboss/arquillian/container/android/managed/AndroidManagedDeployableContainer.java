@@ -22,6 +22,10 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.android.spi.event.AndroidContainerStart;
 import org.jboss.arquillian.android.spi.event.AndroidContainerStop;
+import org.jboss.arquillian.android.spi.event.AndroidDeployArchive;
+import org.jboss.arquillian.android.spi.event.AndroidProtocolDescriptionEvent;
+import org.jboss.arquillian.android.spi.event.AndroidProtocolMetaDataEvent;
+import org.jboss.arquillian.android.spi.event.AndroidUndeployArchive;
 import org.jboss.arquillian.container.android.api.IdentifierGenerator;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
@@ -69,6 +73,18 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     @Inject
     private Event<AndroidContainerStop> androidContainerStopEvent;
 
+    @Inject
+    private Event<AndroidDeployArchive> deployArchiveEvent;
+
+    @Inject
+    private Event<AndroidUndeployArchive> undeployArchiveEvent;
+
+    @Inject
+    private Event<AndroidProtocolMetaDataEvent> androidProtocolMetaDataEvent;
+
+    @Inject
+    private Event<AndroidProtocolDescriptionEvent> androidProtocolDescriptionEvent;
+
     @Override
     public Class<AndroidManagedContainerConfiguration> getConfigurationClass() {
         return AndroidManagedContainerConfiguration.class;
@@ -76,7 +92,11 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
 
     @Override
     public ProtocolDescription getDefaultProtocol() {
-        return new ProtocolDescription("android protocol");
+        logger.log(Level.INFO, "Getting default protocol");
+        AndroidProtocolDescriptionEvent protocolDescriptionEvent = new AndroidProtocolDescriptionEvent();
+        androidProtocolDescriptionEvent.fire(protocolDescriptionEvent);
+        System.out.println("protocol description: " + protocolDescriptionEvent.getProtocolDescription().getName());
+        return protocolDescriptionEvent.getProtocolDescription();
     }
 
     @Override
@@ -93,14 +113,25 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     }
 
     @Override
-    public ProtocolMetaData deploy(Archive<?> arg0) throws DeploymentException {
+    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
         logger.log(Level.INFO, "Deploying the archive to the container {0}.", getContainerName());
-        return new ProtocolMetaData();
+
+        deployArchiveEvent.fire(new AndroidDeployArchive(archive));
+
+        AndroidProtocolMetaDataEvent protocolMetaDataEvent = new AndroidProtocolMetaDataEvent();
+        androidProtocolMetaDataEvent.fire(protocolMetaDataEvent);
+        if (protocolMetaDataEvent.getProtocolMetaData() == null) {
+            throw new DeploymentException("ProtocolMetaData is null!");
+        }
+        System.out.println("DEPLOYMENT: " + archive.toString(true));
+        return protocolMetaDataEvent.getProtocolMetaData();
     }
 
     @Override
-    public void undeploy(Archive<?> arg0) throws DeploymentException {
+    public void undeploy(Archive<?> archive) throws DeploymentException {
         logger.log(Level.INFO, "Undeploying an archive from the container {0}.", getContainerName());
+
+        undeployArchiveEvent.fire(new AndroidUndeployArchive(archive));
     }
 
     @Override

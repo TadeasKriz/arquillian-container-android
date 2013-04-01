@@ -138,7 +138,7 @@ public class AndroidVirtualDeviceManager {
                 {
                     put("Do you wish to create a custom hardware profile [no]", "no\n");
                 }
-            }, command.get().toArray(argsArrays));
+            }, command.getAsList().toArray(argsArrays));
 
             androidVirtualDeviceAvailable.fire(new AndroidVirtualDeviceAvailable(configuration.getAvdName()));
         } catch (InterruptedException e) {
@@ -155,7 +155,7 @@ public class AndroidVirtualDeviceManager {
         command.add(androidSDK.getAndroidPath()).add("delete").add("avd").add("-n").add(avdName);
 
         try {
-            return executor.spawn(command.get());
+            return executor.spawn(command.getAsList());
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Unable to delete AVD {0}.", avdName);
         } catch (ExecutionException e) {

@@ -168,4 +168,12 @@ public interface AndroidDevice {
      * @param droneGuestPort
      */
     void setDroneGuestPort(int droneGuestPort);
+
+    /**
+     * Signs package with the key
+     *
+     * @param file
+     */
+    void signPackage(File file);
+
 }

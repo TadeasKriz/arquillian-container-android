@@ -116,9 +116,9 @@ class AndroidDeviceImpl implements AndroidDevice {
         executeShellCommand(command, new AndroidDeviceOutputReciever() {
             @Override
             public void processNewLines(String[] lines) {
-                if (log.isLoggable(Level.FINEST)) {
+                if (log.isLoggable(Level.INFO)) {
                     for (String line : lines) {
-                        log.log(Level.FINEST, "Shell command {0}: {1}", new Object[] { commandString, line });
+                        log.log(Level.INFO, "Shell command {0}: {1}", new Object[] { commandString, line });
                     }
                 }
             }
@@ -181,9 +181,9 @@ class AndroidDeviceImpl implements AndroidDevice {
     }
 
     @Override
-    public void installPackage(File packageFilePath, boolean reinstall, String... extraArgs)
-        throws AndroidExecutionException {
-        Validate.isReadable(packageFilePath, "File " + packageFilePath + " must represent a readable APK file");
+    public void installPackage(File packageFilePath, boolean reinstall, String... extraArgs) throws AndroidExecutionException {
+        Validate.isReadable(packageFilePath.getAbsoluteFile(), "File " + packageFilePath.getAbsoluteFile()
+            + " must represent a readable APK file");
         try {
             String retval = delegate.installPackage(packageFilePath.getAbsolutePath(), reinstall, extraArgs);
             if (retval != null) {
@@ -216,6 +216,10 @@ class AndroidDeviceImpl implements AndroidDevice {
             throw new AndroidExecutionException("Unable to uninstall APK named " + packageName, e);
         }
 
+    }
+
+    @Override
+    public void signPackage(File file) {
     }
 
     @Override

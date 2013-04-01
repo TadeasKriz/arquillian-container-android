@@ -155,7 +155,7 @@ public class AndroidEmulatorStartup {
         logger.log(Level.INFO, "emulator command -> {0}", command);
         // execute emulator
         try {
-            return executor.spawn(command.get());
+            return executor.spawn(command.getAsList());
         } catch (InterruptedException e) {
             throw new AndroidExecutionException(e, "Unable to start emulator for {0} with options {1}",
                 configuration.getAvdName(),

@@ -163,6 +163,7 @@ public class Validate {
         if (!file.exists() || !file.canRead()) {
             throw new IllegalArgumentException(message);
         }
+
         return true;
     }
 
