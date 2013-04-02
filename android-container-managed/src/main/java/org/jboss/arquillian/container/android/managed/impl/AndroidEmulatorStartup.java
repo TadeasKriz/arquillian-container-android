@@ -82,6 +82,9 @@ public class AndroidEmulatorStartup {
     private Instance<AndroidBridge> androidBridge;
 
     @Inject
+    private Instance<ProcessExecutor> executor;
+
+    @Inject
     private Instance<AndroidManagedContainerConfiguration> configuration;
 
     @Inject
@@ -102,7 +105,7 @@ public class AndroidEmulatorStartup {
         logger.log(Level.INFO, "Waiting {0} seconds for emulator {1} to be started and connected.", new Object[] {
             countdown.timeout(), configuration.getAvdName() });
 
-        ProcessExecutor emulatorProcessExecutor = new ProcessExecutor();
+        ProcessExecutor emulatorProcessExecutor = this.executor.get();
         DeviceConnectDiscovery deviceDiscovery = new DeviceConnectDiscovery();
         AndroidDebugBridge.addDeviceChangeListener(deviceDiscovery);
 

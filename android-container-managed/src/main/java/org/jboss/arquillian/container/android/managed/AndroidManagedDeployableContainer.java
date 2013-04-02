@@ -29,6 +29,7 @@ import org.jboss.arquillian.android.spi.event.AndroidUndeployArchive;
 import org.jboss.arquillian.container.android.api.IdentifierGenerator;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidManagedContainerConfiguration;
 import org.jboss.arquillian.container.android.managed.configuration.AndroidSDK;
+import org.jboss.arquillian.container.android.managed.impl.ProcessExecutor;
 import org.jboss.arquillian.container.android.utils.AndroidIdentifierGenerator;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -38,6 +39,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaD
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
@@ -66,6 +68,10 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     @Inject
     @ContainerScoped
     private InstanceProducer<IdentifierGenerator> idGenerator;
+
+    @Inject
+    @ContainerScoped
+    private InstanceProducer<ProcessExecutor> executor;
 
     @Inject
     private Event<AndroidContainerStart> androidContainerStartEvent;
@@ -104,6 +110,7 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
         this.configuration.set(configuration);
         this.androidSDK.set(new AndroidSDK(this.configuration.get()));
         this.idGenerator.set(new AndroidIdentifierGenerator());
+        this.executor.set(new ProcessExecutor());
     }
 
     @Override

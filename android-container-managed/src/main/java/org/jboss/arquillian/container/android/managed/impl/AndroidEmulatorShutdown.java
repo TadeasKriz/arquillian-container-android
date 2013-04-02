@@ -87,6 +87,9 @@ public class AndroidEmulatorShutdown {
     private Instance<AndroidEmulator> androidEmulator;
 
     @Inject
+    private Instance<ProcessExecutor> executor;
+
+    @Inject
     private Event<AndroidEmulatorShuttedDown> androidEmulatorShuttedDown;
 
     @Inject
@@ -99,7 +102,7 @@ public class AndroidEmulatorShutdown {
         AndroidManagedContainerConfiguration configuration = this.configuration.get();
 
         if (emulator != null && device.isEmulator()) {
-            final ProcessExecutor executor = new ProcessExecutor();
+            final ProcessExecutor executor = this.executor.get();
             final Process p = emulator.getProcess();
             CountDownWatch countdown = new CountDownWatch(configuration.getEmulatorShutdownTimeoutInSeconds(),
                 TimeUnit.SECONDS);

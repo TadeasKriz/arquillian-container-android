@@ -258,7 +258,7 @@ public class AndroidSDK {
         }
 
         throw new RuntimeException("Could not find tool '" + tool + "'.Please ensure you've set JAVA_HOME environment " +
-        		"property properly and that it points to your Java installation directory.");
+            "property properly and that it points to your Java installation directory.");
     }
 
     /**

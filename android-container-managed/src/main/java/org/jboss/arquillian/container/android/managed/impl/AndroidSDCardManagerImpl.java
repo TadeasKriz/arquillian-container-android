@@ -63,19 +63,22 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
     private static final Logger logger = Logger.getLogger(AndroidSDCardManagerImpl.class.getName());
 
     @Inject
-    Instance<AndroidManagedContainerConfiguration> configuration;
+    private Instance<AndroidManagedContainerConfiguration> configuration;
 
     @Inject
-    Instance<AndroidSDK> androidSDK;
+    private Instance<AndroidSDK> androidSDK;
 
     @Inject
-    Instance<IdentifierGenerator> idGenerator;
+    private Instance<IdentifierGenerator> idGenerator;
 
     @Inject
-    Event<AndroidSDCardCreated> androidSDCardCreated;
+    private Instance<ProcessExecutor> executor;
 
     @Inject
-    Event<AndroidSDCardDeleted> androidSDCardDeleted;
+    private Event<AndroidSDCardCreated> androidSDCardCreated;
+
+    @Inject
+    private Event<AndroidSDCardDeleted> androidSDCardDeleted;
 
     private static final String SD_CARD_DEFAULT_DIR_PATH = "/tmp/";
 
@@ -152,7 +155,7 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
 
         AndroidSDCard androidSDCard = (AndroidSDCard) sdCard;
 
-        ProcessExecutor executor = new ProcessExecutor();
+        ProcessExecutor executor = this.executor.get();
         Process sdCardProcess = constructCreateSdCardProcess(executor, sdCard);
         if (createSDCard(sdCardProcess, executor) == 0) {
             logger.log(Level.INFO, "Android SD card labelled {0} located at {1} with size of {2} was created.",

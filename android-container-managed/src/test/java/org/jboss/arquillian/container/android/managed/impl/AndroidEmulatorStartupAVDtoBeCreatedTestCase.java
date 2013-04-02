@@ -71,6 +71,8 @@ public class AndroidEmulatorStartupAVDtoBeCreatedTestCase extends AbstractContai
 
     private AndroidSDK androidSDK;
 
+    private ProcessExecutor processorExecutor;
+
     @Mock
     private IdentifierGenerator idGenerator;
 
@@ -86,7 +88,9 @@ public class AndroidEmulatorStartupAVDtoBeCreatedTestCase extends AbstractContai
     @Before
     public void setup() {
         configuration = new AndroidManagedContainerConfiguration();
+        configuration.setAbi("armeabi");
         androidSDK = new AndroidSDK(configuration);
+        processorExecutor = new ProcessExecutor();
 
         getManager().getContext(ContainerContext.class).activate("doesnotmatter");
 
@@ -95,6 +99,7 @@ public class AndroidEmulatorStartupAVDtoBeCreatedTestCase extends AbstractContai
         bind(ContainerScoped.class, AndroidManagedContainerConfiguration.class, configuration);
         bind(ContainerScoped.class, AndroidSDK.class, androidSDK);
         bind(ContainerScoped.class, IdentifierGenerator.class, idGenerator);
+        bind(ContainerScoped.class, ProcessExecutor.class, processorExecutor);
     }
 
     @After

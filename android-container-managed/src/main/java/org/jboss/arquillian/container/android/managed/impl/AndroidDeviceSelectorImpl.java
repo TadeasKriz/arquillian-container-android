@@ -100,7 +100,10 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
     private Instance<AndroidSDK> androidSDK;
 
     @Inject
-    Instance<IdentifierGenerator> idGenerator;
+    private Instance<ProcessExecutor> executor;
+
+    @Inject
+    private Instance<IdentifierGenerator> idGenerator;
 
     @Inject
     private Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
@@ -288,7 +291,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
     }
 
     private boolean androidVirtualDeviceExists(String avdName) throws AndroidExecutionException {
-        ProcessExecutor executor = new ProcessExecutor();
+        ProcessExecutor executor = this.executor.get();
         Set<String> devices = getAndroidVirtualDeviceNames(executor);
         return devices.contains(avdName);
     }
@@ -300,6 +303,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         Set<String> names = new HashSet<String>();
 
         List<String> output;
+
         try {
             output = executor.execute(androidSDK.get().getAndroidPath(), "list", "avd");
         } catch (InterruptedException e) {
@@ -307,6 +311,7 @@ public class AndroidDeviceSelectorImpl implements AndroidDeviceSelector {
         } catch (ExecutionException e) {
             throw new AndroidExecutionException("Unable to get list of available AVDs", e);
         }
+
         for (String line : output) {
             Matcher m;
             if (line.trim().startsWith("Name: ") && (m = deviceName.matcher(line)).matches()) {

@@ -68,29 +68,32 @@ public class AndroidVirtualDeviceManager {
     private static final Logger logger = Logger.getLogger(AndroidVirtualDeviceManager.class.getName());
 
     @Inject
-    Instance<AndroidManagedContainerConfiguration> configuration;
+    private Instance<AndroidManagedContainerConfiguration> configuration;
 
     @Inject
-    Instance<AndroidSDK> androidSDK;
+    private Instance<AndroidSDK> androidSDK;
 
     @Inject
-    Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
+    private Instance<ProcessExecutor> executor;
 
     @Inject
-    Event<AndroidVirtualDeviceDeleted> androidVirtualDeviceDeleted;
+    private Event<AndroidVirtualDeviceAvailable> androidVirtualDeviceAvailable;
 
     @Inject
-    Event<AndroidSDCardDelete> androidSDCardDelete;
+    private Event<AndroidVirtualDeviceDeleted> androidVirtualDeviceDeleted;
 
     @Inject
-    Event<AndroidSDCardCreate> androidSDCardCreate;
+    private Event<AndroidSDCardDelete> androidSDCardDelete;
+
+    @Inject
+    private Event<AndroidSDCardCreate> androidSDCardCreate;
 
     public void deleteAndroidVirtualDevice(@Observes AndroidVirtualDeviceDelete event) {
 
         AndroidManagedContainerConfiguration configuration = this.configuration.get();
 
         try {
-            ProcessExecutor executor = new ProcessExecutor();
+            ProcessExecutor executor = this.executor.get();
             Process android = constructDeleteProcess(executor, androidSDK.get(), configuration.getAvdName());
             if (deleteAVD(android, executor) == 0) {
                 logger.info("Android Virtual Device " + configuration.getAvdName() + " deleted.");
@@ -116,7 +119,7 @@ public class AndroidVirtualDeviceManager {
         AndroidSDK sdk = this.androidSDK.get();
         Validate.notNullOrEmpty(configuration.getSdSize(), "Memory SD card size must be defined");
 
-        ProcessExecutor executor = new ProcessExecutor();
+        ProcessExecutor executor = this.executor.get();
 
         try {
             Command command = new Command();

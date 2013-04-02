@@ -60,6 +60,8 @@ public class AndroidEmulatorStartupAVDcreatedTestCase extends AbstractContainerT
 
     private AndroidSDK androidSDK;
 
+    private ProcessExecutor processExecutor;
+    
     private String EMULATOR_AVD_NAME = "test01";
 
     private String EMULATOR_CONSOLE_PORT = "5556";
@@ -78,11 +80,13 @@ public class AndroidEmulatorStartupAVDcreatedTestCase extends AbstractContainerT
         configuration.setAvdName(EMULATOR_AVD_NAME);
         configuration.setConsolePort(EMULATOR_CONSOLE_PORT);
         androidSDK = new AndroidSDK(configuration);
+        processExecutor = new ProcessExecutor();
 
         getManager().getContext(ContainerContext.class).activate("doesnotmatter");
 
         bind(ContainerScoped.class, AndroidManagedContainerConfiguration.class, configuration);
         bind(ContainerScoped.class, AndroidSDK.class, androidSDK);
+        bind(ContainerScoped.class, ProcessExecutor.class, processExecutor);
     }
 
     @After
