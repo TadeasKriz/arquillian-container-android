@@ -24,7 +24,7 @@ import java.text.MessageFormat;
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public class AndroidExecutionException extends Exception {
+public class AndroidExecutionException extends RuntimeException {
 
     private static final long serialVersionUID = 5649861186106271426L;
 

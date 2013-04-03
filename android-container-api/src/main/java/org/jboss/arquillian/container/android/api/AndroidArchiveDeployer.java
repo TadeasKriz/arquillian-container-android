@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.container.android.api;
 
-import java.io.IOException;
-
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -27,7 +25,7 @@ import org.jboss.shrinkwrap.api.Archive;
  *
  */
 public interface AndroidArchiveDeployer {
-    void deploy(Archive<?> archive) throws AndroidExecutionException, IOException;
+    void deploy(Archive<?> archive);
 
-    void undeploy(Archive<?> archive) throws AndroidExecutionException;
+    void undeploy(Archive<?> archive);
 }
