@@ -72,7 +72,6 @@ public class MultipleContainerRegistryCreator {
         String activeConfiguration = getActivatedConfiguration();
 
         for (ContainerDef container : event.getContainers()) {
-            log.log(Level.INFO, "ContainerDef container");
             if ((activeConfiguration != null && activeConfiguration.equals(container.getContainerName()))
                     || (activeConfiguration == null && container.isDefault())) {
                 reg.create(container, serviceLoader);
@@ -80,7 +79,6 @@ public class MultipleContainerRegistryCreator {
         }
 
         for (GroupDef group : event.getGroups()) {
-            log.log(Level.INFO, "GroupDef group");
             if ((activeConfiguration != null && activeConfiguration.equals(group.getGroupName()))
                     || (activeConfiguration == null && group.isGroupDefault())) {
                 for (ContainerDef container : group.getGroupContainers()) {
