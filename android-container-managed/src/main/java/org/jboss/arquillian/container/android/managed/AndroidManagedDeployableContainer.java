@@ -39,7 +39,6 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaD
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.InstanceProducer;
-import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
@@ -101,7 +100,6 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
         logger.log(Level.INFO, "Getting default protocol");
         AndroidProtocolDescriptionEvent protocolDescriptionEvent = new AndroidProtocolDescriptionEvent();
         androidProtocolDescriptionEvent.fire(protocolDescriptionEvent);
-        System.out.println("protocol description: " + protocolDescriptionEvent.getProtocolDescription().getName());
         return protocolDescriptionEvent.getProtocolDescription();
     }
 

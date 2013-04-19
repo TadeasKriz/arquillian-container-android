@@ -43,34 +43,13 @@
         <url>git://github.com/smiklosovic/arquillian-container-android.git</url>
     </scm>
 
-    <!-- Properties -->
     <properties>
-        <!-- Versioning -->
-        <version.arquillian_core>1.0.3.Final</version.arquillian_core>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <!-- Dependency Management -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian_core}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-build</artifactId>
-                <version>${version.arquillian_core}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <!-- Modules -->
     <modules>
+        <module>android-container-bom</module>
         <module>android-container-build-config</module>
         <module>android-container-build</module>
         <module>android-container-api</module>
