@@ -89,6 +89,7 @@ public class AndroidEmulatorStartupAVDtoBeCreatedTestCase extends AbstractContai
     public void setup() {
         configuration = new AndroidManagedContainerConfiguration();
         configuration.setAbi("armeabi");
+        configuration.setEmulatorBootupTimeoutInSeconds(300);
         androidSDK = new AndroidSDK(configuration);
         processorExecutor = new ProcessExecutor();
 

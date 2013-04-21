@@ -58,6 +58,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@org.junit.Ignore
 public class MultipleContainersTestCase extends AbstractContainerTestBase {
 
     @Inject

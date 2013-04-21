@@ -190,8 +190,6 @@ public class AndroidEmulatorStartup {
                         + " seconds to Android Debug Bridge. Please increase the time limit in order to get emulator connected.");
             }
 
-            logger.log(Level.INFO, "before two executors");
-
             // device is connected to ADB
             final AndroidDevice connectedDevice = deviceDiscovery.getDiscoveredDevice();
 

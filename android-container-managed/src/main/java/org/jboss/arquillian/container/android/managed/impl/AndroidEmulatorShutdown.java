@@ -241,23 +241,30 @@ public class AndroidEmulatorShutdown {
                 Socket socket = null;
                 BufferedReader in = null;
                 PrintWriter out = null;
+
                 try {
                     socket = new Socket("127.0.0.1", port);
                     out = new PrintWriter(socket.getOutputStream(), true);
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    if (in.readLine() == null) {
-                        return false;
+
+                    String telnetOutputString = null;
+
+                    while ((telnetOutputString = in.readLine()) != null) {
+                        if (telnetOutputString.equals("OK")) {
+                            break;
+                        }
                     }
 
                     out.write(command);
-                    out.write("\r\n");
+                    out.write("\n");
+                    out.flush();
                 } finally {
                     try {
                         out.close();
                         in.close();
                         socket.close();
                     } catch (Exception e) {
-                        // nothing
+                        // ignore
                     }
                 }
 

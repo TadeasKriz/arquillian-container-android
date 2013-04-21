@@ -139,7 +139,7 @@ public class AndroidVirtualDeviceManager {
             String[] argsArrays = new String[command.size()];
             executor.execute(new HashMap<String, String>() {
                 {
-                    put("Do you wish to create a custom hardware profile [no]", "no\n");
+                    put("Do you wish to create a custom hardware profile [no]", "no" + System.getProperty("line.separator"));
                 }
             }, command.getAsList().toArray(argsArrays));
 

@@ -253,7 +253,6 @@ public class ProcessExecutor {
             final List<String> output = new ArrayList<String>();
 
             try {
-
                 // read character by character
                 int i;
                 StringBuilder line = new StringBuilder();
@@ -278,7 +277,10 @@ public class ProcessExecutor {
                     }
 
                     // save output
-                    if (line.indexOf(NL) != -1) {
+                    // adb command writes its output with ends of lines as "\\n"
+                    // ignoring Windows conventions which recognize "\r\n" as the
+                    // end of the line
+                    if (line.indexOf("\n") != -1 || line.indexOf(NL) != -1) {
                         String wholeLine = line.toString();
                         if (log.isLoggable(Level.FINEST)) {
                             log.log(Level.FINEST, "{0} outputs: {1}", new Object[] { process, wholeLine });

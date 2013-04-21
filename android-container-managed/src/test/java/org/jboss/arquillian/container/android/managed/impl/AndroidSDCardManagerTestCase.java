@@ -63,11 +63,13 @@ public class AndroidSDCardManagerTestCase extends AbstractAndroidTestTestBase {
 
     private AndroidSDK androidSDK;
 
+    private ProcessExecutor executor;
+
     private static String SD_CARD = "340df030-8994-11e2-9e96-0800200c9a66.img";
 
     private String SD_CARD_LABEL = "ba817e70-8994-11e2-9e96-0800200c9a66";
 
-    private static String SD_PATH = "/tmp/" + SD_CARD;
+    private static String SD_PATH = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + SD_CARD;
 
     private String SD_SIZE = "128M";
 
@@ -82,11 +84,14 @@ public class AndroidSDCardManagerTestCase extends AbstractAndroidTestTestBase {
     @Before
     public void setup() {
 
+        executor = new ProcessExecutor();
+
         getManager().getContext(ContainerContext.class).activate("doesnotmatter");
 
         Mockito.when(idGenerator.getIdentifier(IdentifierType.SD_CARD.getClass())).thenReturn(SD_CARD);
         Mockito.when(idGenerator.getIdentifier(IdentifierType.SD_CARD_LABEL.getClass())).thenReturn(SD_CARD_LABEL);
         bind(ContainerScoped.class, IdentifierGenerator.class, idGenerator);
+        bind(ContainerScoped.class, ProcessExecutor.class, executor);
     }
 
     @After
@@ -254,7 +259,7 @@ public class AndroidSDCardManagerTestCase extends AbstractAndroidTestTestBase {
     }
 
     private AndroidManagedContainerConfiguration setupSDCardConfiguration(AndroidManagedContainerConfiguration config,
-            String sdFileName, String sdSize, String sdLabel, boolean generated) {
+        String sdFileName, String sdSize, String sdLabel, boolean generated) {
         config.setSdCard(sdFileName);
         config.setSdCardLabel(sdLabel);
         config.setSdSize(sdSize);

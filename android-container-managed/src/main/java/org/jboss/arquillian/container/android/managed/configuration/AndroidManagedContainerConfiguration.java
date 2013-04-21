@@ -40,7 +40,7 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private String avdName;
 
-    private String generatedAvdPath = "/tmp/";
+    private String generatedAvdPath = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator");
 
     private String emulatorOptions;
 

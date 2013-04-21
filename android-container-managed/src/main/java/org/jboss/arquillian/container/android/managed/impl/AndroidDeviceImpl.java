@@ -64,7 +64,7 @@ class AndroidDeviceImpl implements AndroidDevice {
     public String getAvdName() {
         if (isEmulator()) {
             String avdName = delegate.getAvdName();
-            if (avdName.equals("<build>")) {
+            if (avdName == null || avdName.equals("<build>")) {
                 return null;
             }
             return avdName;

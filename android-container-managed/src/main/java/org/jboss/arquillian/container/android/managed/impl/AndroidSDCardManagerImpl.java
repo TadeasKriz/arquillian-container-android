@@ -80,7 +80,8 @@ public class AndroidSDCardManagerImpl implements AndroidSDCardManager {
     @Inject
     private Event<AndroidSDCardDeleted> androidSDCardDeleted;
 
-    private static final String SD_CARD_DEFAULT_DIR_PATH = "/tmp/";
+    private static final String SD_CARD_DEFAULT_DIR_PATH = System.getProperty("java.io.tmpdir")
+        + System.getProperty("file.separator");
 
     private static final String SD_CARD_DEFAULT_SIZE = "128M";
 

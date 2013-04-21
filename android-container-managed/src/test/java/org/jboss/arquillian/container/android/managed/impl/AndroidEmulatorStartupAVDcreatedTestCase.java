@@ -47,7 +47,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Tests starting of an emulator when AVD.
+ * Tests starting of an emulator when AVD is offline.
  *
  * @author <a href="smikloso@redhat.com">Stefan Miklosovic</a>
  *
@@ -61,7 +61,7 @@ public class AndroidEmulatorStartupAVDcreatedTestCase extends AbstractContainerT
     private AndroidSDK androidSDK;
 
     private ProcessExecutor processExecutor;
-    
+
     private String EMULATOR_AVD_NAME = "test01";
 
     private String EMULATOR_CONSOLE_PORT = "5556";
@@ -100,6 +100,8 @@ public class AndroidEmulatorStartupAVDcreatedTestCase extends AbstractContainerT
         fire(new AndroidContainerStart());
 
         AndroidBridge bridge = getManager().getContext(ContainerContext.class).getObjectStore().get(AndroidBridge.class);
+        assertNotNull(bridge);
+
         bind(ContainerScoped.class, AndroidBridge.class, bridge);
 
         AndroidDevice runningDevice = getManager().getContext(ContainerContext.class)
