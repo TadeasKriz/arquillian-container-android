@@ -243,13 +243,13 @@ persisted.
     </configuration>
 
 #### forceNewBridge
-##### default: false
+##### default: true
 
 `forceNewBridge` boolean property specifies if Android Debug Bridge (ADB) should be forced to be created even it 
-already is. It can have only `true` or `false` value. When not used, it is set to false.
+already is. It can have only `true` or `false` value. When not used, it is set to true.
 
     <configuration>
-        <property name="forceNewBridge">true</property>
+        <property name="forceNewBridge">false</property>
     </configuration>
 
 ### Real Android Device Configuration

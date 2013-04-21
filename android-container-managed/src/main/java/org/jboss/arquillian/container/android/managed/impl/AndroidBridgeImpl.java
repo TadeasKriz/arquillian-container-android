@@ -158,7 +158,7 @@ public class AndroidBridgeImpl implements AndroidBridge {
      */
     private void waitForInitialDeviceList() {
         if (!delegate.hasInitialDeviceList()) {
-            logger.fine("Waiting for initial device list from the Android Debug Bridge");
+            logger.info("Waiting for initial device list from the Android Debug Bridge");
             long limitTime = System.currentTimeMillis() + ADB_TIMEOUT_MS;
             while (!delegate.hasInitialDeviceList() && (System.currentTimeMillis() < limitTime)) {
                 try {

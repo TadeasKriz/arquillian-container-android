@@ -34,7 +34,7 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private boolean skip;
 
-    private boolean forceNewBridge;
+    private boolean forceNewBridge = true;
 
     private String serialId;
 
