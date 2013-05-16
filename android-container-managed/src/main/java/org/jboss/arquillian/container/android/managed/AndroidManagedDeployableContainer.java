@@ -120,16 +120,8 @@ public class AndroidManagedDeployableContainer implements DeployableContainer<An
     @Override
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
         logger.log(Level.INFO, "Deploying the archive to the container {0}.", getContainerName());
-
         deployArchiveEvent.fire(new AndroidDeployArchive(archive));
-
-        AndroidProtocolMetaDataEvent protocolMetaDataEvent = new AndroidProtocolMetaDataEvent();
-        androidProtocolMetaDataEvent.fire(protocolMetaDataEvent);
-        if (protocolMetaDataEvent.getProtocolMetaData() == null) {
-            throw new DeploymentException("ProtocolMetaData is null!");
-        }
-        System.out.println("DEPLOYMENT: " + archive.toString(true));
-        return protocolMetaDataEvent.getProtocolMetaData();
+        return new ProtocolMetaData();
     }
 
     @Override

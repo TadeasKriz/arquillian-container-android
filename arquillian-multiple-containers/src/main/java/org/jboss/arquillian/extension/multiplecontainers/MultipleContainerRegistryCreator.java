@@ -45,6 +45,7 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * Registers all container adapters.
  *
  * @author Dominik Pospisil <dpospisi@redhat.com>
+ * @author Stefan Miklosovic <smikloso@redhat.com>
  */
 public class MultipleContainerRegistryCreator {
 

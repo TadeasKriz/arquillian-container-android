@@ -43,7 +43,7 @@ import com.android.ddmlib.TimeoutException;
  */
 class AndroidDeviceImpl implements AndroidDevice {
 
-    private static final Logger log = Logger.getLogger(AndroidDeviceOutputReciever.class.getName());
+    private static final Logger log = Logger.getLogger(AndroidDeviceImpl.class.getName());
 
     private IDevice delegate;
 
