@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/smiklosovic/arquillian-container-android.png)](https://travis-ci.org/smiklosovic/arquillian-container-android)
+
 Android container for Arquillian platform
 =========================================
 
