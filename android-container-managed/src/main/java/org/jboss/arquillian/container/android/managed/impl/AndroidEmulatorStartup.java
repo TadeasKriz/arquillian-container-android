@@ -118,6 +118,8 @@ public class AndroidEmulatorStartup {
 
         waitUntilBootUpIsComplete(deviceDiscovery, emulatorProcessExecutor, countdown);
 
+        unlockEmulator(deviceDiscovery, emulatorProcessExecutor);
+
         emulator = deviceDiscovery.getDiscoveredDevice();
         setDronePorts(emulator);
 
@@ -169,6 +171,21 @@ public class AndroidEmulatorStartup {
                 configuration.getEmulatorOptions());
         }
 
+    }
+
+    private void unlockEmulator(final DeviceConnectDiscovery deviceDiscovery, final ProcessExecutor executor) {
+
+        final String adbPath = androidSDK.get().getAdbPath();
+        final AndroidDevice connectedDevice = deviceDiscovery.getDiscoveredDevice();
+        final String serialNumber = connectedDevice.getSerialNumber();
+        try {
+            executor.execute(Collections.<String, String> emptyMap(), adbPath,
+                "-s", serialNumber, "shell", "input", "keyevent", "82");
+            executor.execute(Collections.<String, String> emptyMap(), adbPath,
+                "-s", serialNumber, "shell", "input", "keyevent", "4");
+        } catch (final Exception ignore) {
+            // intentionally left empty
+        }
     }
 
     private void waitUntilBootUpIsComplete(final DeviceConnectDiscovery deviceDiscovery, final ProcessExecutor executor,
