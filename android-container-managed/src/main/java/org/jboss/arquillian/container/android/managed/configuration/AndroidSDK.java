@@ -47,6 +47,7 @@ import java.util.logging.Logger;
  * Represents an Android SDK.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  * @author hugo.josefson@jayway.com
  * @author Manfred Moser <manfred@simpligility.com>
  */
@@ -77,9 +78,14 @@ public class AndroidSDK {
     private static final String PLATFORMS_FOLDER_NAME = "platforms";
 
     /**
-     * folder name for the SDK sub folder that contains the platform tools.
+     * folder name for the SDK sub folder that contains the platform tools
      */
     private static final String PLATFORM_TOOLS_FOLDER_NAME = "platform-tools";
+
+    /**
+     * folder name of the SDK sub folder that contains build tools
+     */
+    private static final String BUILD_TOOLS_FOLDER_NAME = "build-tools";
 
     private static final class Platform implements Comparable<Platform> {
         final String name;
@@ -269,13 +275,14 @@ public class AndroidSDK {
      */
     public String getPathForTool(String tool) {
 
-        String[] possiblePaths = { sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool,
-            sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool + ".exe",
-            sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool + ".bat",
-            sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/lib/" + tool, getPlatform() + "/tools/" + tool,
+        String[] possiblePaths = { sdkPath + "/" + PLATFORMS_FOLDER_NAME + "/" + tool,
+            sdkPath + "/" + PLATFORMS_FOLDER_NAME + "/" + tool + ".exe",
+            sdkPath + "/" + PLATFORMS_FOLDER_NAME + "/" + tool + ".bat",
+            sdkPath + "/" + PLATFORMS_FOLDER_NAME + "/lib/" + tool, getPlatform() + "/tools/" + tool,
             getPlatform() + "/tools/" + tool + ".exe", getPlatform() + "/tools/" + tool + ".bat",
             getPlatform() + "/tools/lib/" + tool, sdkPath + "/tools/" + tool, sdkPath + "/tools/" + tool + ".exe",
-            sdkPath + "/tools/" + tool + ".bat", sdkPath + "/tools/lib/" + tool };
+            sdkPath + "/tools/" + tool + ".bat", sdkPath + "/tools/lib/" + tool,
+            sdkPath + "/" + PLATFORM_TOOLS_FOLDER_NAME + "/" + tool };
 
         for (String possiblePath : possiblePaths) {
             File file = new File(possiblePath);
@@ -286,6 +293,33 @@ public class AndroidSDK {
 
         throw new RuntimeException("Could not find tool '" + tool
             + "'. Please ensure you've set it properly in Arquillian configuration");
+    }
+
+    private String getBuildTool(String tool) {
+
+        // look only into android-sdks/platforms/android-{number}/tools/aapt
+
+        File possiblePlatformPath =
+            new File(sdkPath + "/" + PLATFORMS_FOLDER_NAME + getPlatform() + "/tools/" + tool);
+
+        if (possiblePlatformPath.exists() && !possiblePlatformPath.isDirectory()) {
+            return possiblePlatformPath.getAbsolutePath();
+        }
+
+        // go into android-sdks/build-tools/
+
+        File possibleBuildPath = new File(sdkPath + "/" + BUILD_TOOLS_FOLDER_NAME);
+
+        File[] dirs = possibleBuildPath.listFiles();
+        Arrays.sort(dirs);
+
+        for (File dir : dirs) {
+            File tmpTool = new File(dir, tool);
+            if (tmpTool.exists() && !tmpTool.isDirectory())
+                return tmpTool.getAbsolutePath();
+        }
+
+        throw new RuntimeException("Could not find tool '" + tool + ".");
     }
 
     /**
@@ -308,6 +342,10 @@ public class AndroidSDK {
      */
     public String getAdbPath() {
         return getPathForTool("adb");
+    }
+
+    public String getAaptPath() {
+        return getBuildTool("aapt");
     }
 
     /**
