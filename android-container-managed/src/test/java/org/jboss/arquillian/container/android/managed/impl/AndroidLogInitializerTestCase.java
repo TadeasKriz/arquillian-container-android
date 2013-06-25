@@ -29,14 +29,14 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
-//@Ignore
+@Ignore
 public class AndroidLogInitializerTestCase extends AbstractAndroidTestTestBase {
 
     private AndroidManagedContainerConfiguration configuration;
 
     private AndroidSDK androidSDK;
 
-    private String RUNNING_EMULATOR_AVD_NAME = "android-arm-container";
+    private String RUNNING_EMULATOR_AVD_NAME = "test01";
 
     private String RUNNING_EMULATOR_CONSOLE_PORT = "5554";
 
@@ -66,7 +66,7 @@ public class AndroidLogInitializerTestCase extends AbstractAndroidTestTestBase {
         bridge.disconnect();
     }
 
-    @Test//(timeout = 15000) // TODO are 15 seconds enough?
+    @Test // TODO should we set timeout?
     public void testLogInitialization() {
 
         ProcessExecutor processExecutor = new ProcessExecutor();
