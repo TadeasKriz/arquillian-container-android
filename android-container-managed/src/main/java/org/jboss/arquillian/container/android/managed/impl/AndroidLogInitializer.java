@@ -80,6 +80,13 @@ public class AndroidLogInitializer {
 
         logcatFuture.cancel(true);
 
+        try {
+            logcat.get().getWriter().close();
+        } catch(IOException e) {
+
+        } catch (NullPointerException e) {
+
+        }
     }
 
     public class LogcatReader implements Callable<Void> {
@@ -133,8 +140,11 @@ public class AndroidLogInitializer {
                 while((line = reader.readLine()) != null) {
                     if(shouldWrite(line)) {
                         writer.write(line);
+                        writer.flush();
                     }
                 }
+
+                writer.close();
 
             } catch(IOException e) {
                 logger.log(Level.SEVERE, "Error with logging", e);

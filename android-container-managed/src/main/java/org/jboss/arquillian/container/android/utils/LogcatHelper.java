@@ -38,7 +38,7 @@ public class LogcatHelper {
             return new LogcatToLoggerWriter(Logger.getLogger("Logcat"));
         } else if(configuration.getLogType().equals(LogType.FILE)) {
             try {
-                return new FileWriter(configuration.getLogFile());
+                return new LogcatToFileWriter(configuration.getLogFile());
             } catch (IOException e) {
                 logger.warning("Couldn't open log file!");
                 return null;
@@ -47,6 +47,18 @@ public class LogcatHelper {
             return null;
         }
 
+    }
+
+    public static class LogcatToFileWriter extends FileWriter {
+
+        public LogcatToFileWriter(String fileName) throws IOException {
+            super(fileName);
+        }
+
+        @Override
+        public void write(String str) throws IOException {
+            super.write(str + "\n");
+        }
     }
 
     public static class LogcatToConsoleWriter extends  Writer {
@@ -64,7 +76,7 @@ public class LogcatHelper {
 
         @Override
         public void close() throws IOException {
-
+            System.out.flush();
         }
     }
 

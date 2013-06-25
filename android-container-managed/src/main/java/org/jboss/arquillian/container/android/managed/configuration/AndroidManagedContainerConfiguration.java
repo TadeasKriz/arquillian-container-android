@@ -79,7 +79,7 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
 
     private String logType = LogType.OUTPUT;
 
-    private String logFile = "logcat.log";
+    private String logFile = "target/logcat.log";
 
     private String logPackageWhitelist = "";
 
