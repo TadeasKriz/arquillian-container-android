@@ -75,6 +75,16 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
     // Android 2.3.3 is the default
     private String apiLevel = "10";
 
+    private String logLevel = LogLevel.DEFAULT;
+
+    private String logType = LogType.OUTPUT;
+
+    private String logFile = "logcat.log";
+
+    private String logPackageWhitelist = "";
+
+    private String logPackageBlacklist = "";
+
     public String getHome() {
         return home;
     }
@@ -247,6 +257,50 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         this.droneGuestPort = droneGuestPort;
     }
 
+    public String getLogLevel() {
+        return logLevel;
+    }
+
+    public void setLogLevel(String logLevel) {
+        this.logLevel = logLevel;
+    }
+
+    public String getLogType() {
+        return logType;
+    }
+
+    public void setLogType(String logType) {
+        this.logType = logType;
+    }
+
+    public String getLogFile() {
+        return logFile;
+    }
+
+    public void setLogFile(String logFile) {
+        this.logFile = logFile;
+    }
+
+    public String getLogPackageWhitelist() {
+        return logPackageWhitelist;
+    }
+
+    public void setLogPackageWhitelist(String logPackageWhitelist) {
+        this.logPackageWhitelist = logPackageWhitelist;
+    }
+
+    public String getLogPackageBlacklist() {
+        return logPackageBlacklist;
+    }
+
+    public void setLogPackageBlacklist(String logPackageBlacklist) {
+        this.logPackageBlacklist = logPackageBlacklist;
+    }
+
+    public boolean isIntelliLogEnabled() {
+        return !logPackageWhitelist.equals("") || !logPackageBlacklist.equals("");
+    }
+
     @Override
     public void validate() throws AndroidContainerConfigurationException {
         Validate.isReadableDirectory(home,
@@ -317,6 +371,13 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
             Validate.isPortValid(droneGuestPort);
         }
 
+        // TODO validate log configuration
+
+        if(!logPackageWhitelist.equals("") && logPackageBlacklist.equals("")) {
+            logPackageBlacklist = "*";
+            logger.warning("\"logPackageBlacklist\" is empty, but \"logPackageWhitelist\" is not. Assuming \"*\" as value for \"logPackageBlacklist\"!");
+        }
+
         if (emulatorBootupTimeoutInSeconds <= 0) {
             throw new AndroidContainerConfigurationException(
                 "Emulator bootup timeout has to be bigger then 0.");
@@ -347,6 +408,11 @@ public class AndroidManagedContainerConfiguration implements ContainerConfigurat
         sb.append("home\t\t\t:").append(this.home).append("\n");
         sb.append("consolePort\t\t:").append(this.consolePort).append("\n");
         sb.append("adbPort\t\t\t:").append(this.adbPort).append("\n");
+        sb.append("logLevel\t\t:").append(this.logLevel).append("\n");
+        sb.append("logType\t\t\t:").append(this.logType.toString()).append("\n");
+        sb.append("logFile\t\t\t:").append(this.logFile).append("\n");
+        sb.append("logPackageWhitelist\t:").append(this.logPackageWhitelist).append("\n");
+        sb.append("logPackageBlacklist\t:").append(this.logPackageBlacklist).append("\n");
         return sb.toString();
     }
 

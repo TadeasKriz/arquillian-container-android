@@ -64,7 +64,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  */
 public class AndroidBridgeConnector {
 
-    private static final Logger logger = Logger.getLogger(AndroidBridgeConnector.class.getName());
+        private static final Logger logger = Logger.getLogger(AndroidBridgeConnector.class.getName());
 
     @Inject
     @ContainerScoped

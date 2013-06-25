@@ -9,6 +9,10 @@
 *.war
 *.ear
 
+# IDE Project files #
+*.iml
+
 # directories
 target/
 containerTest/
+.idea/
